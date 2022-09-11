@@ -1,13 +1,15 @@
-import { RecoilRoot } from "recoil";
-import App from "./App";
-import Reset from "./styles/Reset";
 import React from "react";
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import { RecoilRoot } from "recoil";
+import Reset from "./styles/Reset";
 
-ReactDOM.render(
+const root = ReactDOM.createRoot(
+  document.getElementById("root") as HTMLElement
+);
+root.render(
   <RecoilRoot>
     <Reset />
     <App />
-  </RecoilRoot>,
-  document.getElementById("root")
+  </RecoilRoot>
 );
