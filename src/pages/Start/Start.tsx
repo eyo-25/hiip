@@ -1,5 +1,5 @@
 const Start = () => {
-  return <></>;
+  return <span>start</span>;
 };
 
 export default Start;

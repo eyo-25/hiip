@@ -1,5 +1,5 @@
 const FeedBack = () => {
-  return <></>;
+  return <span>FeedBack</span>;
 };
 
 export default FeedBack;

@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import AuthForm from "./AuthForm";
-
+import AuthForm from "./component/AuthForm";
+import AuthSocialLogin from "./component/AuthSocialLogin";
 const Auth = () => {
   const [isCreate, setIsCreate] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
@@ -13,9 +12,8 @@ const Auth = () => {
   };
   return (
     <>
+      <AuthSocialLogin />
       <div>
-        <button>Google 계정으로 가입하기</button>
-        <button>Github 계정으로 가입하기</button>
         <div>또는</div>
         <button onClick={onCreateClick}>이메일 주소로 가입하기</button>
       </div>

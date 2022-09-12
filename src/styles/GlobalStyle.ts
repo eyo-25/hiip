@@ -1,7 +1,6 @@
 import { createGlobalStyle } from "styled-components";
 
-//head에 style을 넣어준다.
-const Reset = createGlobalStyle`
+const GlobalStyle = createGlobalStyle`
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -32,13 +31,8 @@ footer, header, hgroup, main, menu, nav, section {
     display: none;
 }
 body {
-  font-family: 'Source Sans Pro', 'Segoe UI', Tahoma, Verdana, sans-serif;
+  font-family: "NotoSansKR";
   line-height: 1;
-}
-/* body 스크롤 방지용 */
-.stop-scroll{
-  height: 100%;
-  overflow: hidden;
 }
 menu, ol, ul {
   list-style: none;
@@ -60,8 +54,7 @@ table {
 }
 a {
   text-decoration: none;
-  color:inherit;
 }
 `;
 
-export default Reset;
+export default GlobalStyle;

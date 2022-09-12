@@ -1,9 +1,10 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Auth from "../Component/Auth";
-import FeedBack from "../pages/FeedBack";
-import Home from "../pages/Home";
-import MyPage from "../pages/MyPage";
-import Start from "../pages/Start";
+import NavBar from "../Component/NavBar";
+import Auth from "../pages/Auth/Auth";
+import FeedBack from "../pages/FeedBack/FeedBack";
+import Home from "../pages/Home/Home";
+import MyPage from "../pages/MyPage/MyPage";
+import Start from "../pages/Start/Start";
 
 export default function AppRouter({ isLoggedIn }: { isLoggedIn: boolean }) {
   if (!isLoggedIn) {
@@ -17,9 +18,10 @@ export default function AppRouter({ isLoggedIn }: { isLoggedIn: boolean }) {
   }
   return (
     <BrowserRouter basename={process.env.PUBLIC_URL}>
+      <NavBar />
       <Routes>
         <Route path={"/"} element={<Home />} />
-        <Route path={"/start "} element={<Start />} />
+        <Route path={"/start"} element={<Start />} />
         <Route path={"/feedback"} element={<FeedBack />} />
         <Route path={"/mypage"} element={<MyPage />} />
       </Routes>

@@ -5,29 +5,19 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { useState } from "react";
-import { authService } from "../firebase";
+import { authService } from "../../../firebase";
 
 interface IAuthFormProps {
   newCount: boolean;
   close: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Overlay = styled.div`
-  position: fixed;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 11;
-`;
-
 const BigBox = styled.div`
   position: absolute;
-  width: 500px;
-  height: 75vh;
+  width: 100%;
+  height: 100%;
   left: 0;
   right: 0;
-  margin: 0 auto;
   z-index: 12;
   background-color: white;
 `;
@@ -37,9 +27,16 @@ const BigForm = styled.form`
   flex-direction: column;
 `;
 
+const CloseBtn = styled.button`
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 50px;
+`;
+
 const AuthForm = ({ close, newCount }: IAuthFormProps) => {
   const { register, handleSubmit, getValues } = useForm();
-  const overlayClick = () => {
+  const closeClick = () => {
     close(false);
   };
   const [error, setError] = useState("");
@@ -59,7 +56,6 @@ const AuthForm = ({ close, newCount }: IAuthFormProps) => {
   };
   return (
     <>
-      <Overlay onClick={overlayClick} />
       <BigBox>
         <h4>{newCount ? "계정을 생성하세요" : "HIIP에 로그인하기"}</h4>
         <BigForm onSubmit={handleSubmit(onValid)}>
@@ -76,6 +72,7 @@ const AuthForm = ({ close, newCount }: IAuthFormProps) => {
           <button>{newCount ? "Creat Account" : "LogIn"}</button>
         </BigForm>
         {error !== "" ? <span>{error}</span> : null}
+        <CloseBtn onClick={closeClick}>x</CloseBtn>
       </BigBox>
     </>
   );
