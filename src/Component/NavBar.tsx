@@ -5,23 +5,33 @@ import { ReactComponent as Icon2 } from "../Assets/Icons/start.svg";
 import { ReactComponent as Icon3 } from "../Assets/Icons/peedback.svg";
 import { ReactComponent as Icon4 } from "../Assets/Icons/mypage.svg";
 
-const Nav = styled.nav`
+const NavContainer = styled.div`
+  display: flex;
   position: fixed;
   bottom: 0;
-  z-index: 11;
-  max-width: 375px;
+  height: 136px;
   width: 100%;
-  padding-bottom: 40px;
+  background-color: white;
+  border-top: 1px solid #c4c4c4;
+  z-index: 12;
+  align-items: flex-end;
+`;
+const Nav = styled.nav`
+  display: flex;
+  flex-direction: column;
+  max-width: 375px;
+  padding-bottom: 35px;
   width: 85%;
+  margin: 0 auto;
 `;
 const SubItems = styled.ul`
   display: flex;
-  padding: 0 3px;
+  padding-left: 2px;
 `;
 const SubItem = styled.li<{ isActive: boolean }>`
   font-size: 16px;
   font-weight: 600;
-  margin-bottom: 19px;
+  margin-bottom: 20px;
   margin-right: 18px;
   a {
     color: ${(props) => (props.isActive ? "#000000" : "#c4c4c4")};
@@ -68,7 +78,7 @@ const NavBar = () => {
   const mypageMatch = useMatch("/mypage");
   const homeActive = homeMatch !== null || IntervalMatch !== null;
   return (
-    <>
+    <NavContainer>
       <Nav>
         {homeMatch || IntervalMatch ? (
           <SubItems>
@@ -108,7 +118,7 @@ const NavBar = () => {
           </Item>
         </Items>
       </Nav>
-    </>
+    </NavContainer>
   );
 };
 

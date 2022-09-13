@@ -1,8 +1,6 @@
 import AppRouter from "./Router/AppRouter";
 import { useEffect, useState } from "react";
 import { authService } from "./firebase";
-import { Container } from "./Component/layout/Container";
-import { Footer } from "./Component/Footer";
 
 function App() {
   const [init, setInit] = useState(false);
@@ -20,10 +18,7 @@ function App() {
   }, []);
   return (
     <>
-      <Container>
-        <AppRouter isLoggedIn={Boolean(userObj)} />
-      </Container>
-      {userObj ? <Footer /> : null}
+      <AppRouter isLoggedIn={Boolean(userObj)} />
     </>
   );
 }

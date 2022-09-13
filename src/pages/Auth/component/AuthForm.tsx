@@ -12,14 +12,21 @@ interface IAuthFormProps {
   close: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const BigBox = styled.div`
+const Container = styled.div`
+  display: flex;
   position: absolute;
+  justify-content: center;
+  align-items: center;
   width: 100%;
-  height: 100%;
-  left: 0;
-  right: 0;
-  z-index: 12;
+  height: 100vh;
   background-color: white;
+  z-index: 12;
+`;
+
+const BigBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  max-width: 375px;
 `;
 
 const BigForm = styled.form`
@@ -27,12 +34,14 @@ const BigForm = styled.form`
   flex-direction: column;
 `;
 
-const CloseBtn = styled.button`
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 50px;
+const BigTitle = styled.h4`
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -1px;
+  margin-bottom: 10px;
 `;
+
+const CloseBtn = styled.button``;
 
 const AuthForm = ({ close, newCount }: IAuthFormProps) => {
   const { register, handleSubmit, getValues } = useForm();
@@ -55,9 +64,11 @@ const AuthForm = ({ close, newCount }: IAuthFormProps) => {
     }
   };
   return (
-    <>
+    <Container>
       <BigBox>
-        <h4>{newCount ? "계정을 생성하세요" : "HIIP에 로그인하기"}</h4>
+        <BigTitle>
+          {newCount ? "계정을 생성하세요" : "HIIP에 로그인하기"}
+        </BigTitle>
         <BigForm onSubmit={handleSubmit(onValid)}>
           <input
             {...register("email", { required: true })}
@@ -74,7 +85,7 @@ const AuthForm = ({ close, newCount }: IAuthFormProps) => {
         {error !== "" ? <span>{error}</span> : null}
         <CloseBtn onClick={closeClick}>x</CloseBtn>
       </BigBox>
-    </>
+    </Container>
   );
 };
 

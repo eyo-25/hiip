@@ -33,6 +33,7 @@ footer, header, hgroup, main, menu, nav, section {
 body {
   font-family: "NotoSansKR";
   line-height: 1;
+  background-color: #F7F7F7;
 }
 menu, ol, ul {
   list-style: none;

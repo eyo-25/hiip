@@ -1,13 +1,20 @@
+import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import TodoBoard from "./Project/component/TodoBoard";
+import { ReactComponent as PlusIcon } from "../../Assets/Icons/plus.svg";
 
-const Container = styled.div`
+export const Container = styled.div`
   display: flex;
   position: relative;
   justify-content: center;
+  max-width: 375px;
+  margin: 0 auto;
 `;
 
-const AddBtn = styled.button`
+export const CreatePlanBtn = styled.button`
   display: flex;
+  justify-content: center;
+  align-items: center;
   height: 78px;
   width: 78px;
   border-radius: 40px;
@@ -17,12 +24,23 @@ const AddBtn = styled.button`
   margin: 0 auto;
   background-color: black;
   cursor: pointer;
+  svg {
+    width: 30px;
+    height: 30px;
+  }
 `;
 
 const Home = () => {
+  const navigate = useNavigate();
+  const onCreatePlanClick = () => {
+    navigate(`/plan/interval`);
+  };
   return (
     <Container>
-      <AddBtn></AddBtn>
+      <TodoBoard />
+      <CreatePlanBtn onClick={onCreatePlanClick}>
+        <PlusIcon />
+      </CreatePlanBtn>
     </Container>
   );
 };
