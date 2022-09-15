@@ -37,7 +37,7 @@ const TodoBoard = () => {
 export default TodoBoard;
 
 const Wrapper = styled.div`
-  margin-top: 200px;
+  margin-top: 125px;
   display: flex;
   width: 100%;
   justify-content: center;

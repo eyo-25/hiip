@@ -1,7 +1,24 @@
-import { useMatch, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import TodoBoard from "./Project/component/TodoBoard";
 import { ReactComponent as PlusIcon } from "../../Assets/Icons/plus.svg";
+
+const Home = () => {
+  const navigate = useNavigate();
+  const onCreatePlanClick = () => {
+    navigate(`/project/create`);
+  };
+  return (
+    <Container>
+      <TodoBoard />
+      <CreatePlanBtn onClick={onCreatePlanClick}>
+        <PlusIcon />
+      </CreatePlanBtn>
+    </Container>
+  );
+};
+
+export default Home;
 
 export const Container = styled.div`
   display: flex;
@@ -29,20 +46,3 @@ export const CreatePlanBtn = styled.button`
     height: 30px;
   }
 `;
-
-const Home = () => {
-  const navigate = useNavigate();
-  const onCreatePlanClick = () => {
-    navigate(`/plan/interval`);
-  };
-  return (
-    <Container>
-      <TodoBoard />
-      <CreatePlanBtn onClick={onCreatePlanClick}>
-        <PlusIcon />
-      </CreatePlanBtn>
-    </Container>
-  );
-};
-
-export default Home;
