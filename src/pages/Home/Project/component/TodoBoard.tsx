@@ -20,11 +20,16 @@ const TodoBoard = () => {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Wrapper>
-        <Droppable droppableId="toDo">
+        <Droppable droppableId="boards">
           {(provided) => (
             <DropBox ref={provided.innerRef} {...provided.droppableProps}>
-              {toDos.map((toDo, index) => (
-                <DragabbleCard key={toDo} toDo={toDo} index={index} />
+              {toDos?.map((toDo, index) => (
+                <DragabbleCard
+                  key={toDo.id}
+                  toDoId={toDo.id}
+                  planTitle={toDo.planTitle}
+                  index={index}
+                />
               ))}
             </DropBox>
           )}

@@ -24,8 +24,7 @@ export default function AppRouter({ isLoggedIn }: { isLoggedIn: boolean }) {
       <Header />
       <Routes>
         <Route path={"/"} element={<Home />}></Route>
-        <Route path={"/project/create"} element={<CreateProject />}></Route>
-        <Route path={"/plan/interval"} element={<Interval />} />
+        <Route path={"/interval"} element={<CreateProject />} />
         <Route path={"/start"} element={<Start />} />
         <Route path={"/feedback"} element={<FeedBack />} />
         <Route path={"/mypage"} element={<MyPage />} />

@@ -72,7 +72,7 @@ const NavBar = () => {
     navigate(address);
   };
   const homeMatch = useMatch("/");
-  const IntervalMatch = useMatch("/plan/interval");
+  const IntervalMatch = useMatch("/interval");
   const startMatch = useMatch("/start");
   const feedbackMatch = useMatch("/feedback");
   const mypageMatch = useMatch("/mypage");
@@ -86,7 +86,7 @@ const NavBar = () => {
               <Link to="/">프로젝트</Link>
             </SubItem>
             <SubItem isActive={IntervalMatch !== null}>
-              <Link to="/plan/interval">인터벌</Link>
+              <Link to="/interval">인터벌 생성</Link>
             </SubItem>
           </SubItems>
         ) : null}

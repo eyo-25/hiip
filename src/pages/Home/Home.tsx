@@ -6,7 +6,7 @@ import { ReactComponent as PlusIcon } from "../../Assets/Icons/plus.svg";
 const Home = () => {
   const navigate = useNavigate();
   const onCreatePlanClick = () => {
-    navigate(`/project/create`);
+    navigate(`/interval`);
   };
   return (
     <Container>

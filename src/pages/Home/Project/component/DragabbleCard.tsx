@@ -3,20 +3,21 @@ import { Draggable } from "react-beautiful-dnd";
 import React from "react";
 
 interface IDragabbleCardProps {
-  toDo: string;
+  planTitle: string;
   index: number;
+  toDoId: number;
 }
 
-function DragabbleCard({ toDo, index }: IDragabbleCardProps) {
+function DragabbleCard({ planTitle, toDoId, index }: IDragabbleCardProps) {
   return (
-    <Draggable draggableId={toDo} index={index} key={index}>
+    <Draggable draggableId={toDoId} index={index} key={index}>
       {(provided) => (
         <DragBox
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
         >
-          {toDo}
+          {planTitle}
         </DragBox>
       )}
     </Draggable>
