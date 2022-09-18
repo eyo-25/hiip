@@ -1,42 +1,27 @@
 import { useState } from "react";
 import ReactDatePicker from "react-datepicker";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import DatePicker from "react-datepicker";
 import ko from "date-fns/locale/ko";
+import { IoRemoveCircle, IoAddCircle } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 import {
   dateState,
   endDateState,
   startDateState,
   toDoState,
 } from "../../../../Recoil/atoms";
-import { useForm } from "react-hook-form";
-import { IoRemoveCircle, IoAddCircle } from "react-icons/io5";
-import { useNavigate } from "react-router-dom";
-
-interface IForm {
-  startDate: string;
-  endDate: string;
-  planTitle: string;
-  planTarget: string;
-  intervalSet: number;
-  repeat: string;
-  id: string;
-}
 
 const ProjectInput = () => {
-  const setToDos = useSetRecoilState(toDoState);
+  const [toDos, setToDos] = useRecoilState(toDoState);
   const navigate = useNavigate();
   const [startDate, setStartDate] = useRecoilState(startDateState);
   const [endDate, setEndDate] = useRecoilState(endDateState);
   const [dataSet, setDataSet] = useRecoilState(dateState);
+  const [planTitle, setPlanTitle] = useState<string>();
+  const [planTarget, setPlanTarget] = useState<string>();
   const [count, setCount] = useState(1);
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm();
   const onDateSetting = (start: any, end: any) => {
     if (start && end) {
       const startDay =
@@ -77,18 +62,49 @@ const ProjectInput = () => {
     setCount((prev) => prev - 1);
   };
   const onCancelClick = () => {
+    setStartDate(null);
+    setEndDate(null);
     navigate(`/`);
   };
-  const handleValid = ({
-    startDate,
-    endDate,
-    planTitle,
-    planTarget,
-    intervalSet,
-    repeat,
-  }: IForm) => {};
+  const titleChange = (event: React.FormEvent<HTMLInputElement>) => {
+    const {
+      currentTarget: { value },
+    } = event;
+    setPlanTitle(value);
+  };
+  const targetChange = (event: React.FormEvent<HTMLInputElement>) => {
+    const {
+      currentTarget: { value },
+    } = event;
+    setPlanTarget(value);
+  };
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (startDate && endDate) {
+      setToDos((oldToDo) => {
+        const oldArray = [...oldToDo];
+        const newArray = [
+          {
+            startDate: startDate,
+            endDate: endDate,
+            planTitle: planTitle,
+            planTarget: planTarget,
+            intervalSet: count,
+            repeat: 1,
+            id: Date.now(),
+          },
+          ...oldArray,
+        ];
+        return [...newArray];
+      });
+      setStartDate(null);
+      setEndDate(null);
+      navigate("/");
+    }
+  };
+  console.log(toDos);
   return (
-    <form onSubmit={handleSubmit(handleValid)}>
+    <form onSubmit={onSubmit}>
       <Container>
         <DateBox>
           <DateItem>
@@ -120,19 +136,19 @@ const ProjectInput = () => {
           <InputItem>
             <ItemTitle>플랜 제목</ItemTitle>
             <ItemInput
-              {...register("planTitle", {
-                required: "플랜 제목을 적어 주세요",
-              })}
+              value={planTitle || ""}
+              onChange={titleChange}
               placeholder="플랜 제목을 적어 주세요"
+              required
             />
           </InputItem>
           <InputItem>
             <ItemTitle>플랜 목표</ItemTitle>
             <ItemInput
-              {...register("planTarget", {
-                required: "플랜 목표를 적어 주세요",
-              })}
+              value={planTarget || ""}
+              onChange={targetChange}
               placeholder="플랜 목표를 적어 주세요"
+              required
             />
           </InputItem>
           <InputItem>

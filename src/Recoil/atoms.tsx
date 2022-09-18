@@ -1,17 +1,17 @@
 import { atom } from "recoil";
 
-interface ITodo {
-  startDate: string;
-  endDate: string;
-  planTitle: string;
-  planTarget: string;
-  intervalSet: number;
-  repeat: string;
-  id: number;
+export interface ITodo {
+  startDate: any;
+  endDate: any;
+  planTitle: any;
+  planTarget: any;
+  intervalSet: any;
+  repeat: any;
+  id: any;
 }
 
 export const toDoState = atom<ITodo[]>({
-  key: "toDoState",
+  key: "toDo",
   default: [],
 });
 

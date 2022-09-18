@@ -12,7 +12,6 @@ function CalendarPicker() {
   const [startDate, setStartDate] = useRecoilState(startDateState);
   const [endDate, setEndDate] = useRecoilState(endDateState);
   const [dataSet, setDataSet] = useRecoilState(dateState);
-  console.log(startDate);
   const onDateSetting = (start: any, end: any) => {
     if (start && end) {
       const startDay =
@@ -38,7 +37,6 @@ function CalendarPicker() {
     setEndDate(end);
     onDateSetting(start, end);
   };
-  console.log(dataSet);
   const CustomInput = () => <div>안녕</div>;
   return (
     <>

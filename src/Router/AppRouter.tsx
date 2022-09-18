@@ -4,8 +4,7 @@ import NavBar from "../Component/NavBar";
 import Auth from "../pages/Auth/Auth";
 import FeedBack from "../pages/FeedBack/FeedBack";
 import Home from "../pages/Home/Home";
-import Interval from "../pages/Home/Interval/Interval";
-import CreateProject from "../pages/Home/Project/component/CreateProject";
+import CreateProject from "../pages/Home/Interval/component/CreateProject";
 import MyPage from "../pages/MyPage/MyPage";
 import Start from "../pages/Start/Start";
 

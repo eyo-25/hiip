@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import "react-datepicker/dist/react-datepicker.css";
-import CalendarPicker from "./CalendarPicker";
 import ProjectInput from "./ProjectInput";
+import CalendarPicker from "./CalendarPicker";
 
 function CreateProject() {
   return (

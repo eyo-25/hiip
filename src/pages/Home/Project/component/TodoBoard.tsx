@@ -12,8 +12,9 @@ const TodoBoard = () => {
     if (!destination) return;
     setToDos((oldToDos) => {
       const toDosCopy = [...oldToDos];
+      const taskObj = toDosCopy[source.index];
       toDosCopy.splice(source.index, 1);
-      toDosCopy.splice(destination?.index, 0, draggableId);
+      toDosCopy.splice(destination?.index, 0, taskObj);
       return toDosCopy;
     });
   };
@@ -28,6 +29,8 @@ const TodoBoard = () => {
                   key={toDo.id}
                   toDoId={toDo.id}
                   planTitle={toDo.planTitle}
+                  planTarget={toDo.planTarget}
+                  interval={toDo.intervalSet}
                   index={index}
                 />
               ))}
@@ -45,6 +48,7 @@ const Wrapper = styled.div`
   margin-top: 125px;
   display: flex;
   width: 100%;
+  height: 100%;
   justify-content: center;
 `;
 
