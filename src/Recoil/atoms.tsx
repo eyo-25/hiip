@@ -29,3 +29,8 @@ export const endDateState = atom({
   key: "endDateState",
   default: null,
 });
+
+export const editPopupState = atom({
+  key: "editPopupState",
+  default: false,
+});

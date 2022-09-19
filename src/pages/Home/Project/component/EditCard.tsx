@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ReactDatePicker from "react-datepicker";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
@@ -8,13 +8,29 @@ import { IoRemoveCircle, IoAddCircle } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import {
   dateState,
+  editPopupState,
   endDateState,
   startDateState,
   toDoState,
 } from "../../../../Recoil/atoms";
 
-const ProjectInput = () => {
+interface IDragabbleCardProps {
+  editTitle: string;
+  editTarget: string;
+  index: number;
+  toDoId: number;
+  editinterval: number;
+}
+
+const EditCard = ({
+  editTitle,
+  editTarget,
+  editinterval,
+  toDoId,
+  index,
+}: IDragabbleCardProps) => {
   const [toDos, setToDos] = useRecoilState(toDoState);
+  const [editPopup, setEditPopup] = useRecoilState(editPopupState);
   const navigate = useNavigate();
   const [startDate, setStartDate] = useRecoilState(startDateState);
   const [endDate, setEndDate] = useRecoilState(endDateState);
@@ -41,6 +57,12 @@ const ProjectInput = () => {
       return setDataSet({ start: startDay, end: endDay });
     }
   };
+  // useEffect(() => {
+  //   setPlanTitle(editTitle);
+  //   setPlanTarget(editTarget);
+  //   setCount(editinterval);
+  // }, [editPopup]);
+  console.log(editTitle);
   const onStartChange = (dates: any) => {
     const start = dates;
     const end = endDate;
@@ -64,7 +86,10 @@ const ProjectInput = () => {
   const onCancelClick = () => {
     setStartDate(null);
     setEndDate(null);
-    navigate(`/`);
+    setPlanTitle("");
+    setPlanTarget("");
+    setCount(1);
+    setEditPopup((prev) => !prev);
   };
   const titleChange = (event: React.FormEvent<HTMLInputElement>) => {
     const {
@@ -99,6 +124,9 @@ const ProjectInput = () => {
       });
       setStartDate(null);
       setEndDate(null);
+      setPlanTitle("");
+      setPlanTarget("");
+      setCount(1);
       navigate("/");
     }
   };
@@ -173,22 +201,23 @@ const ProjectInput = () => {
         </InputItems>
         <BtnBox>
           <CancelBtn onClick={onCancelClick}>취소</CancelBtn>
-          <ConfirmBtn>완료</ConfirmBtn>
+          <ConfirmBtn>수정 완료</ConfirmBtn>
         </BtnBox>
       </Container>
     </form>
   );
 };
 
-export default ProjectInput;
+export default EditCard;
 
 const Container = styled.div`
   display: flex;
+  background-color: white;
   flex-direction: column;
   justify-content: center;
   margin: 0 auto;
   max-width: 375px;
-  z-index: 21;
+  z-index: 12px;
 `;
 
 const DateBox = styled.div`

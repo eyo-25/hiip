@@ -8,7 +8,7 @@ import DragabbleCard from "./DragabbleCard";
 //Draggable의 prop중 dragHandleProps은 요소를 드래그 가능하게 한다.
 const TodoBoard = () => {
   const [toDos, setToDos] = useRecoilState(toDoState);
-  const onDragEnd = ({ draggableId, destination, source }: DropResult) => {
+  const onDragEnd = ({ destination, source }: DropResult) => {
     if (!destination) return;
     setToDos((oldToDos) => {
       const toDosCopy = [...oldToDos];
