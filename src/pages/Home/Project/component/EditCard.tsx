@@ -5,7 +5,7 @@ import styled from "styled-components";
 import DatePicker from "react-datepicker";
 import ko from "date-fns/locale/ko";
 import { IoRemoveCircle, IoAddCircle } from "react-icons/io5";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   dateState,
   editPopupState,
@@ -14,24 +14,11 @@ import {
   toDoState,
 } from "../../../../Recoil/atoms";
 
-interface IDragabbleCardProps {
-  editTitle: string;
-  editTarget: string;
-  index: number;
-  toDoId: number;
-  editinterval: number;
-}
-
-const EditCard = ({
-  editTitle,
-  editTarget,
-  editinterval,
-  toDoId,
-  index,
-}: IDragabbleCardProps) => {
+const EditCard = () => {
+  const navigate = useNavigate();
+  let params = useParams();
   const [toDos, setToDos] = useRecoilState(toDoState);
   const [editPopup, setEditPopup] = useRecoilState(editPopupState);
-  const navigate = useNavigate();
   const [startDate, setStartDate] = useRecoilState(startDateState);
   const [endDate, setEndDate] = useRecoilState(endDateState);
   const [dataSet, setDataSet] = useRecoilState(dateState);
@@ -57,12 +44,20 @@ const EditCard = ({
       return setDataSet({ start: startDay, end: endDay });
     }
   };
-  // useEffect(() => {
-  //   setPlanTitle(editTitle);
-  //   setPlanTarget(editTarget);
-  //   setCount(editinterval);
-  // }, [editPopup]);
-  console.log(editTitle);
+  useEffect(() => {
+    if (params.todoId && toDos) {
+      const editTodo = toDos.find(
+        (data) => data.id + "" === params.todoId + ""
+      );
+      setStartDate(editTodo?.startDate);
+      setEndDate(editTodo?.endDate);
+      setPlanTitle(editTodo?.planTitle);
+      setPlanTarget(editTodo?.planTarget);
+      setCount(editTodo?.intervalSet);
+    } else {
+      navigate("/");
+    }
+  }, []);
   const onStartChange = (dates: any) => {
     const start = dates;
     const end = endDate;
@@ -86,10 +81,7 @@ const EditCard = ({
   const onCancelClick = () => {
     setStartDate(null);
     setEndDate(null);
-    setPlanTitle("");
-    setPlanTarget("");
-    setCount(1);
-    setEditPopup((prev) => !prev);
+    navigate("/");
   };
   const titleChange = (event: React.FormEvent<HTMLInputElement>) => {
     const {
@@ -106,9 +98,14 @@ const EditCard = ({
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (startDate && endDate) {
-      setToDos((oldToDo) => {
-        const oldArray = [...oldToDo];
-        const newArray = [
+      setToDos((oldToDos) => {
+        const targetIndex = oldToDos.findIndex(
+          (e) => e.id + "" === params.todoId + ""
+        );
+        const editArray = oldToDos.find(
+          (e) => e.id + "" === params.todoId + ""
+        );
+        const addArray = [
           {
             startDate: startDate,
             endDate: endDate,
@@ -116,21 +113,18 @@ const EditCard = ({
             planTarget: planTarget,
             intervalSet: count,
             repeat: 1,
-            id: Date.now(),
+            id: editArray?.id + "",
           },
-          ...oldArray,
         ];
+        const newArray = [...oldToDos];
+        newArray.splice(targetIndex, 1, ...addArray);
         return [...newArray];
       });
       setStartDate(null);
       setEndDate(null);
-      setPlanTitle("");
-      setPlanTarget("");
-      setCount(1);
       navigate("/");
     }
   };
-  console.log(toDos);
   return (
     <form onSubmit={onSubmit}>
       <Container>
@@ -213,10 +207,12 @@ export default EditCard;
 const Container = styled.div`
   display: flex;
   background-color: white;
+  border-radius: 5px;
   flex-direction: column;
   justify-content: center;
   margin: 0 auto;
   max-width: 375px;
+  padding: 15px;
   z-index: 12px;
 `;
 
@@ -245,6 +241,9 @@ const DateItem = styled.div`
     display: flex;
     text-align: center;
     font-size: 12px;
+    &:first-child {
+      margin-right: 5px;
+    }
   }
 `;
 

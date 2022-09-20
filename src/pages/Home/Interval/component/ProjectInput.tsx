@@ -102,7 +102,6 @@ const ProjectInput = () => {
       navigate("/");
     }
   };
-  console.log(toDos);
   return (
     <form onSubmit={onSubmit}>
       <Container>

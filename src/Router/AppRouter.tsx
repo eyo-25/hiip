@@ -22,7 +22,9 @@ export default function AppRouter({ isLoggedIn }: { isLoggedIn: boolean }) {
     <BrowserRouter basename={process.env.PUBLIC_URL}>
       <Header />
       <Routes>
-        <Route path={"/"} element={<Home />}></Route>
+        <Route path={"/"} element={<Home />}>
+          <Route path={"/edit/:todoId"} element={<Home />} />
+        </Route>
         <Route path={"/interval"} element={<CreateProject />} />
         <Route path={"/start"} element={<Start />} />
         <Route path={"/feedback"} element={<FeedBack />} />

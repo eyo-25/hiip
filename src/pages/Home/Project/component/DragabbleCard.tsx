@@ -6,6 +6,7 @@ import { IoPlaySharp, IoAlertCircleOutline } from "react-icons/io5";
 import { editPopupState, toDoState } from "../../../../Recoil/atoms";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import EditCard from "./EditCard";
+import { useMatch, useNavigate } from "react-router-dom";
 
 interface IDragabbleCardProps {
   planTitle: string;
@@ -22,6 +23,8 @@ function DragabbleCard({
   toDoId,
   index,
 }: IDragabbleCardProps) {
+  const navigate = useNavigate();
+  const editMatch = useMatch("/edit/:todoId");
   const setToDos = useSetRecoilState(toDoState);
   const [infoPopup, setInfoPopup] = useState(false);
   const [editPopup, setEditPopup] = useRecoilState(editPopupState);
@@ -29,7 +32,7 @@ function DragabbleCard({
     setInfoPopup((prev) => !prev);
   };
   const onEditClick = () => {
-    setEditPopup((prev) => !prev);
+    navigate(`/edit/${toDoId}`);
   };
   const onDelete = () => {
     setToDos((oldToDos) => {
@@ -41,22 +44,16 @@ function DragabbleCard({
     });
   };
   return (
-    <Draggable draggableId={toDoId + ""} index={index} key={index}>
+    <Draggable draggableId={toDoId + ""} index={index} key={toDoId}>
       {(provided) => (
         <DragBox
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
         >
-          {editPopup ? (
-            <Overlay>
-              <EditCard
-                index={index}
-                toDoId={toDoId}
-                editinterval={interval}
-                editTitle={planTitle}
-                editTarget={planTarget}
-              ></EditCard>
+          {editMatch ? (
+            <Overlay key={toDoId}>
+              <EditCard></EditCard>
             </Overlay>
           ) : null}
           <TextBox>
@@ -203,4 +200,5 @@ const Overlay = styled.div`
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 20;
+  cursor: pointer;
 `;
