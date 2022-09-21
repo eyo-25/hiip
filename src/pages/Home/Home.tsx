@@ -2,12 +2,53 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import TodoBoard from "./Project/component/TodoBoard";
 import { ReactComponent as PlusIcon } from "../../Assets/Icons/plus.svg";
+import { useRecoilState } from "recoil";
+import { toDoState } from "../../Recoil/atoms";
+import { useEffect } from "react";
+import { collection, orderBy, query, onSnapshot } from "firebase/firestore";
+import { authService, dbService } from "../../firebase";
+import { onAuthStateChanged } from "firebase/auth";
+
+export interface ITodo {
+  startDate: any;
+  endDate: any;
+  planTitle: any;
+  planTarget: any;
+  intervalSet: any;
+  repeat: any;
+  id: any;
+}
 
 const Home = () => {
+  const [toDos, setToDos] = useRecoilState(toDoState);
   const navigate = useNavigate();
   const onCreatePlanClick = () => {
     navigate(`/interval`);
   };
+  useEffect(() => {
+    const q = query(collection(dbService, "plan"), orderBy("id", "desc"));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const newArray = querySnapshot.docs.map((doc: any) => {
+        return {
+          ...doc.data(),
+        };
+      });
+      setToDos(() => {
+        const newArray2 = newArray.map((e) => {
+          e.startDate = e.startDate.toDate();
+          e.endDate = e.endDate.toDate();
+          return e;
+        });
+        return newArray2;
+      });
+    });
+    onAuthStateChanged(authService, (user) => {
+      if (user == null) {
+        unsubscribe();
+      }
+    });
+  }, []);
+  console.log(toDos);
   return (
     <Container>
       <TodoBoard />

@@ -8,7 +8,12 @@ import CreateProject from "../pages/Home/Interval/component/CreateProject";
 import MyPage from "../pages/MyPage/MyPage";
 import Start from "../pages/Start/Start";
 
-export default function AppRouter({ isLoggedIn }: { isLoggedIn: boolean }) {
+interface AppRouterProps {
+  isLoggedIn: boolean;
+  userObj?: any;
+}
+
+export default function AppRouter({ isLoggedIn, userObj }: AppRouterProps) {
   if (!isLoggedIn) {
     return (
       <BrowserRouter basename={process.env.PUBLIC_URL}>
@@ -25,7 +30,10 @@ export default function AppRouter({ isLoggedIn }: { isLoggedIn: boolean }) {
         <Route path={"/"} element={<Home />}>
           <Route path={"/edit/:todoId"} element={<Home />} />
         </Route>
-        <Route path={"/interval"} element={<CreateProject />} />
+        <Route
+          path={"/interval"}
+          element={<CreateProject userObj={userObj} />}
+        />
         <Route path={"/start"} element={<Start />} />
         <Route path={"/feedback"} element={<FeedBack />} />
         <Route path={"/mypage"} element={<MyPage />} />

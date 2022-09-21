@@ -12,8 +12,11 @@ import {
   startDateState,
   toDoState,
 } from "../../../../Recoil/atoms";
+import { dbService } from "../../../../firebase";
+import { v4 as uuidv4 } from "uuid";
+import { IUserObjProps } from "../../../../Utils/interface";
 
-const ProjectInput = () => {
+const ProjectInput = ({ userObj }: IUserObjProps) => {
   const [toDos, setToDos] = useRecoilState(toDoState);
   const navigate = useNavigate();
   const [startDate, setStartDate] = useRecoilState(startDateState);
@@ -78,29 +81,22 @@ const ProjectInput = () => {
     } = event;
     setPlanTarget(value);
   };
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (startDate && endDate) {
-      setToDos((oldToDo) => {
-        const oldArray = [...oldToDo];
-        const newArray = [
-          {
-            startDate: startDate,
-            endDate: endDate,
-            planTitle: planTitle,
-            planTarget: planTarget,
-            intervalSet: count,
-            repeat: 1,
-            id: Date.now(),
-          },
-          ...oldArray,
-        ];
-        return [...newArray];
-      });
-      setStartDate(null);
-      setEndDate(null);
-      navigate("/");
-    }
+    console.log(userObj);
+    const newObj = {
+      startDate: startDate,
+      endDate: endDate,
+      planTitle: planTitle,
+      planTarget: planTarget,
+      intervalSet: count,
+      repeat: 1,
+      id: Date.now(),
+    };
+    await dbService.collection("plan").add(newObj);
+    setStartDate(null);
+    setEndDate(null);
+    navigate("/");
   };
   return (
     <form onSubmit={onSubmit}>

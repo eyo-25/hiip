@@ -2,8 +2,9 @@ import styled from "styled-components";
 import "react-datepicker/dist/react-datepicker.css";
 import ProjectInput from "./ProjectInput";
 import CalendarPicker from "./CalendarPicker";
+import { IUserObjProps } from "../../../../Utils/interface";
 
-function CreateProject() {
+function CreateProject({ userObj }: IUserObjProps) {
   return (
     <>
       <TopWrapper>
@@ -12,7 +13,7 @@ function CreateProject() {
         </Container>
       </TopWrapper>
       <BottomWrapper>
-        <ProjectInput />
+        <ProjectInput userObj={userObj} />
       </BottomWrapper>
     </>
   );

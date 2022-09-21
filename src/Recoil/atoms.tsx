@@ -6,6 +6,7 @@ export interface ITodo {
   planTitle: any;
   planTarget: any;
   intervalSet: any;
+  creatorId?: any;
   repeat: any;
   id: any;
 }
