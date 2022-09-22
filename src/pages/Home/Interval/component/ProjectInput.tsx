@@ -90,8 +90,9 @@ const ProjectInput = ({ userObj }: IUserObjProps) => {
       planTitle: planTitle,
       planTarget: planTarget,
       intervalSet: count,
+      creatorId: userObj.uid,
       repeat: 1,
-      id: Date.now(),
+      creatorAt: Date.now(),
     };
     await dbService.collection("plan").add(newObj);
     setStartDate(null);

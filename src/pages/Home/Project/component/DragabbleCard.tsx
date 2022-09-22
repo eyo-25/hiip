@@ -7,6 +7,9 @@ import { editPopupState, toDoState } from "../../../../Recoil/atoms";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import EditCard from "./EditCard";
 import { useMatch, useNavigate } from "react-router-dom";
+import { dbService, storageService } from "../../../../firebase";
+import { deleteObject, ref } from "firebase/storage";
+import { IUserObjProps } from "../../../../Utils/interface";
 
 interface IDragabbleCardProps {
   planTitle: string;
@@ -14,6 +17,8 @@ interface IDragabbleCardProps {
   index: number;
   toDoId: number;
   interval: number;
+  toDoObj: any;
+  userObj: IUserObjProps;
 }
 
 function DragabbleCard({
@@ -22,6 +27,8 @@ function DragabbleCard({
   interval,
   toDoId,
   index,
+  toDoObj,
+  userObj,
 }: IDragabbleCardProps) {
   const navigate = useNavigate();
   const editMatch = useMatch("/edit/:todoId");
@@ -34,14 +41,11 @@ function DragabbleCard({
   const onEditClick = () => {
     navigate(`/edit/${toDoId}`);
   };
-  const onDelete = () => {
-    setToDos((oldToDos) => {
-      const targetIndex = oldToDos.findIndex((e) => e.id === toDoId);
-      return [
-        ...oldToDos.slice(0, targetIndex),
-        ...oldToDos.slice(targetIndex + 1),
-      ];
-    });
+  const onDelete = async () => {
+    const ok = window.confirm("플랜을 삭제 하시겠습니까?");
+    if (ok) {
+      await dbService.doc(`plan/${toDoObj.id}`).delete();
+    }
   };
   return (
     <Draggable draggableId={toDoId + ""} index={index} key={toDoId}>
@@ -53,7 +57,7 @@ function DragabbleCard({
         >
           {editMatch ? (
             <Overlay key={toDoId}>
-              <EditCard></EditCard>
+              <EditCard userObj={userObj} toDoObj={toDoObj}></EditCard>
             </Overlay>
           ) : null}
           <TextBox>

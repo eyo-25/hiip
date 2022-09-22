@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { collection, orderBy, query, onSnapshot } from "firebase/firestore";
 import { authService, dbService } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { IUserObjProps } from "../../Utils/interface";
 
 export interface ITodo {
   startDate: any;
@@ -19,17 +20,21 @@ export interface ITodo {
   id: any;
 }
 
-const Home = () => {
+const Home = ({ userObj }: IUserObjProps) => {
   const [toDos, setToDos] = useRecoilState(toDoState);
   const navigate = useNavigate();
   const onCreatePlanClick = () => {
     navigate(`/interval`);
   };
   useEffect(() => {
-    const q = query(collection(dbService, "plan"), orderBy("id", "desc"));
+    const q = query(
+      collection(dbService, "plan"),
+      orderBy("creatorAt", "desc")
+    );
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const newArray = querySnapshot.docs.map((doc: any) => {
         return {
+          id: doc.id,
           ...doc.data(),
         };
       });
@@ -51,7 +56,7 @@ const Home = () => {
   console.log(toDos);
   return (
     <Container>
-      <TodoBoard />
+      <TodoBoard userObj={userObj} />
       <CreatePlanBtn onClick={onCreatePlanClick}>
         <PlusIcon />
       </CreatePlanBtn>

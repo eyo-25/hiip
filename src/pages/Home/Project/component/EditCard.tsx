@@ -13,18 +13,28 @@ import {
   startDateState,
   toDoState,
 } from "../../../../Recoil/atoms";
+import { dbService } from "../../../../firebase";
+import { IUserObjProps } from "../../../../Utils/interface";
 
-const EditCard = () => {
+const EditCard = ({
+  userObj,
+  toDoObj,
+}: {
+  userObj: IUserObjProps;
+  toDoObj: any;
+}) => {
   const navigate = useNavigate();
   let params = useParams();
   const [toDos, setToDos] = useRecoilState(toDoState);
-  const [editPopup, setEditPopup] = useRecoilState(editPopupState);
   const [startDate, setStartDate] = useRecoilState(startDateState);
   const [endDate, setEndDate] = useRecoilState(endDateState);
   const [dataSet, setDataSet] = useRecoilState(dateState);
   const [planTitle, setPlanTitle] = useState<string>();
   const [planTarget, setPlanTarget] = useState<string>();
   const [count, setCount] = useState(1);
+  const [creatorId, setCreatorId] = useState();
+  const [creatorAt, setCreatorAt] = useState();
+  const [repeat, setRepeat] = useState();
   const onDateSetting = (start: any, end: any) => {
     if (start && end) {
       const startDay =
@@ -47,17 +57,21 @@ const EditCard = () => {
   useEffect(() => {
     if (params.todoId && toDos) {
       const editTodo = toDos.find(
-        (data) => data.id + "" === params.todoId + ""
+        (data) => data.creatorAt + "" === params.todoId + ""
       );
       setStartDate(editTodo?.startDate);
       setEndDate(editTodo?.endDate);
       setPlanTitle(editTodo?.planTitle);
       setPlanTarget(editTodo?.planTarget);
       setCount(editTodo?.intervalSet);
+      setCreatorId(editTodo?.creatorId);
+      setCreatorAt(editTodo?.creatorAt);
+      setRepeat(editTodo?.repeat);
     } else {
       navigate("/");
     }
   }, []);
+
   const onStartChange = (dates: any) => {
     const start = dates;
     const end = endDate;
@@ -95,35 +109,23 @@ const EditCard = () => {
     } = event;
     setPlanTarget(value);
   };
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (startDate && endDate) {
-      setToDos((oldToDos) => {
-        const targetIndex = oldToDos.findIndex(
-          (e) => e.id + "" === params.todoId + ""
-        );
-        const editArray = oldToDos.find(
-          (e) => e.id + "" === params.todoId + ""
-        );
-        const addArray = [
-          {
-            startDate: startDate,
-            endDate: endDate,
-            planTitle: planTitle,
-            planTarget: planTarget,
-            intervalSet: count,
-            repeat: 1,
-            id: editArray?.id + "",
-          },
-        ];
-        const newArray = [...oldToDos];
-        newArray.splice(targetIndex, 1, ...addArray);
-        return [...newArray];
-      });
-      setStartDate(null);
-      setEndDate(null);
-      navigate("/");
-    }
+    const editObj = {
+      startDate: startDate,
+      endDate: endDate,
+      planTitle: planTitle,
+      planTarget: planTarget,
+      intervalSet: count,
+      creatorId: creatorId,
+      creatorAt: creatorAt,
+      repeat: repeat,
+      id: toDoObj.id,
+    };
+    await dbService.collection("plan").doc(`${toDoObj.id}`).update(editObj);
+    setStartDate(null);
+    setEndDate(null);
+    navigate("/");
   };
   return (
     <form onSubmit={onSubmit}>
