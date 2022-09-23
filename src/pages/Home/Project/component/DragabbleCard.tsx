@@ -19,6 +19,7 @@ interface IDragabbleCardProps {
   interval: number;
   toDoObj: any;
   userObj: IUserObjProps;
+  isOwner: boolean;
 }
 
 function DragabbleCard({
@@ -29,6 +30,7 @@ function DragabbleCard({
   index,
   toDoObj,
   userObj,
+  isOwner,
 }: IDragabbleCardProps) {
   const navigate = useNavigate();
   const editMatch = useMatch("/edit/:todoId");
@@ -39,7 +41,7 @@ function DragabbleCard({
     setInfoPopup((prev) => !prev);
   };
   const onEditClick = () => {
-    navigate(`/edit/${toDoId}`);
+    navigate(`/edit/${toDoObj.id}`);
   };
   const onDelete = async () => {
     const ok = window.confirm("플랜을 삭제 하시겠습니까?");
@@ -48,40 +50,44 @@ function DragabbleCard({
     }
   };
   return (
-    <Draggable draggableId={toDoId + ""} index={index} key={toDoId}>
-      {(provided) => (
-        <DragBox
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-        >
-          {editMatch ? (
-            <Overlay key={toDoId}>
-              <EditCard userObj={userObj} toDoObj={toDoObj}></EditCard>
-            </Overlay>
-          ) : null}
-          <TextBox>
-            <h4>{planTitle}</h4>
-            <p>{planTarget}</p>
-          </TextBox>
-          <IntervalBox>
-            <h4>{interval}</h4>
-            <span>SET</span>
-            <StartBtn />
-          </IntervalBox>
-          <InfoBtn onClick={onInfoClick} />
-          {infoPopup ? (
-            <InfoBox onClick={onInfoClick}>
-              <BoxCover />
-              <BtnBox>
-                <EditBtn onClick={onEditClick}>편집</EditBtn>
-                <DeleteBtn onClick={onDelete}>삭제</DeleteBtn>
-              </BtnBox>
-            </InfoBox>
-          ) : null}
-        </DragBox>
+    <>
+      {isOwner && (
+        <Draggable draggableId={toDoId + ""} index={index} key={toDoId}>
+          {(provided) => (
+            <DragBox
+              ref={provided.innerRef}
+              {...provided.draggableProps}
+              {...provided.dragHandleProps}
+            >
+              {editMatch ? (
+                <Overlay key={toDoId}>
+                  <EditCard userObj={userObj} toDoObj={toDoObj}></EditCard>
+                </Overlay>
+              ) : null}
+              <TextBox>
+                <h4>{planTitle}</h4>
+                <p>{planTarget}</p>
+              </TextBox>
+              <IntervalBox>
+                <h4>{interval}</h4>
+                <span>SET</span>
+                <StartBtn />
+              </IntervalBox>
+              <InfoBtn onClick={onInfoClick} />
+              {infoPopup ? (
+                <InfoBox onClick={onInfoClick}>
+                  <BoxCover />
+                  <BtnBox>
+                    <EditBtn onClick={onEditClick}>편집</EditBtn>
+                    <DeleteBtn onClick={onDelete}>삭제</DeleteBtn>
+                  </BtnBox>
+                </InfoBox>
+              ) : null}
+            </DragBox>
+          )}
+        </Draggable>
       )}
-    </Draggable>
+    </>
   );
 }
 

@@ -36,7 +36,12 @@ export default function AppRouter({ isLoggedIn, userObj }: AppRouterProps) {
         />
         <Route path={"/start"} element={<Start />} />
         <Route path={"/feedback"} element={<FeedBack />} />
-        <Route path={"/mypage"} element={<MyPage />} />
+        <Route path={"/mypage"} element={<MyPage userObj={userObj} />}>
+          <Route
+            path={"/mypage/editprofile"}
+            element={<MyPage userObj={userObj} />}
+          />
+        </Route>
       </Routes>
       <NavBar />
     </BrowserRouter>

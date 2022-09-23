@@ -10,14 +10,12 @@ import {
   dateState,
   endDateState,
   startDateState,
-  toDoState,
 } from "../../../../Recoil/atoms";
 import { dbService } from "../../../../firebase";
 import { v4 as uuidv4 } from "uuid";
 import { IUserObjProps } from "../../../../Utils/interface";
 
 const ProjectInput = ({ userObj }: IUserObjProps) => {
-  const [toDos, setToDos] = useRecoilState(toDoState);
   const navigate = useNavigate();
   const [startDate, setStartDate] = useRecoilState(startDateState);
   const [endDate, setEndDate] = useRecoilState(endDateState);
@@ -83,7 +81,6 @@ const ProjectInput = ({ userObj }: IUserObjProps) => {
   };
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(userObj);
     const newObj = {
       startDate: startDate,
       endDate: endDate,
@@ -118,7 +115,7 @@ const ProjectInput = ({ userObj }: IUserObjProps) => {
           <DateItem>
             <DateTitle>종료 날짜</DateTitle>
             <DatePicker
-              minDate={new Date() && startDate}
+              minDate={startDate ? startDate : new Date()}
               selected={endDate}
               onChange={onEndChange}
               locale={ko}

@@ -53,7 +53,6 @@ const Home = ({ userObj }: IUserObjProps) => {
       }
     });
   }, []);
-  console.log(toDos);
   return (
     <Container>
       <TodoBoard userObj={userObj} />

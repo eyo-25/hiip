@@ -22,12 +22,12 @@ export const dateState = atom({
   default: { start: "", end: "" },
 });
 
-export const startDateState = atom({
+export const startDateState = atom<any>({
   key: "startDateState",
   default: null,
 });
 
-export const endDateState = atom({
+export const endDateState = atom<any>({
   key: "endDateState",
   default: null,
 });

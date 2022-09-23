@@ -8,7 +8,6 @@ import { IoRemoveCircle, IoAddCircle } from "react-icons/io5";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   dateState,
-  editPopupState,
   endDateState,
   startDateState,
   toDoState,
@@ -32,9 +31,6 @@ const EditCard = ({
   const [planTitle, setPlanTitle] = useState<string>();
   const [planTarget, setPlanTarget] = useState<string>();
   const [count, setCount] = useState(1);
-  const [creatorId, setCreatorId] = useState();
-  const [creatorAt, setCreatorAt] = useState();
-  const [repeat, setRepeat] = useState();
   const onDateSetting = (start: any, end: any) => {
     if (start && end) {
       const startDay =
@@ -57,16 +53,13 @@ const EditCard = ({
   useEffect(() => {
     if (params.todoId && toDos) {
       const editTodo = toDos.find(
-        (data) => data.creatorAt + "" === params.todoId + ""
+        (data) => data.id + "" === params.todoId + ""
       );
       setStartDate(editTodo?.startDate);
       setEndDate(editTodo?.endDate);
       setPlanTitle(editTodo?.planTitle);
       setPlanTarget(editTodo?.planTarget);
       setCount(editTodo?.intervalSet);
-      setCreatorId(editTodo?.creatorId);
-      setCreatorAt(editTodo?.creatorAt);
-      setRepeat(editTodo?.repeat);
     } else {
       navigate("/");
     }
@@ -111,21 +104,25 @@ const EditCard = ({
   };
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const editObj = {
-      startDate: startDate,
-      endDate: endDate,
-      planTitle: planTitle,
-      planTarget: planTarget,
-      intervalSet: count,
-      creatorId: creatorId,
-      creatorAt: creatorAt,
-      repeat: repeat,
-      id: toDoObj.id,
-    };
-    await dbService.collection("plan").doc(`${toDoObj.id}`).update(editObj);
-    setStartDate(null);
-    setEndDate(null);
-    navigate("/");
+    if (startDate > endDate) {
+      alert("시작일이 마감일과 같거나 작아야합니다:)");
+    }
+    if (startDate <= endDate) {
+      const editObj = {
+        startDate: startDate,
+        endDate: endDate,
+        planTitle: planTitle,
+        planTarget: planTarget,
+        intervalSet: count,
+      };
+      await dbService
+        .collection("plan")
+        .doc(`${params.todoId}`)
+        .update(editObj);
+      setStartDate(null);
+      setEndDate(null);
+      navigate("/");
+    }
   };
   return (
     <form onSubmit={onSubmit}>

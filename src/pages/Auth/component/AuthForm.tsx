@@ -12,37 +12,6 @@ interface IAuthFormProps {
   close: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Container = styled.div`
-  display: flex;
-  position: absolute;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100vh;
-  background-color: white;
-  z-index: 12;
-`;
-
-const BigBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  max-width: 375px;
-`;
-
-const BigForm = styled.form`
-  display: flex;
-  flex-direction: column;
-`;
-
-const BigTitle = styled.h4`
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: -1px;
-  margin-bottom: 10px;
-`;
-
-const CloseBtn = styled.button``;
-
 const AuthForm = ({ close, newCount }: IAuthFormProps) => {
   const { register, handleSubmit, getValues } = useForm();
   const closeClick = () => {
@@ -83,10 +52,56 @@ const AuthForm = ({ close, newCount }: IAuthFormProps) => {
           <button>{newCount ? "Creat Account" : "LogIn"}</button>
         </BigForm>
         {error !== "" ? <span>{error}</span> : null}
-        <CloseBtn onClick={closeClick}>x</CloseBtn>
+        <CloseBtn onClick={closeClick}>Cancle</CloseBtn>
       </BigBox>
     </Container>
   );
 };
 
 export default AuthForm;
+
+const Container = styled.div`
+  display: flex;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  background-color: white;
+  z-index: 12;
+`;
+
+const BigBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  max-width: 375px;
+`;
+
+const BigForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  input {
+    margin-bottom: 5px;
+    height: 30px;
+  }
+  button {
+    margin-bottom: 5px;
+    height: 30px;
+    border-radius: 4px;
+    background-color: black;
+    color: white;
+  }
+`;
+
+const BigTitle = styled.h4`
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -1px;
+  margin-bottom: 10px;
+`;
+
+const CloseBtn = styled.button`
+  margin-bottom: 5px;
+  height: 30px;
+  border-radius: 4px;
+`;

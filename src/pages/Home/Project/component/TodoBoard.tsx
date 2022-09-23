@@ -35,6 +35,7 @@ const TodoBoard = ({ userObj }: IUserObjProps) => {
                   interval={toDo.intervalSet}
                   index={index}
                   userObj={userObj}
+                  isOwner={toDo.creatorId === userObj.uid}
                 />
               ))}
             </DropBox>
