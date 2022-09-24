@@ -16,7 +16,7 @@ const MyPage = ({ userObj }: IUserObjProps) => {
     navigate(`/mypage/editprofile`);
   };
   const GUEST_ICON =
-    "https://firebasestorage.googleapis.com/v0/b/hiip-d7ad7.appspot.com/o/%EB%8B%A4%EC%9A%B4%EB%A1%9C%EB%93%9C.jfif?alt=media&token=bde25594-c9c4-44de-b12e-bd1847cf02fe";
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_qBTDzBVonLHd5Ejk0i-61YlcHI54KTgOMhIRea9jwACihT9hxQaj2P87_XAv87DEkAY&usqp=CAU";
   return (
     <Container>
       <ProfileBox>
@@ -92,7 +92,7 @@ const ProfileImg = styled.img`
 const UserText = styled.div`
   display: flex;
   flex-direction: column;
-  margin-left: 20px;
+  margin-left: 15px;
   cursor: pointer;
   p {
     font-size: 12px;

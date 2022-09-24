@@ -111,9 +111,10 @@ const DragBox = styled.li`
 const TextBox = styled.div`
   display: flex;
   flex-direction: column;
+  letter-spacing: -0.2px;
   h4 {
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
   }
   p {
     color: #9d9d9d;

@@ -1,11 +1,9 @@
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
-import { authService } from "../../../firebase";
+import { authService, dbService, firebaseInstance } from "../../../firebase";
+import { ReactComponent as HiipIcon } from "../../../Assets/Icons/HIIPLogo.svg";
 
 interface IAuthFormProps {
   newCount: boolean;
@@ -21,9 +19,23 @@ const AuthForm = ({ close, newCount }: IAuthFormProps) => {
   const onValid = async () => {
     const email = getValues("email");
     const password = getValues("password");
+    const nickname = getValues("nickname");
     try {
       if (newCount) {
-        await createUserWithEmailAndPassword(authService, email, password);
+        await firebaseInstance
+          .auth()
+          .createUserWithEmailAndPassword(email, password)
+          .then((result: any) => {
+            let userInfo = {
+              email: email,
+              nickname: nickname,
+            };
+            result.user.updateProfile({
+              displayName: nickname,
+            });
+            dbService.collection("user").doc(result.user.uid).set({ userInfo });
+          });
+        // await createUserWithEmailAndPassword(authService, email, password);
         close(false);
       } else {
         await signInWithEmailAndPassword(authService, email, password);
@@ -36,7 +48,13 @@ const AuthForm = ({ close, newCount }: IAuthFormProps) => {
     <Container>
       <BigBox>
         <BigTitle>
-          {newCount ? "계정을 생성하세요" : "HIIP에 로그인하기"}
+          {newCount ? (
+            "계정을 생성하세요"
+          ) : (
+            <LogoBox>
+              <HiipLogo />에 로그인하기
+            </LogoBox>
+          )}
         </BigTitle>
         <BigForm onSubmit={handleSubmit(onValid)}>
           <input
@@ -49,6 +67,13 @@ const AuthForm = ({ close, newCount }: IAuthFormProps) => {
             type="password"
             placeholder="password를 적어주세요"
           />
+          {newCount && (
+            <input
+              {...register("nickname", { required: true })}
+              type="text"
+              placeholder="nickname를 적어주세요"
+            />
+          )}
           <button>{newCount ? "Creat Account" : "LogIn"}</button>
         </BigForm>
         {error !== "" ? <span>{error}</span> : null}
@@ -77,12 +102,24 @@ const BigBox = styled.div`
   max-width: 375px;
 `;
 
+const LogoBox = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const HiipLogo = styled(HiipIcon)`
+  display: flex;
+  width: 50px;
+  margin-right: 5px;
+`;
+
 const BigForm = styled.form`
   display: flex;
   flex-direction: column;
   input {
     margin-bottom: 5px;
     height: 30px;
+    text-align: center;
   }
   button {
     margin-bottom: 5px;
@@ -94,7 +131,7 @@ const BigForm = styled.form`
 `;
 
 const BigTitle = styled.h4`
-  font-size: 22px;
+  font-size: 21px;
   font-weight: 600;
   letter-spacing: -1px;
   margin-bottom: 10px;

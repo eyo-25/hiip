@@ -1,6 +1,14 @@
 import AppRouter from "./Router/AppRouter";
 import { useEffect, useState } from "react";
 import { authService } from "./firebase";
+import { useQuery } from "@tanstack/react-query";
+
+export interface IUserObj {
+  displayName?: any;
+  email?: any;
+  photoURL?: any;
+  uid?: any;
+}
 
 function App() {
   const [userObj, setUserObj] = useState<object | null>(null);
@@ -13,6 +21,7 @@ function App() {
       }
     });
   }, []);
+
   return (
     <>
       <AppRouter isLoggedIn={Boolean(userObj)} userObj={userObj} />

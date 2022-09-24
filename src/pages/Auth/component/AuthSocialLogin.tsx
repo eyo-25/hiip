@@ -3,7 +3,10 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
-import { authService } from "../../../firebase";
+import styled from "styled-components";
+import { authService, dbService } from "../../../firebase";
+import { ReactComponent as GoogleIcon } from "../../../Assets/Icons/googleLogo.svg";
+import { IoLogoGithub } from "react-icons/io5";
 
 const AuthSocialLogin = () => {
   const onSocialClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -16,18 +19,50 @@ const AuthSocialLogin = () => {
     } else if (name === "github") {
       provider = new GithubAuthProvider();
     }
-    await signInWithPopup(authService, provider);
+    provider &&
+      (await signInWithPopup(authService, provider).then((result) => {
+        const userInfo = {
+          email: result.user.email,
+          nickname: result.user.displayName,
+          photoURL: result.user.photoURL,
+        };
+        dbService.collection("user").doc(result.user.uid).set({ userInfo });
+      }));
   };
   return (
     <>
-      <button onClick={onSocialClick} name="google">
+      <LogInBtn onClick={onSocialClick} name="google">
+        <GoogleIcon />
         Google 계정으로 로그인
-      </button>
-      <button onClick={onSocialClick} name="github">
+      </LogInBtn>
+      <LogInBtn onClick={onSocialClick} name="github">
+        <IoLogoGithub />
         Github 계정으로 로그인
-      </button>
+      </LogInBtn>
     </>
   );
 };
 
 export default AuthSocialLogin;
+
+const LogInBtn = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 8px 0;
+  width: 100%;
+  background-color: inherit;
+  border-radius: 20px;
+  border: 1px solid #c4c4c4;
+  cursor: pointer;
+  svg {
+    width: 25px;
+    height: 25px;
+    margin-right: 10px;
+  }
+  &:hover {
+    transition: 0.52s ease;
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+`;

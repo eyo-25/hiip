@@ -4,7 +4,7 @@ import { IUserObjProps } from "../../Utils/interface";
 import React, { useState, useRef } from "react";
 import { IoImage, IoCloseCircleSharp } from "react-icons/io5";
 import { v4 as uuidv4 } from "uuid";
-import { storageService } from "../../firebase";
+import { dbService, storageService } from "../../firebase";
 import {
   deleteObject,
   getDownloadURL,
@@ -25,7 +25,6 @@ const EditProfile = ({ userObj }: IUserObjProps) => {
   const onCancelClick = () => {
     navigate("/mypage");
   };
-
   //파이어베이스 스토리지 규칙 꼭 수정!!
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -39,27 +38,36 @@ const EditProfile = ({ userObj }: IUserObjProps) => {
       const response = await uploadString(fileRef, profileImg, "data_url");
       profileURL = await getDownloadURL(response.ref);
     }
-    if (
-      userObj.photoURL !== null &&
-      !userObj.photoURL.includes("googleusercontent") &&
-      !userObj.photoURL.includes("githubusercontent")
-    ) {
-      deleteObject(ref(storageService, userObj.photoURL));
-    }
+
     if (profileURL !== "") {
+      if (
+        userObj.photoURL !== null &&
+        !userObj.photoURL.includes("googleusercontent") &&
+        !userObj.photoURL.includes("githubusercontent")
+      ) {
+        deleteObject(ref(storageService, userObj.photoURL));
+      }
       await userObj.updateProfile({
         displayName: newDisplayName,
+        photoURL: profileURL,
+        email: userObj.email,
+      });
+      dbService.collection("user").doc(userObj.uid).update({
+        nickname: newDisplayName,
         photoURL: profileURL,
       });
     } else {
       await userObj.updateProfile({
         displayName: newDisplayName,
+      });
+      dbService.collection("user").doc(userObj.uid).update({
+        nickname: newDisplayName,
         photoURL: userObj.photoURL,
+        email: userObj.email,
       });
     }
     navigate("/mypage");
     setProfileImg("");
-    console.log(userObj);
   };
   const onDisplayChange = (event: React.FormEvent<HTMLInputElement>) => {
     const {
@@ -137,6 +145,7 @@ const EditProfile = ({ userObj }: IUserObjProps) => {
 export default EditProfile;
 
 const Container = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -162,6 +171,7 @@ const Overlay = styled.div`
 `;
 
 const ModalBox = styled.div`
+  position: absolute;
   display: flex;
   flex-direction: column;
   align-items: center;

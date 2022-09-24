@@ -22,25 +22,28 @@ const TodoBoard = ({ userObj }: IUserObjProps) => {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Wrapper>
-        <Droppable droppableId="boards">
-          {(provided) => (
-            <DropBox ref={provided.innerRef} {...provided.droppableProps}>
-              {toDos?.map((toDo, index) => (
-                <DragabbleCard
-                  key={toDo.creatorAt}
-                  toDoId={toDo.creatorAt}
-                  toDoObj={toDo}
-                  planTitle={toDo.planTitle}
-                  planTarget={toDo.planTarget}
-                  interval={toDo.intervalSet}
-                  index={index}
-                  userObj={userObj}
-                  isOwner={toDo.creatorId === userObj.uid}
-                />
-              ))}
-            </DropBox>
-          )}
-        </Droppable>
+        <DropBox>
+          <Droppable droppableId="boards">
+            {(provided, info) => (
+              <Area ref={provided.innerRef} {...provided.droppableProps}>
+                {toDos?.map((toDo, index) => (
+                  <DragabbleCard
+                    key={toDo.creatorAt}
+                    toDoId={toDo.creatorAt}
+                    toDoObj={toDo}
+                    planTitle={toDo.planTitle}
+                    planTarget={toDo.planTarget}
+                    interval={toDo.intervalSet}
+                    index={index}
+                    userObj={userObj}
+                    isOwner={toDo.creatorId === userObj.uid}
+                  />
+                ))}
+                {provided.placeholder}
+              </Area>
+            )}
+          </Droppable>
+        </DropBox>
       </Wrapper>
     </DragDropContext>
   );
@@ -61,3 +64,5 @@ const DropBox = styled.ul`
   width: 100%;
   flex-direction: column;
 `;
+
+const Area = styled.div``;
