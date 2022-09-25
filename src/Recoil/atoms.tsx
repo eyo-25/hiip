@@ -1,10 +1,10 @@
 import { atom } from "recoil";
 
 export interface ITodo {
-  startDate: any;
-  endDate: any;
-  planTitle: any;
-  planTarget: any;
+  startDate: string;
+  endDate: string;
+  planTitle: string;
+  planTarget: string;
   intervalSet: any;
   creatorId?: any;
   creatorAt?: any;

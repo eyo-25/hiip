@@ -82,9 +82,9 @@ const ProfileBox = styled.div`
 `;
 
 const ProfileImg = styled.img`
+  background-color: #c4c4c4;
   width: 50px;
   height: 50px;
-  background-color: #c4c4c4;
   border-radius: 25px;
   cursor: pointer;
 `;

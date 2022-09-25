@@ -9,6 +9,7 @@ import { collection, orderBy, query, onSnapshot } from "firebase/firestore";
 import { authService, dbService } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { IUserObjProps } from "../../Utils/interface";
+import WeeklyDatePicker from "./Project/component/WeeklyDatePicker";
 
 export interface ITodo {
   startDate: any;
@@ -53,13 +54,17 @@ const Home = ({ userObj }: IUserObjProps) => {
       }
     });
   }, []);
+
   return (
-    <Container>
-      <TodoBoard userObj={userObj} />
-      <CreatePlanBtn onClick={onCreatePlanClick}>
-        <PlusIcon />
-      </CreatePlanBtn>
-    </Container>
+    <>
+      <WeeklyDatePicker />
+      <Container>
+        <TodoBoard userObj={userObj} />
+        <CreatePlanBtn onClick={onCreatePlanClick}>
+          <PlusIcon />
+        </CreatePlanBtn>
+      </Container>
+    </>
   );
 };
 
@@ -67,13 +72,18 @@ export default Home;
 
 export const Container = styled.div`
   display: flex;
+  flex-direction: column;
   position: relative;
   justify-content: center;
+  padding-top: 30px;
   max-width: 375px;
   margin: 0 auto;
 `;
 
 export const CreatePlanBtn = styled.button`
+  position: absolute;
+  left: 0;
+  right: 0;
   display: flex;
   justify-content: center;
   align-items: center;

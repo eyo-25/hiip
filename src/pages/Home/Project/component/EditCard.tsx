@@ -240,8 +240,8 @@ const DateItem = styled.div`
     display: flex;
     text-align: center;
     font-size: 12px;
-    &:first-child {
-      margin-right: 5px;
+    &:nth-child(1) {
+      margin-left: 5px;
     }
   }
 `;

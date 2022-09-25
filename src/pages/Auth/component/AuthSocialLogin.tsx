@@ -62,7 +62,7 @@ const LogInBtn = styled.button`
     margin-right: 10px;
   }
   &:hover {
-    transition: 0.52s ease;
+    transition: 0.5s ease-in;
     background-color: rgba(0, 0, 0, 0.1);
   }
 `;
