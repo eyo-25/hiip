@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { IoChevronForward, IoChevronBack } from "react-icons/io5";
+import { useRecoilState } from "recoil";
+import { nowDateState } from "../../../../Recoil/atoms";
 
 const WeeklyDatePicker = () => {
   const date = new Date();
@@ -15,7 +17,7 @@ const WeeklyDatePicker = () => {
   let calendarMonthTodayDay = date.getDay();
 
   // 주간 배열
-  var arWeek = [null, null, null, null, null, null, null] as any;
+  let arWeek = [null, null, null, null, null, null, null] as any;
 
   const [count, setCount] = useState(0);
 
@@ -39,9 +41,6 @@ const WeeklyDatePicker = () => {
     );
   }
 
-  // 오늘
-  let today = new Date();
-
   var calendarDays = ["일", "월", "화", "수", "목", "금", "토"];
 
   const onPrevClick = () => {
@@ -54,18 +53,20 @@ const WeeklyDatePicker = () => {
 
   const onTodayClick = () => {
     setCount(0);
+    setClickDate(Moment().format("YYYY-MM-DD"));
   };
 
-  const [clickDate, setClickDate] = useState(new Date());
+  const Moment = require("moment");
 
-  console.log(
-    clickDate
-    // clickDate.getFullYear(),
-    // clickDate.getMonth() + 1,
-    // clickDate.getDate()
-  );
-  console.log(arWeek);
-  // console.log(arWeek.findindex((e: any) => e.getFullYear()));
+  const [clickDate, setClickDate] = useRecoilState(nowDateState);
+
+  const onDateClick = (date: string) => {
+    setClickDate(Moment(date).format("YYYY-MM-DD"));
+  };
+
+  useEffect(() => {
+    setClickDate(Moment().format("YYYY-MM-DD"));
+  }, []);
 
   return (
     <Wrapper>
@@ -82,7 +83,13 @@ const WeeklyDatePicker = () => {
             <DayBox key={days}>{days}</DayBox>
           ))}
           {arWeek.map((date: any, index: number) => (
-            <DateBox key={index}>{date.getDate()}</DateBox>
+            <DateBox
+              key={index}
+              clicked={clickDate === Moment(date).format("YYYY-MM-DD")}
+              onClick={() => onDateClick(date)}
+            >
+              <div>{date.getDate()}</div>
+            </DateBox>
           ))}
         </DateContainer>
       </Container>
@@ -114,11 +121,15 @@ const MonthBox = styled.div`
   align-items: center;
   width: 90%;
   font-weight: 600;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 `;
 
 const MonthText = styled.div`
   display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 2px;
+  border-radius: 50%;
   cursor: pointer;
 `;
 
@@ -130,17 +141,33 @@ const DateContainer = styled.div`
   font-weight: 600;
 `;
 
-const DateBox = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
 const DayBox = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
+`;
+
+const DateBox = styled.div<{ clicked: boolean }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 2px;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    color: ${(props) => (props.clicked ? "white" : "black")};
+    background-color: ${(props) => props.clicked && "black"};
+    /* &:hover {
+      background-color: #eeeeee;
+      color: black;
+    } */
+  }
 `;
 
 const PrevBtn = styled(IoChevronBack)`

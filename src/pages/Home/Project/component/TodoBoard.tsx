@@ -1,7 +1,7 @@
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
-import { toDoState } from "../../../../Recoil/atoms";
+import { nowDateState, toDoState } from "../../../../Recoil/atoms";
 import { IUserObjProps } from "../../../../Utils/interface";
 import DragabbleCard from "./DragabbleCard";
 
@@ -9,6 +9,8 @@ import DragabbleCard from "./DragabbleCard";
 //Draggable의 prop중 dragHandleProps은 요소를 드래그 가능하게 한다.
 const TodoBoard = ({ userObj }: IUserObjProps) => {
   const [toDos, setToDos] = useRecoilState(toDoState);
+  const [clickDate, setClickDate] = useRecoilState(nowDateState);
+  const Moment = require("moment");
   const onDragEnd = ({ destination, source }: DropResult) => {
     if (!destination) return;
     setToDos((oldToDos) => {
@@ -24,20 +26,28 @@ const TodoBoard = ({ userObj }: IUserObjProps) => {
       <Wrapper>
         <DropBox>
           <Droppable droppableId="boards">
-            {(provided, info) => (
+            {(provided) => (
               <Area ref={provided.innerRef} {...provided.droppableProps}>
                 {toDos?.map((toDo, index) => (
-                  <DragabbleCard
+                  <CardBox
                     key={toDo.creatorAt}
-                    toDoId={toDo.creatorAt}
-                    toDoObj={toDo}
-                    planTitle={toDo.planTitle}
-                    planTarget={toDo.planTarget}
-                    interval={toDo.intervalSet}
-                    index={index}
-                    userObj={userObj}
-                    isOwner={toDo.creatorId === userObj.uid}
-                  />
+                    dateNow={
+                      Moment(toDo.startDate).format("YYYY-MM-DD") <=
+                        clickDate &&
+                      clickDate <= Moment(toDo.endDate).format("YYYY-MM-DD")
+                    }
+                  >
+                    <DragabbleCard
+                      toDoId={toDo.creatorAt}
+                      toDoObj={toDo}
+                      planTitle={toDo.planTitle}
+                      planTarget={toDo.planTarget}
+                      interval={toDo.intervalSet}
+                      index={index}
+                      userObj={userObj}
+                      isOwner={toDo.creatorId === userObj.uid}
+                    />
+                  </CardBox>
                 ))}
                 {provided.placeholder}
               </Area>
@@ -52,7 +62,6 @@ const TodoBoard = ({ userObj }: IUserObjProps) => {
 export default TodoBoard;
 
 const Wrapper = styled.div`
-  /* margin-top: 125px; */
   display: flex;
   width: 100%;
   height: 100%;
@@ -63,6 +72,10 @@ const DropBox = styled.ul`
   display: flex;
   width: 100%;
   flex-direction: column;
+`;
+
+const CardBox = styled.div<{ dateNow: boolean }>`
+  display: ${(props) => !props.dateNow && "none"};
 `;
 
 const Area = styled.div``;

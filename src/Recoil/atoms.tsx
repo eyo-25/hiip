@@ -36,3 +36,10 @@ export const editPopupState = atom({
   key: "editPopupState",
   default: false,
 });
+
+const Moment = require("moment");
+
+export const nowDateState = atom({
+  key: "nowDateState",
+  default: Moment().format("YYYY-MM-DD"),
+});

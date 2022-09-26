@@ -7,6 +7,7 @@ import {
   endDateState,
   startDateState,
 } from "../../../../Recoil/atoms";
+import "../DatePicker.css";
 
 function CalendarPicker() {
   const [startDate, setStartDate] = useRecoilState(startDateState);
@@ -16,9 +17,9 @@ function CalendarPicker() {
     if (start && end) {
       const startDay =
         start.getFullYear().toString() +
-        "년 " +
+        "년" +
         (start.getMonth() + 1).toString() +
-        "월 " +
+        "월" +
         start.getDate().toString() +
         "일";
       const endDay =
@@ -41,7 +42,7 @@ function CalendarPicker() {
   return (
     <>
       <CalendarBox>
-        <DatePicker
+        <DatePickerBox
           placeholderText="시작날짜 선택"
           dateFormat="yyyy-MM-dd"
           minDate={new Date()}
@@ -66,4 +67,10 @@ const CalendarBox = styled.div`
   height: 280px;
   display: flex;
   flex-direction: column;
+`;
+
+const DatePickerBox = styled(DatePicker)`
+  display: flex;
+  width: 100%;
+  height: 100%;
 `;
