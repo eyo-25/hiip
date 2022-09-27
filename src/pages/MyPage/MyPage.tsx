@@ -53,6 +53,10 @@ const MyPage = ({ userObj }: IUserObjProps) => {
           <div>고객센터</div>
           <IoChevronForward />
         </Item>
+        <Item>
+          <div>제작자 소개</div>
+          <IoChevronForward />
+        </Item>
         <Item onClick={onLogOutClick}>
           <span>로그아웃</span>
           <IoChevronForward />

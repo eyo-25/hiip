@@ -1,16 +1,14 @@
 import styled from "styled-components";
 import "react-datepicker/dist/react-datepicker.css";
-import ProjectInput from "./ProjectInput";
-import CalendarPicker from "./CalendarPicker";
-import { IUserObjProps } from "../../../../Utils/interface";
+import ProjectInput from "./component/ProjectInput";
+import { IUserObjProps } from "../../../Utils/interface";
+import CalendarPicker from "./component/CalendarPicker";
 
 function CreateProject({ userObj }: IUserObjProps) {
   return (
     <>
       <TopWrapper>
-        <Container>
-          <CalendarPicker />
-        </Container>
+        <CalendarPicker />
       </TopWrapper>
       <BottomWrapper>
         <ProjectInput userObj={userObj} />
@@ -30,13 +28,4 @@ const TopWrapper = styled.div`
 const BottomWrapper = styled.div`
   background-color: white;
   height: 58vh;
-`;
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  justify-content: center;
-  max-width: 375px;
-  margin: 0 auto;
 `;

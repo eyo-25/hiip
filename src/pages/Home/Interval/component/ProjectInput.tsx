@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ReactDatePicker from "react-datepicker";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
@@ -23,6 +23,12 @@ const ProjectInput = ({ userObj }: IUserObjProps) => {
   const [planTitle, setPlanTitle] = useState<string>();
   const [planTarget, setPlanTarget] = useState<string>();
   const [count, setCount] = useState(1);
+
+  useEffect(() => {
+    setStartDate(new Date());
+    setEndDate(null);
+  }, []);
+
   const onDateSetting = (start: any, end: any) => {
     if (start && end) {
       const startDay =

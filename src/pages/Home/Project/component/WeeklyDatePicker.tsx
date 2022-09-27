@@ -21,8 +21,8 @@ const WeeklyDatePicker = () => {
 
   const [count, setCount] = useState(0);
 
-  var addDay1 = count;
-  for (var index = calendarMonthTodayDay; index < 7; index++) {
+  let addDay1 = count;
+  for (let index = calendarMonthTodayDay; index < 7; index++) {
     arWeek[index] = new Date(
       calendarYear,
       calendarMonth - 1,
@@ -31,7 +31,7 @@ const WeeklyDatePicker = () => {
     addDay1++;
   }
 
-  var addDay2 = count;
+  let addDay2 = count;
   for (let index = calendarMonthTodayDay - 1; index >= 0; index--) {
     --addDay2;
     arWeek[index] = new Date(
@@ -41,7 +41,7 @@ const WeeklyDatePicker = () => {
     );
   }
 
-  var calendarDays = ["일", "월", "화", "수", "목", "금", "토"];
+  let calendarDays = ["일", "월", "화", "수", "목", "금", "토"];
 
   const onPrevClick = () => {
     setCount((prev) => prev - 7);

@@ -1,76 +1,299 @@
+import { useEffect, useState } from "react";
+import React from "react";
+import moment from "moment";
 import styled from "styled-components";
-import DatePicker from "react-datepicker";
-import ko from "date-fns/locale/ko";
+import { IoChevronForward, IoChevronBack } from "react-icons/io5";
 import { useRecoilState } from "recoil";
-import {
-  dateState,
-  endDateState,
-  startDateState,
-} from "../../../../Recoil/atoms";
-import "../DatePicker.css";
+import { nowDateState } from "../../../../Recoil/atoms";
 
-function CalendarPicker() {
-  const [startDate, setStartDate] = useRecoilState(startDateState);
-  const [endDate, setEndDate] = useRecoilState(endDateState);
-  const [dataSet, setDataSet] = useRecoilState(dateState);
-  const onDateSetting = (start: any, end: any) => {
-    if (start && end) {
-      const startDay =
-        start.getFullYear().toString() +
-        "년" +
-        (start.getMonth() + 1).toString() +
-        "월" +
-        start.getDate().toString() +
-        "일";
-      const endDay =
-        end.getFullYear().toString() +
-        "년 " +
-        (end.getMonth() + 1).toString() +
-        "월 " +
-        end.getDate().toString() +
-        "일 ";
-      return setDataSet({ start: startDay, end: endDay });
-    }
+const CalendarPicker = () => {
+  const [plusCount, setPlusCount] = useState(1);
+  const [minusCount, setMinusCount] = useState(1);
+  const [clickDate, setClickDate] = useRecoilState(nowDateState);
+  const Moment = require("moment");
+
+  const [click, setClick] = useState(0);
+
+  const [startDate, setStartDate] = useState<any>(null);
+  const [endDate, setEndDate] = useState<any>(null);
+
+  console.log(startDate);
+  console.log(endDate);
+
+  const nowDate = new Date();
+
+  const [date, setDate] = useState(nowDate);
+
+  useEffect(() => {
+    setPlusCount(1);
+    setMinusCount(1);
+    setDate(nowDate);
+    setClickDate(Moment().format("YYYY-MM-DD"));
+    setClick(0);
+    setStartDate(null);
+    setEndDate(null);
+  }, []);
+
+  const onDateClick = (date: string) => {
+    const clickDate = Moment(date).format("YYYY-MM-DD");
+    setClickDate(clickDate);
+    setClick((click) => {
+      let newClick = click >= 3 ? 1 : click + 1;
+      if (
+        (!(startDate === null) && clickDate < startDate) ||
+        endDate < clickDate
+      ) {
+        newClick = 1;
+        setEndDate(null);
+      }
+      if (startDate <= clickDate && clickDate < endDate) {
+        newClick = 2;
+        setEndDate(clickDate);
+      }
+      if (newClick === 1) {
+        setStartDate(clickDate);
+      } else if (newClick === 2) {
+        setEndDate(clickDate);
+      } else if (newClick === 3) {
+        setStartDate(null);
+        setEndDate(null);
+      }
+      return newClick;
+    });
   };
-  const onChange = (dates: any) => {
-    const [start, end] = dates;
-    setStartDate(start);
-    setEndDate(end);
-    onDateSetting(start, end);
+
+  // 달력 연도
+  let calendarYear = date.getFullYear();
+
+  // 달력 월
+  let calendarMonth = date.getMonth() + 1;
+
+  //Date 객체에서는 일자가 0이면 이전달의 마지막 일자를 계산하여 이전 달의 마지막 날짜로 자동 설정됩니다.
+  let monthLastDate = new Date(calendarYear, calendarMonth, 0);
+  // 달력 월의 마지막 일
+  let calendarMonthLastDate = monthLastDate.getDate();
+
+  // 달력 월의 시작 일
+  let monthStartDay = new Date(calendarYear, date.getMonth(), 1);
+  // 달력 월의 시작 요일
+  let calendarMonthStartDay = monthStartDay.getDay();
+
+  let arWeek = [] as any;
+
+  // 달력 총 갯수
+  for (let index = 0; index < 42; index++) {
+    arWeek[index] = null;
+  }
+
+  // 현재 월 date배정
+  let addDay1 = 0;
+  for (
+    let index = calendarMonthStartDay;
+    index < calendarMonthLastDate + calendarMonthStartDay;
+    index++
+  ) {
+    arWeek[index] = new Date(
+      calendarYear,
+      calendarMonth - 1,
+      monthStartDay.getDate() + addDay1
+    );
+    addDay1++;
+  }
+
+  //이전달 마지막일
+  let prevMonthLastDate = new Date(
+    calendarYear,
+    calendarMonth - 1,
+    0
+  ).getDate();
+
+  // 이전 월 date배정
+  let addDay2 = 1;
+  for (let index = calendarMonthStartDay - 1; index >= 0; index--) {
+    --addDay2;
+    arWeek[index] = new Date(
+      calendarYear,
+      calendarMonth - 2,
+      prevMonthLastDate + addDay2
+    );
+  }
+
+  let addDay3 = 0;
+  let prevDate = calendarMonthLastDate + calendarMonthStartDay;
+  for (let index = prevDate; index < 42; index++) {
+    arWeek[index] = new Date(
+      calendarYear,
+      calendarMonth,
+      monthStartDay.getDate() + addDay3
+    );
+    addDay3++;
+  }
+
+  const onPrevClick = () => {
+    setDate(new Date(nowDate.setMonth(nowDate.getMonth() - minusCount)));
+    setMinusCount((prev) => prev + 1);
+    setPlusCount((prev) => prev - 1);
   };
-  const CustomInput = () => <div>안녕</div>;
+  const onNextClick = () => {
+    setDate(new Date(nowDate.setMonth(nowDate.getMonth() + plusCount)));
+    setPlusCount((prev) => prev + 1);
+    setMinusCount((prev) => prev - 1);
+  };
+  const onNowClick = () => {
+    setDate(nowDate);
+    setPlusCount(1);
+    setMinusCount(1);
+    setClickDate(Moment().format("YYYY-MM-DD"));
+    setClick(0);
+    setStartDate(null);
+    setEndDate(null);
+  };
+
+  let calendarDays = ["일", "월", "화", "수", "목", "금", "토"];
+
   return (
-    <>
-      <CalendarBox>
-        <DatePickerBox
-          placeholderText="시작날짜 선택"
-          dateFormat="yyyy-MM-dd"
-          minDate={new Date()}
-          locale={ko}
-          selected={startDate}
-          startDate={startDate}
-          endDate={endDate}
-          selectsRange
-          inline
-          onChange={onChange}
-          customInput={<CustomInput />}
-        />
-      </CalendarBox>
-    </>
+    <Wrapper>
+      <Container>
+        <MonthBox>
+          <PrevBtn onClick={onPrevClick} />
+          <MonthText onClick={onNowClick}>{calendarMonth}월</MonthText>
+          <NextBtn onClick={onNextClick} />
+        </MonthBox>
+        <DateContainer>
+          {calendarDays.map((days) => (
+            <DayBox key={days}>{days}</DayBox>
+          ))}
+          {arWeek.map((date: any, index: number) => (
+            <DateBox key={index}>
+              <HoverBox
+                clicked={clickDate === Moment(date).format("YYYY-MM-DD")}
+                onClick={() => onDateClick(date)}
+              >
+                <DateText nowMonth={date.getMonth() + 1 != calendarMonth}>
+                  {date.getDate()}
+                </DateText>
+                {startDate <= Moment(date).format("YYYY-MM-DD") &&
+                  Moment(date).format("YYYY-MM-DD") <= endDate && (
+                    <DateBar isSame={startDate === endDate}>
+                      <BarPoint />
+                    </DateBar>
+                  )}
+                {startDate === Moment(date).format("YYYY-MM-DD") && (
+                  <DateBar isSame={startDate === endDate}>
+                    <BarPoint />
+                  </DateBar>
+                )}
+              </HoverBox>
+            </DateBox>
+          ))}
+        </DateContainer>
+      </Container>
+    </Wrapper>
   );
-}
+};
 
-export default CalendarPicker;
+export default React.memo(CalendarPicker);
 
-const CalendarBox = styled.div`
-  width: 100%;
-  height: 280px;
-  display: flex;
-  flex-direction: column;
-`;
-
-const DatePickerBox = styled(DatePicker)`
-  display: flex;
+const Wrapper = styled.div`
   width: 100%;
   height: 100%;
+`;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  padding-top: 5px;
+  max-width: 410px;
+  margin: 0 auto;
+`;
+
+const MonthBox = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 91%;
+  font-weight: 600;
+  margin-bottom: 20px;
+`;
+
+const MonthText = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 2px;
+  border-radius: 50%;
+  cursor: pointer;
+`;
+
+const PrevBtn = styled(IoChevronBack)`
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+`;
+
+const NextBtn = styled(IoChevronForward)`
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+`;
+
+const DateContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  width: 100%;
+  font-size: 12px;
+  font-weight: 600;
+`;
+
+const DateBox = styled.div`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 2.2rem;
+  cursor: pointer;
+`;
+
+const DayBox = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2px;
+`;
+
+const HoverBox = styled.div<{ clicked: boolean }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 0.5px;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  color: ${(props) => props.clicked && "white"};
+  background-color: ${(props) => props.clicked && "black"};
+`;
+
+const DateText = styled.div<{ nowMonth: boolean }>`
+  color: ${(props) => props.nowMonth && "#c4c4c4"};
+`;
+
+const DateBar = styled.div<{ isSame: boolean }>`
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  bottom: 0;
+  width: 100%;
+  height: 4px;
+  background-color: ${(props) => (props.isSame ? "#FFC500" : "#0002ff")};
+`;
+
+const BarPoint = styled.div`
+  width: 5px;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #fb0045;
 `;
