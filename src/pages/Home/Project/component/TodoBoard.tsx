@@ -78,4 +78,7 @@ const CardBox = styled.div<{ dateNow: boolean }>`
   display: ${(props) => !props.dateNow && "none"};
 `;
 
-const Area = styled.div``;
+const Area = styled.div`
+  display: flex;
+  flex-direction: column;
+`;

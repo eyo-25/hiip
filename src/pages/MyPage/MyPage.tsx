@@ -4,6 +4,7 @@ import { authService } from "../../firebase";
 import { IUserObjProps } from "../../Utils/interface";
 import { IoChevronForward } from "react-icons/io5";
 import EditProfile from "./EditProfile";
+import Header from "../../Component/Header";
 
 const MyPage = ({ userObj }: IUserObjProps) => {
   const navigate = useNavigate();
@@ -18,52 +19,55 @@ const MyPage = ({ userObj }: IUserObjProps) => {
   const GUEST_ICON =
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_qBTDzBVonLHd5Ejk0i-61YlcHI54KTgOMhIRea9jwACihT9hxQaj2P87_XAv87DEkAY&usqp=CAU";
   return (
-    <Container>
-      <ProfileBox>
-        <ProfileImg
-          onClick={onEditClick}
-          src={userObj.photoURL !== null ? userObj.photoURL : GUEST_ICON}
-        />
-        <UserText>
-          <UserNameBox>
-            <h4 onClick={onEditClick}>
-              {userObj.displayName ? userObj.displayName : `HIIP 회원`}
-            </h4>
-            <UserRank>Beginner</UserRank>
-          </UserNameBox>
-          <p>{userObj.email ? userObj.email : "이메일을 등록해 주세요"}</p>
-        </UserText>
-      </ProfileBox>
-      <Items>
-        <Item onClick={onEditClick}>
-          <div>프로필 관리</div>
-          <IoChevronForward />
-        </Item>
-        <Item>
-          <div>친구 관리</div>
-          <IoChevronForward />
-        </Item>
-        <Item>
-          <div>알림 관리</div>
-          <IoChevronForward />
-        </Item>
-      </Items>
-      <Items>
-        <Item>
-          <div>고객센터</div>
-          <IoChevronForward />
-        </Item>
-        <Item>
-          <div>제작자 소개</div>
-          <IoChevronForward />
-        </Item>
-        <Item onClick={onLogOutClick}>
-          <span>로그아웃</span>
-          <IoChevronForward />
-        </Item>
-      </Items>
-      {editMatch && <EditProfile userObj={userObj}></EditProfile>}
-    </Container>
+    <>
+      <Header />
+      <Container>
+        <ProfileBox>
+          <ProfileImg
+            onClick={onEditClick}
+            src={userObj.photoURL !== null ? userObj.photoURL : GUEST_ICON}
+          />
+          <UserText>
+            <UserNameBox>
+              <h4 onClick={onEditClick}>
+                {userObj.displayName ? userObj.displayName : `HIIP 회원`}
+              </h4>
+              <UserRank>Beginner</UserRank>
+            </UserNameBox>
+            <p>{userObj.email ? userObj.email : "이메일을 등록해 주세요"}</p>
+          </UserText>
+        </ProfileBox>
+        <Items>
+          <Item onClick={onEditClick}>
+            <div>프로필 관리</div>
+            <IoChevronForward />
+          </Item>
+          <Item>
+            <div>친구 관리</div>
+            <IoChevronForward />
+          </Item>
+          <Item>
+            <div>알림 관리</div>
+            <IoChevronForward />
+          </Item>
+        </Items>
+        <Items>
+          <Item>
+            <div>고객센터</div>
+            <IoChevronForward />
+          </Item>
+          <Item>
+            <div>제작자 소개</div>
+            <IoChevronForward />
+          </Item>
+          <Item onClick={onLogOutClick}>
+            <span>로그아웃</span>
+            <IoChevronForward />
+          </Item>
+        </Items>
+        {editMatch && <EditProfile userObj={userObj}></EditProfile>}
+      </Container>
+    </>
   );
 };
 

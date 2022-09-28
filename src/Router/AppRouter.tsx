@@ -25,7 +25,7 @@ export default function AppRouter({ isLoggedIn, userObj }: AppRouterProps) {
   }
   return (
     <BrowserRouter basename={process.env.PUBLIC_URL}>
-      <Header />
+      {/* <Header /> */}
       <Routes>
         <Route path={"/"} element={<Home userObj={userObj} />}>
           <Route path={"/edit/:todoId"} element={<Home userObj={userObj} />} />
@@ -34,7 +34,9 @@ export default function AppRouter({ isLoggedIn, userObj }: AppRouterProps) {
           path={"/interval"}
           element={<CreateProject userObj={userObj} />}
         />
-        <Route path={"/start"} element={<Start />} />
+        <Route path={"/start"} element={<Start userObj={userObj} />}>
+          <Route path={"/start/ready"} element={<Start userObj={userObj} />} />
+        </Route>
         <Route path={"/feedback"} element={<FeedBack />} />
         <Route path={"/mypage"} element={<MyPage userObj={userObj} />}>
           <Route

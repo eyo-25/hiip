@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import React from "react";
-import moment from "moment";
 import styled from "styled-components";
 import { IoChevronForward, IoChevronBack } from "react-icons/io5";
 import { useRecoilState } from "recoil";
-import { nowDateState } from "../../../../Recoil/atoms";
+import {
+  clickState,
+  endDateStatus,
+  nowDateState,
+  startDateStatus,
+} from "../../../../Recoil/atoms";
 
 const CalendarPicker = () => {
   const [plusCount, setPlusCount] = useState(1);
@@ -12,13 +16,10 @@ const CalendarPicker = () => {
   const [clickDate, setClickDate] = useRecoilState(nowDateState);
   const Moment = require("moment");
 
-  const [click, setClick] = useState(0);
+  const [click, setClick] = useRecoilState(clickState);
 
-  const [startDate, setStartDate] = useState<any>(null);
-  const [endDate, setEndDate] = useState<any>(null);
-
-  console.log(startDate);
-  console.log(endDate);
+  const [startDate, setStartDate] = useRecoilState(startDateStatus);
+  const [endDate, setEndDate] = useRecoilState(endDateStatus);
 
   const nowDate = new Date();
 
@@ -37,29 +38,36 @@ const CalendarPicker = () => {
   const onDateClick = (date: string) => {
     const clickDate = Moment(date).format("YYYY-MM-DD");
     setClickDate(clickDate);
-    setClick((click) => {
-      let newClick = click >= 3 ? 1 : click + 1;
-      if (
-        (!(startDate === null) && clickDate < startDate) ||
-        endDate < clickDate
-      ) {
-        newClick = 1;
-        setEndDate(null);
-      }
-      if (startDate <= clickDate && clickDate < endDate) {
-        newClick = 2;
-        setEndDate(clickDate);
-      }
-      if (newClick === 1) {
-        setStartDate(clickDate);
-      } else if (newClick === 2) {
-        setEndDate(clickDate);
-      } else if (newClick === 3) {
-        setStartDate(null);
-        setEndDate(null);
-      }
-      return newClick;
-    });
+    let newClick = click >= 3 ? 1 : click + 1;
+    // if (
+    //   (!(startDate === null) && clickDate < startDate) ||
+    //   endDate < clickDate
+    // ) {
+    //   setClick(1);
+    //   newClick = 1;
+    //   setEndDate(null);
+    // }
+    if (clickDate < startDate) {
+      setClick(0);
+      newClick = 0;
+      setStartDate(null);
+      setEndDate(null);
+    }
+    if (startDate <= clickDate && clickDate < endDate) {
+      setClick(2);
+      newClick = 2;
+      setEndDate(clickDate);
+    }
+    if (newClick === 1) {
+      setStartDate(clickDate);
+      setStartDate(clickDate);
+    } else if (newClick === 2) {
+      setEndDate(clickDate);
+    } else if (newClick === 3) {
+      setStartDate(null);
+      setEndDate(null);
+    }
+    setClick(newClick);
   };
 
   // 달력 연도
@@ -205,7 +213,6 @@ const Container = styled.div`
   height: 100%;
   justify-content: center;
   align-items: center;
-  padding-top: 5px;
   max-width: 410px;
   margin: 0 auto;
 `;
@@ -216,6 +223,7 @@ const MonthBox = styled.div`
   align-items: center;
   width: 91%;
   font-weight: 600;
+  margin-top: 5px;
   margin-bottom: 20px;
 `;
 
@@ -253,7 +261,7 @@ const DateBox = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 2.2rem;
+  height: 2.3rem;
   cursor: pointer;
 `;
 
@@ -261,7 +269,7 @@ const DayBox = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 2px;
+  margin-bottom: 5px;
 `;
 
 const HoverBox = styled.div<{ clicked: boolean }>`

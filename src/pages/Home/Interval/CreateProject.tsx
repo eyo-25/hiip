@@ -3,10 +3,12 @@ import "react-datepicker/dist/react-datepicker.css";
 import ProjectInput from "./component/ProjectInput";
 import { IUserObjProps } from "../../../Utils/interface";
 import CalendarPicker from "./component/CalendarPicker";
+import Header from "../../../Component/Header";
 
 function CreateProject({ userObj }: IUserObjProps) {
   return (
     <>
+      <Header />
       <TopWrapper>
         <CalendarPicker />
       </TopWrapper>
@@ -21,11 +23,11 @@ export default CreateProject;
 
 const TopWrapper = styled.div`
   background-color: white;
-  margin-bottom: 15px;
-  height: 32vh;
+  margin-bottom: 10px;
+  height: 34vh;
 `;
 
 const BottomWrapper = styled.div`
   background-color: white;
-  height: 58vh;
+  height: 50vh;
 `;

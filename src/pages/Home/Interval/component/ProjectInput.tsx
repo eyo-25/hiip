@@ -7,58 +7,45 @@ import ko from "date-fns/locale/ko";
 import { IoRemoveCircle, IoAddCircle } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import {
-  dateState,
-  endDateState,
-  startDateState,
+  clickState,
+  endChange,
+  nowDateState,
+  startChange,
 } from "../../../../Recoil/atoms";
 import { dbService } from "../../../../firebase";
-import { v4 as uuidv4 } from "uuid";
 import { IUserObjProps } from "../../../../Utils/interface";
 
 const ProjectInput = ({ userObj }: IUserObjProps) => {
   const navigate = useNavigate();
-  const [startDate, setStartDate] = useRecoilState(startDateState);
-  const [endDate, setEndDate] = useRecoilState(endDateState);
-  const [dataSet, setDataSet] = useRecoilState(dateState);
+  const [startDate, setStartDate] = useRecoilState(startChange);
+  const [endDate, setEndDate] = useRecoilState(endChange);
   const [planTitle, setPlanTitle] = useState<string>();
   const [planTarget, setPlanTarget] = useState<string>();
   const [count, setCount] = useState(1);
+  const [clickDate, setClickDate] = useRecoilState(nowDateState);
+  const [click, setClick] = useRecoilState(clickState);
+  const Moment = require("moment");
 
   useEffect(() => {
-    setStartDate(new Date());
+    setStartDate(null);
     setEndDate(null);
   }, []);
 
-  const onDateSetting = (start: any, end: any) => {
-    if (start && end) {
-      const startDay =
-        start.getFullYear().toString() +
-        "년 " +
-        (start.getMonth() + 1).toString() +
-        "월 " +
-        start.getDate().toString() +
-        "일";
-      const endDay =
-        end.getFullYear().toString() +
-        "년 " +
-        (end.getMonth() + 1).toString() +
-        "월 " +
-        end.getDate().toString() +
-        "일 ";
-      return setDataSet({ start: startDay, end: endDay });
+  useEffect(() => {
+    if (endDate < startDate) {
+      setEndDate(null);
     }
-  };
+  }, [startDate]);
+
   const onStartChange = (dates: any) => {
-    const start = dates;
-    const end = endDate;
-    setStartDate(start);
-    onDateSetting(start, end);
+    setStartDate(dates);
+    setClickDate(Moment(dates).format("YYYY-MM-DD"));
+    setClick(1);
   };
   const onEndChange = (dates: any) => {
-    const end = dates;
-    const start = startDate;
-    setEndDate(end);
-    onDateSetting(start, end);
+    setEndDate(dates);
+    setClickDate(Moment(dates).format("YYYY-MM-DD"));
+    setClick(2);
   };
   const onCountUp = () => {
     if (count >= 10) return;
@@ -102,6 +89,7 @@ const ProjectInput = ({ userObj }: IUserObjProps) => {
     setEndDate(null);
     navigate("/");
   };
+
   return (
     <form onSubmit={onSubmit}>
       <Container>
@@ -109,7 +97,7 @@ const ProjectInput = ({ userObj }: IUserObjProps) => {
           <DateItem>
             <DateTitle>시작 날짜</DateTitle>
             <ReactDatePicker
-              minDate={new Date()}
+              // minDate={new Date()}
               selected={startDate}
               onChange={onStartChange}
               locale={ko}
@@ -194,7 +182,7 @@ const DateBox = styled.div`
   display: flex;
   justify-content: space-between;
   margin-bottom: 15px;
-  margin-top: 30px;
+  margin-top: 25px;
 `;
 
 const DateTitle = styled.div`
@@ -253,10 +241,11 @@ const ItemInput = styled.input`
 
 const BtnBox = styled.div`
   display: flex;
-  margin-top: 9px;
+  margin-top: 5px;
   width: 100%;
   height: 44px;
   font-size: 14px;
+  margin-bottom: 25px;
 `;
 
 const ConfirmBtn = styled.button`
@@ -305,3 +294,5 @@ const UpBtn = styled(IoAddCircle)`
   height: 15px;
   cursor: pointer;
 `;
+
+const StartInput = styled.input``;

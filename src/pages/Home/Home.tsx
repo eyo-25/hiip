@@ -10,6 +10,7 @@ import { authService, dbService } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { IUserObjProps } from "../../Utils/interface";
 import WeeklyDatePicker from "./Project/component/WeeklyDatePicker";
+import Header from "../../Component/Header";
 
 export interface ITodo {
   startDate: any;
@@ -57,6 +58,7 @@ const Home = ({ userObj }: IUserObjProps) => {
 
   return (
     <>
+      <Header />
       <WeeklyDatePicker />
       <Container>
         <TodoBoard userObj={userObj} />

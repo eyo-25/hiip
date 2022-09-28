@@ -3,12 +3,9 @@ import styled from "styled-components";
 import { Draggable } from "react-beautiful-dnd";
 import React from "react";
 import { IoPlaySharp, IoAlertCircleOutline } from "react-icons/io5";
-import { editPopupState, toDoState } from "../../../../Recoil/atoms";
-import { useRecoilState, useSetRecoilState } from "recoil";
 import EditCard from "./EditCard";
 import { useMatch, useNavigate } from "react-router-dom";
-import { dbService, storageService } from "../../../../firebase";
-import { deleteObject, ref } from "firebase/storage";
+import { dbService } from "../../../../firebase";
 import { IUserObjProps } from "../../../../Utils/interface";
 
 interface IDragabbleCardProps {
@@ -34,9 +31,7 @@ function DragabbleCard({
 }: IDragabbleCardProps) {
   const navigate = useNavigate();
   const editMatch = useMatch("/edit/:todoId");
-  const setToDos = useSetRecoilState(toDoState);
   const [infoPopup, setInfoPopup] = useState(false);
-  const [editPopup, setEditPopup] = useRecoilState(editPopupState);
   const onInfoClick = () => {
     setInfoPopup((prev) => !prev);
   };
@@ -104,8 +99,8 @@ const DragBox = styled.li`
   width: 100%;
   background: white;
   border-radius: 10px;
-  margin-bottom: 20px;
-  box-shadow: 0 3px 2px rgba(0, 0, 0, 0.075);
+  margin-bottom: 15px;
+  box-shadow: 3px 4px 12px rgba(0, 0, 0, 0.08);
 `;
 
 const TextBox = styled.div`

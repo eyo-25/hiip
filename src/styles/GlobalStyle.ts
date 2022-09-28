@@ -34,6 +34,12 @@ body {
   font-family: "NotoSansKR";
   line-height: 1;
   background-color: #F7F7F7;
+  
+  // 스크롤바 영역차지 막기
+  overflow: overlay;
+  // 스크롤 막기
+  /* overflow: hidden;
+  height: 100%; */
 }
 menu, ol, ul {
   list-style: none;
@@ -55,6 +61,19 @@ table {
 }
 a {
   text-decoration: none;
+}
+
+body::-webkit-scrollbar {
+  width: 5px;  /* 스크롤바의 너비 */
+}
+
+body::-webkit-scrollbar-thumb {
+    height: 30%; /* 스크롤바의 길이 */
+    background: rgba(255, 255, 255, 0.3); /* 스크롤바의 색상 */
+}
+
+body::-webkit-scrollbar-track {
+    background: #0c0c0c  /*스크롤바 뒷 배경 색상*/
 }
 `;
 

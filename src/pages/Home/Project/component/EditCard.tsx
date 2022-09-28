@@ -7,7 +7,6 @@ import ko from "date-fns/locale/ko";
 import { IoRemoveCircle, IoAddCircle } from "react-icons/io5";
 import { useNavigate, useParams } from "react-router-dom";
 import {
-  dateState,
   endDateState,
   startDateState,
   toDoState,
@@ -27,29 +26,28 @@ const EditCard = ({
   const [toDos, setToDos] = useRecoilState(toDoState);
   const [startDate, setStartDate] = useRecoilState(startDateState);
   const [endDate, setEndDate] = useRecoilState(endDateState);
-  const [dataSet, setDataSet] = useRecoilState(dateState);
   const [planTitle, setPlanTitle] = useState<string>();
   const [planTarget, setPlanTarget] = useState<string>();
   const [count, setCount] = useState(1);
-  const onDateSetting = (start: any, end: any) => {
-    if (start && end) {
-      const startDay =
-        start.getFullYear().toString() +
-        "년 " +
-        (start.getMonth() + 1).toString() +
-        "월 " +
-        start.getDate().toString() +
-        "일";
-      const endDay =
-        end.getFullYear().toString() +
-        "년 " +
-        (end.getMonth() + 1).toString() +
-        "월 " +
-        end.getDate().toString() +
-        "일 ";
-      return setDataSet({ start: startDay, end: endDay });
-    }
-  };
+  // const onDateSetting = (start: any, end: any) => {
+  //   if (start && end) {
+  //     const startDay =
+  //       start.getFullYear().toString() +
+  //       "년 " +
+  //       (start.getMonth() + 1).toString() +
+  //       "월 " +
+  //       start.getDate().toString() +
+  //       "일";
+  //     const endDay =
+  //       end.getFullYear().toString() +
+  //       "년 " +
+  //       (end.getMonth() + 1).toString() +
+  //       "월 " +
+  //       end.getDate().toString() +
+  //       "일 ";
+  //     return setDataSet({ start: startDay, end: endDay });
+  //   }
+  // };
   useEffect(() => {
     if (params.todoId && toDos) {
       const editTodo = toDos.find(
@@ -67,15 +65,11 @@ const EditCard = ({
 
   const onStartChange = (dates: any) => {
     const start = dates;
-    const end = endDate;
     setStartDate(start);
-    onDateSetting(start, end);
   };
   const onEndChange = (dates: any) => {
     const end = dates;
-    const start = startDate;
     setEndDate(end);
-    onDateSetting(start, end);
   };
   const onCountUp = () => {
     if (count >= 10) return;

@@ -8,6 +8,7 @@ import Font_B from "../Assets/Fonts/NotoSansKR-Bold.woff";
 import Font_M from "../Assets/Fonts/NotoSansKR-Medium.woff";
 import Font_R from "../Assets/Fonts/NotoSansKR-Regular.woff";
 import Font_T from "../Assets/Fonts/NotoSansKR-Thin.woff";
+import Font_BI from "../Assets/Fonts/Roboto-BlackItalic.woff";
 
 export const GlobalFont = createGlobalStyle`
     @font-face {
@@ -27,12 +28,22 @@ export const GlobalFont = createGlobalStyle`
     }
     @font-face {
         font-family: "NotoSansKR";
-        src: local("NotoSansKR-Regular"), url(${Font_M}) format('woff'); 
+        src: local("NotoSansKR-Regular"), url(${Font_R}) format('woff'); 
         font-weight: 300;
     }
     @font-face {
         font-family: "NotoSansKR";
         src: local("NotoSansKR-Thin"), url(${Font_T}) format('woff'); 
         font-weight: 100;
+    }
+    @font-face {
+        font-family: "NotoSansKR";
+        src: local("NotoSansKR-Thin"), url(${Font_T}) format('woff'); 
+        font-weight: 100;
+    }
+    @font-face {
+        font-family: "Roboto";
+        src: local("Roboto-BlackItalic"), url(${Font_BI}) format('woff'); 
+        font-weight: 900;
     }
 `;
