@@ -30,13 +30,13 @@ function DragabbleCard({
   isOwner,
 }: IDragabbleCardProps) {
   const navigate = useNavigate();
-  const editMatch = useMatch("/edit/:todoId");
+  const editMatch = useMatch("/plan/edit/:todoId");
   const [infoPopup, setInfoPopup] = useState(false);
   const onInfoClick = () => {
     setInfoPopup((prev) => !prev);
   };
   const onEditClick = () => {
-    navigate(`/edit/${toDoObj.id}`);
+    navigate(`/plan/edit/${toDoObj.id}`);
   };
   const onDelete = async () => {
     const ok = window.confirm("플랜을 삭제 하시겠습니까?");
@@ -44,6 +44,10 @@ function DragabbleCard({
       await dbService.doc(`plan/${toDoObj.id}`).delete();
     }
   };
+  let intervalArray = [] as any;
+  for (let index = 0; index < interval; index++) {
+    intervalArray[index] = index;
+  }
   return (
     <>
       {isOwner && (
@@ -78,6 +82,11 @@ function DragabbleCard({
                   </BtnBox>
                 </InfoBox>
               ) : null}
+              <IntervalBarBox>
+                {intervalArray.map((index: number) => (
+                  <IntervalBar key={index} />
+                ))}
+              </IntervalBarBox>
             </DragBox>
           )}
         </Draggable>
@@ -100,7 +109,7 @@ const DragBox = styled.li`
   background: white;
   border-radius: 10px;
   margin-bottom: 15px;
-  box-shadow: 3px 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.1);
 `;
 
 const TextBox = styled.div`
@@ -207,4 +216,20 @@ const Overlay = styled.div`
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 20;
   cursor: pointer;
+`;
+
+const IntervalBarBox = styled.div`
+  display: flex;
+  position: absolute;
+  bottom: 0;
+  width: 310px;
+  height: 4px;
+`;
+
+const IntervalBar = styled.div`
+  display: flex;
+  background-color: #1e272e;
+  height: 100%;
+  width: 100%;
+  margin: 0 3px;
 `;

@@ -29,25 +29,6 @@ const EditCard = ({
   const [planTitle, setPlanTitle] = useState<string>();
   const [planTarget, setPlanTarget] = useState<string>();
   const [count, setCount] = useState(1);
-  // const onDateSetting = (start: any, end: any) => {
-  //   if (start && end) {
-  //     const startDay =
-  //       start.getFullYear().toString() +
-  //       "년 " +
-  //       (start.getMonth() + 1).toString() +
-  //       "월 " +
-  //       start.getDate().toString() +
-  //       "일";
-  //     const endDay =
-  //       end.getFullYear().toString() +
-  //       "년 " +
-  //       (end.getMonth() + 1).toString() +
-  //       "월 " +
-  //       end.getDate().toString() +
-  //       "일 ";
-  //     return setDataSet({ start: startDay, end: endDay });
-  //   }
-  // };
   useEffect(() => {
     if (params.todoId && toDos) {
       const editTodo = toDos.find(
@@ -59,7 +40,7 @@ const EditCard = ({
       setPlanTarget(editTodo?.planTarget);
       setCount(editTodo?.intervalSet);
     } else {
-      navigate("/");
+      navigate("/plan");
     }
   }, []);
 
@@ -82,7 +63,7 @@ const EditCard = ({
   const onCancelClick = () => {
     setStartDate(null);
     setEndDate(null);
-    navigate("/");
+    navigate("/plan");
   };
   const titleChange = (event: React.FormEvent<HTMLInputElement>) => {
     const {
@@ -115,7 +96,7 @@ const EditCard = ({
         .update(editObj);
       setStartDate(null);
       setEndDate(null);
-      navigate("/");
+      navigate("/plan");
     }
   };
   return (

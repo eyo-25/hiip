@@ -6,8 +6,15 @@ import SummaryBox from "./Component/SummaryBox";
 import StartBoard from "./Component/StartBoard";
 import { IUserObjProps } from "../../Utils/interface";
 import { useMatch, useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import { toDoState } from "../../Recoil/atoms";
+import { useEffect } from "react";
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import { authService, dbService } from "../../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 const Start = ({ userObj }: IUserObjProps) => {
+  const [toDos, setToDos] = useRecoilState(toDoState);
   const navigate = useNavigate();
   const readyMatch = useMatch("/start/ready");
   const onPlayClick = () => {
@@ -18,10 +25,37 @@ const Start = ({ userObj }: IUserObjProps) => {
       navigate("/start");
     }
   };
+  useEffect(() => {
+    const q = query(
+      collection(dbService, "plan"),
+      orderBy("creatorAt", "desc")
+    );
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const newArray = querySnapshot.docs.map((doc: any) => {
+        return {
+          id: doc.id,
+          ...doc.data(),
+        };
+      });
+      setToDos(() => {
+        const newArray2 = newArray.map((e) => {
+          e.startDate = e.startDate.toDate();
+          e.endDate = e.endDate.toDate();
+          return e;
+        });
+        return newArray2;
+      });
+    });
+    onAuthStateChanged(authService, (user) => {
+      if (user == null) {
+        unsubscribe();
+      }
+    });
+  }, []);
   return (
     <Wrapper>
       <BackgroundBox onClick={onBackClick}>
-        <BackgroundImg />
+        <BackgroundImg isReady={readyMatch !== null} />
       </BackgroundBox>
       <Container>
         <WeeklyPickerHeader />
@@ -37,7 +71,7 @@ const Start = ({ userObj }: IUserObjProps) => {
 
 const Wrapper = styled.div`
   height: 100vh;
-  background-color: #0c0c0c;
+  background-color: black;
 `;
 
 const Container = styled.div`
@@ -58,12 +92,16 @@ const BackgroundBox = styled.div`
   margin: 0 auto;
 `;
 
-const BackgroundImg = styled.div`
+const BackgroundImg = styled.div<{ isReady: boolean }>`
   display: flex;
   width: 100%;
   height: 100%;
   justify-content: center;
-  background-image: url(${Background});
+  background-image: ${(props) =>
+      props.isReady
+        ? "linear-gradient(rgba(0, 0, 0, 0.5), 40%, rgba(0, 0, 0, 1)),"
+        : "linear-gradient(rgba(0, 0, 0, 0), 40%, rgba(0, 0, 0, 0.4)),"}
+    url(${Background});
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 65%;

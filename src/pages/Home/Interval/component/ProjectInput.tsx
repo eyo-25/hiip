@@ -58,7 +58,7 @@ const ProjectInput = ({ userObj }: IUserObjProps) => {
   const onCancelClick = () => {
     setStartDate(null);
     setEndDate(null);
-    navigate(`/`);
+    navigate("/plan");
   };
   const titleChange = (event: React.FormEvent<HTMLInputElement>) => {
     const {
@@ -87,7 +87,7 @@ const ProjectInput = ({ userObj }: IUserObjProps) => {
     await dbService.collection("plan").add(newObj);
     setStartDate(null);
     setEndDate(null);
-    navigate("/");
+    navigate("/plan");
   };
 
   return (

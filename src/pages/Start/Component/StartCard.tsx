@@ -23,6 +23,10 @@ const StartCard = ({
   userObj,
   isOwner,
 }: IDragabbleCardProps) => {
+  let intervalArray = [];
+  for (let index = 0; index < interval; index++) {
+    intervalArray[index] = index;
+  }
   return (
     <>
       {isOwner && (
@@ -36,6 +40,11 @@ const StartCard = ({
             <span>SET</span>
             <StartBtn />
           </IntervalBox>
+          <IntervalBarBox>
+            {intervalArray.map((index) => (
+              <IntervalBar key={index} />
+            ))}
+          </IntervalBarBox>
         </DragBox>
       )}
     </>
@@ -55,12 +64,8 @@ const DragBox = styled.li`
   background: white;
   border-radius: 10px;
   margin-bottom: 15px;
-  box-shadow: 3px 4px 12px rgba(0, 0, 0, 0.08);
-  /* &:hover {
-    box-shadow: 2px 4px 20px rgba(0, 0, 0, 0.2);
-    transform: scale(1.02);
-    transition: all 0.3s ease-in-out;
-  } */
+  box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
 `;
 
 const TextBox = styled.div`
@@ -90,4 +95,20 @@ const IntervalBox = styled.div`
 const StartBtn = styled(IoPlaySharp)`
   color: #9d9d9d;
   margin-left: 15px;
+`;
+
+const IntervalBarBox = styled.div`
+  display: flex;
+  position: absolute;
+  bottom: 0;
+  width: 310px;
+  height: 4px;
+`;
+
+const IntervalBar = styled.div`
+  display: flex;
+  background-color: #1e272e;
+  height: 100%;
+  width: 100%;
+  margin: 0 3px;
 `;

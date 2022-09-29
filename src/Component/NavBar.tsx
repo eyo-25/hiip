@@ -11,18 +11,20 @@ const NavBar = () => {
     navigate(address);
   };
   const homeMatch = useMatch("/");
+  const planMatch = useMatch("/plan");
   const IntervalMatch = useMatch("/interval");
   const startMatch = useMatch("/start/*");
   const feedbackMatch = useMatch("/feedback");
   const mypageMatch = useMatch("/mypage");
-  const homeActive = homeMatch !== null || IntervalMatch !== null;
+  const planActive = planMatch !== null || IntervalMatch !== null;
+  const startActive = homeMatch !== null || startMatch !== null;
   return (
-    <NavContainer isStart={startMatch !== null}>
+    <NavContainer isStart={startActive}>
       <Nav>
-        {homeMatch || IntervalMatch ? (
+        {planMatch || IntervalMatch ? (
           <SubItems>
-            <SubItem isActive={homeMatch !== null}>
-              <Link to="/">프로젝트</Link>
+            <SubItem isActive={planMatch !== null}>
+              <Link to="/plan">프로젝트</Link>
             </SubItem>
             <SubItem isActive={IntervalMatch !== null}>
               <Link to="/interval">인터벌 생성</Link>
@@ -30,16 +32,13 @@ const NavBar = () => {
           </SubItems>
         ) : null}
         <Items>
-          <Item isActive={homeActive} onClick={() => onClick("/")}>
+          <Item isActive={planActive} onClick={() => onClick("/plan")}>
             <Icon1 />
-            <Link to="/">계획</Link>
+            <Link to="/plan">계획</Link>
           </Item>
-          <Item
-            isActive={startMatch !== null}
-            onClick={() => onClick("/start")}
-          >
+          <Item isActive={startActive} onClick={() => onClick("/")}>
             <Icon2 />
-            <Link to="/start">실행</Link>
+            <Link to="/">실행</Link>
           </Item>
           <Item
             isActive={feedbackMatch !== null}
@@ -105,6 +104,7 @@ const Items = styled.ul`
 const Item = styled.li<{ isActive: boolean }>`
   display: flex;
   flex-direction: column;
+  cursor: pointer;
   svg {
     width: 35px;
     height: 35px;

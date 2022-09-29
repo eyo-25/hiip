@@ -35,7 +35,6 @@ const AuthForm = ({ close, newCount }: IAuthFormProps) => {
             });
             dbService.collection("user").doc(result.user.uid).set({ userInfo });
           });
-        // await createUserWithEmailAndPassword(authService, email, password);
         close(false);
       } else {
         await signInWithEmailAndPassword(authService, email, password);
