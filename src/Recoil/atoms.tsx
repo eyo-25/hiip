@@ -90,3 +90,8 @@ export const clickState = atom<any>({
   key: "clickState",
   default: 0,
 });
+
+export const readyState = atom<any>({
+  key: "readyState",
+  default: "",
+});

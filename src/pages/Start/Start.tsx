@@ -4,31 +4,27 @@ import WeeklyPickerHeader from "./Component/WeeklyPickerHeader";
 import { IoPlaySharp } from "react-icons/io5";
 import SummaryBox from "./Component/SummaryBox";
 import StartBoard from "./Component/StartBoard";
-import { IUserObjProps } from "../../Utils/interface";
 import { useMatch, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import { toDoState } from "../../Recoil/atoms";
+import { readyState, toDoState } from "../../Recoil/atoms";
 import { useEffect } from "react";
-import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import { onSnapshot, query } from "firebase/firestore";
 import { authService, dbService } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
-const Start = ({ userObj }: IUserObjProps) => {
+const Start = () => {
   const [toDos, setToDos] = useRecoilState(toDoState);
+  const [readyToDo, setReadyToDo] = useRecoilState(readyState);
   const navigate = useNavigate();
   const readyMatch = useMatch("/start/ready");
-  const onPlayClick = () => {
-    navigate("/start/ready");
-  };
-  const onBackClick = () => {
-    if (readyMatch !== null) {
-      navigate("/start");
-    }
-  };
+
   useEffect(() => {
+    const uid = JSON.parse(localStorage.getItem("user") as any).uid;
     const q = query(
-      collection(dbService, "plan"),
-      orderBy("creatorAt", "desc")
+      dbService
+        .collection("plan")
+        .where("creatorId", "==", uid)
+        .orderBy("creatorAt", "desc")
     );
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const newArray = querySnapshot.docs.map((doc: any) => {
@@ -52,6 +48,27 @@ const Start = ({ userObj }: IUserObjProps) => {
       }
     });
   }, []);
+
+  useEffect(() => {
+    const uid = JSON.parse(localStorage.getItem("user") as any).uid;
+    dbService
+      .collection("ready")
+      .doc(`${uid}`)
+      .get()
+      .then((result: any) => {
+        setReadyToDo(result.data().readyId);
+      });
+  }, []);
+
+  const onPlayClick = () => {
+    navigate("/start/ready");
+  };
+  const onBackClick = () => {
+    if (readyMatch !== null) {
+      navigate("/start");
+    }
+  };
+
   return (
     <Wrapper>
       <BackgroundBox onClick={onBackClick}>
@@ -60,10 +77,10 @@ const Start = ({ userObj }: IUserObjProps) => {
       <Container>
         <WeeklyPickerHeader />
         <SummaryBox />
-        <StartBoard userObj={userObj} />
+        <StartBoard />
       </Container>
-      <PlayBtnBox>
-        <PlayBtn onClick={onPlayClick} />
+      <PlayBtnBox onClick={onPlayClick}>
+        <PlayBtn />
       </PlayBtnBox>
     </Wrapper>
   );

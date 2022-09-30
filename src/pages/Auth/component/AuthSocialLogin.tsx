@@ -25,8 +25,9 @@ const AuthSocialLogin = () => {
           email: result.user.email,
           nickname: result.user.displayName,
           photoURL: result.user.photoURL,
+          uid: result.user.uid,
         };
-        dbService.collection("user").doc(result.user.uid).set({ userInfo });
+        dbService.collection("user").doc(result.user.uid).set(userInfo);
       }));
   };
   return (

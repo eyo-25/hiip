@@ -12,15 +12,8 @@ import {
   toDoState,
 } from "../../../../Recoil/atoms";
 import { dbService } from "../../../../firebase";
-import { IUserObjProps } from "../../../../Utils/interface";
 
-const EditCard = ({
-  userObj,
-  toDoObj,
-}: {
-  userObj: IUserObjProps;
-  toDoObj: any;
-}) => {
+const EditCard = () => {
   const navigate = useNavigate();
   let params = useParams();
   const [toDos, setToDos] = useRecoilState(toDoState);

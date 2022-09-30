@@ -7,6 +7,13 @@ import EditProfile from "./EditProfile";
 import Header from "../../Component/Header";
 
 const MyPage = ({ userObj }: IUserObjProps) => {
+  const localPhotoURL = JSON.parse(
+    localStorage.getItem("user") as any
+  ).photoURL;
+  const localEmail = JSON.parse(localStorage.getItem("user") as any).email;
+  const localNickname = JSON.parse(
+    localStorage.getItem("user") as any
+  ).nickname;
   const navigate = useNavigate();
   const editMatch = useMatch(`/mypage/editprofile`);
   const onLogOutClick = () => {
@@ -25,16 +32,16 @@ const MyPage = ({ userObj }: IUserObjProps) => {
         <ProfileBox>
           <ProfileImg
             onClick={onEditClick}
-            src={userObj.photoURL !== null ? userObj.photoURL : GUEST_ICON}
+            src={localPhotoURL !== null ? localPhotoURL : GUEST_ICON}
           />
           <UserText>
             <UserNameBox>
               <h4 onClick={onEditClick}>
-                {userObj.displayName ? userObj.displayName : `HIIP 회원`}
+                {localNickname ? localNickname : `HIIP 회원`}
               </h4>
               <UserRank>Beginner</UserRank>
             </UserNameBox>
-            <p>{userObj.email ? userObj.email : "이메일을 등록해 주세요"}</p>
+            <p>{localEmail ? localEmail : "이메일을 등록해 주세요"}</p>
           </UserText>
         </ProfileBox>
         <Items>

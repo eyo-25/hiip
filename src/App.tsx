@@ -1,15 +1,22 @@
 import AppRouter from "./Router/AppRouter";
 import { useEffect, useState } from "react";
-import { authService } from "./firebase";
-import { useQuery } from "@tanstack/react-query";
-import { useRecoilState } from "recoil";
+import { authService, dbService } from "./firebase";
+import { IUserObjProps } from "./Utils/interface";
 
 function App() {
-  const [userObj, setUserObj] = useState<object | null>(null);
+  const [userObj, setUserObj] = useState<IUserObjProps | null>(null);
   useEffect(() => {
-    authService.onAuthStateChanged((user) => {
+    authService.onAuthStateChanged(async (user: any) => {
       if (user) {
         setUserObj(user);
+        localStorage.setItem("user", JSON.stringify(user));
+        dbService
+          .collection("user")
+          .doc(`${user.uid}`)
+          .get()
+          .then((result: any) => {
+            localStorage.setItem("user", JSON.stringify(result.data()));
+          });
       } else {
         setUserObj(null);
       }

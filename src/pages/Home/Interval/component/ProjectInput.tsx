@@ -294,5 +294,3 @@ const UpBtn = styled(IoAddCircle)`
   height: 15px;
   cursor: pointer;
 `;
-
-const StartInput = styled.input``;

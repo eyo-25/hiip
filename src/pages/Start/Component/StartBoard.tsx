@@ -2,10 +2,9 @@ import { useMatch } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { toDoState } from "../../../Recoil/atoms";
-import { IUserObjProps } from "../../../Utils/interface";
 import StartCard from "./StartCard";
 
-const StartBoard = ({ userObj }: IUserObjProps) => {
+const StartBoard = () => {
   const [toDos, setToDos] = useRecoilState(toDoState);
   const readyMatch = useMatch("/start/ready");
   return (
@@ -14,14 +13,11 @@ const StartBoard = ({ userObj }: IUserObjProps) => {
         {toDos?.map((toDo, index) => (
           <StartCard
             key={index}
-            toDoId={toDo.creatorAt}
-            toDoObj={toDo}
             planTitle={toDo.planTitle}
             planTarget={toDo.planTarget}
+            toDoId={toDo.id}
             interval={toDo.intervalSet}
-            index={index}
-            userObj={userObj}
-            isOwner={toDo.creatorId === userObj.uid}
+            toDoObj={toDo}
           />
         ))}
       </Container>

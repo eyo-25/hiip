@@ -29,6 +29,9 @@ const AuthForm = ({ close, newCount }: IAuthFormProps) => {
             let userInfo = {
               email: email,
               nickname: nickname,
+              photoURL:
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_qBTDzBVonLHd5Ejk0i-61YlcHI54KTgOMhIRea9jwACihT9hxQaj2P87_XAv87DEkAY&usqp=CAU",
+              uid: result.user.uid,
             };
             result.user.updateProfile({
               displayName: nickname,

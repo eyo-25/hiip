@@ -39,6 +39,8 @@ const CalendarPicker = () => {
     const clickDate = Moment(date).format("YYYY-MM-DD");
     setClickDate(clickDate);
     let newClick = click >= 3 ? 1 : click + 1;
+
+    //초기화 옵션
     // if (
     //   (!(startDate === null) && clickDate < startDate) ||
     //   endDate < clickDate
@@ -47,6 +49,7 @@ const CalendarPicker = () => {
     //   newClick = 1;
     //   setEndDate(null);
     // }
+
     if (clickDate < startDate) {
       setClick(0);
       newClick = 0;

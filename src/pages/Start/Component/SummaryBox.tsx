@@ -1,7 +1,10 @@
 import { useMatch, useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
+import { toDoState } from "../../../Recoil/atoms";
 
 const Summary = () => {
+  const [toDos, setToDos] = useRecoilState(toDoState);
   const navigate = useNavigate();
   const readyMatch = useMatch("/start/ready");
   const onBackClick = () => {
@@ -12,9 +15,15 @@ const Summary = () => {
   return (
     <Container onClick={onBackClick} isReady={readyMatch !== null}>
       <SummaryBox isReady={readyMatch !== null}>
-        <SummaryWord>
-          이대론 <br /> 가망이 없다
-        </SummaryWord>
+        {toDos.length < 1 ? (
+          <SummaryWord>
+            플랜을 <br /> 추가해주세요
+          </SummaryWord>
+        ) : (
+          <SummaryWord>
+            이대론 <br /> 가망이 없다
+          </SummaryWord>
+        )}
       </SummaryBox>
       <DdayBox>
         <DdayText>0</DdayText>
@@ -66,7 +75,7 @@ const Container = styled.div<{ isReady: boolean }>`
   justify-content: ${(props) => (props.isReady ? "flex-start" : "center")};
   align-items: center;
   margin: 0 auto;
-  padding-top: 130px;
+  padding-top: 120px;
   color: white;
   height: ${(props) => (props.isReady ? "40vh" : "70vh")};
 `;
@@ -93,6 +102,7 @@ const DdayBox = styled.div`
   align-items: flex-end;
   font-family: "Roboto";
   font-weight: 900;
+  padding: 10px 0;
   cursor: pointer;
   span {
     font-size: 20px;
@@ -111,7 +121,7 @@ const DetailInfoBox = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  padding: 20px 0;
+  padding: 10px 0;
 `;
 
 const DetailItems = styled.ul`

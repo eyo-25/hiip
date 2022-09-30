@@ -2,12 +2,11 @@ import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { nowDateState, toDoState } from "../../../../Recoil/atoms";
-import { IUserObjProps } from "../../../../Utils/interface";
 import DragabbleCard from "./DragabbleCard";
 
 //Droppable과 Draggable의 Children은 함수여야 한다.
 //Draggable의 prop중 dragHandleProps은 요소를 드래그 가능하게 한다.
-const TodoBoard = ({ userObj }: IUserObjProps) => {
+const TodoBoard = () => {
   const [toDos, setToDos] = useRecoilState(toDoState);
   const [clickDate, setClickDate] = useRecoilState(nowDateState);
   const Moment = require("moment");
@@ -22,40 +21,48 @@ const TodoBoard = ({ userObj }: IUserObjProps) => {
     });
   };
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Wrapper>
-        <DropBox>
-          <Droppable droppableId="boards">
-            {(provided) => (
-              <Area ref={provided.innerRef} {...provided.droppableProps}>
-                {toDos?.map((toDo, index) => (
-                  <CardBox
-                    key={toDo.creatorAt}
-                    dateNow={
-                      Moment(toDo.startDate).format("YYYY-MM-DD") <=
-                        clickDate &&
-                      clickDate <= Moment(toDo.endDate).format("YYYY-MM-DD")
-                    }
-                  >
-                    <DragabbleCard
-                      toDoId={toDo.creatorAt}
-                      toDoObj={toDo}
-                      planTitle={toDo.planTitle}
-                      planTarget={toDo.planTarget}
-                      interval={toDo.intervalSet}
-                      index={index}
-                      userObj={userObj}
-                      isOwner={toDo.creatorId === userObj.uid}
-                    />
-                  </CardBox>
-                ))}
-                {provided.placeholder}
-              </Area>
-            )}
-          </Droppable>
-        </DropBox>
-      </Wrapper>
-    </DragDropContext>
+    <>
+      {toDos.length < 1 && (
+        <GuidText>
+          TO-DO를 추가하고
+          <br />
+          인터벌 플랜을
+          <br />
+          완성해주세요
+        </GuidText>
+      )}
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Wrapper>
+          <DropBox>
+            <Droppable droppableId="boards">
+              {(provided) => (
+                <Area ref={provided.innerRef} {...provided.droppableProps}>
+                  {toDos?.map((toDo, index) => (
+                    <CardBox
+                      key={toDo.creatorAt}
+                      dateNow={
+                        Moment(toDo.startDate).format("YYYY-MM-DD") <=
+                          clickDate &&
+                        clickDate <= Moment(toDo.endDate).format("YYYY-MM-DD")
+                      }
+                    >
+                      <DragabbleCard
+                        toDoId={toDo.id}
+                        planTitle={toDo.planTitle}
+                        planTarget={toDo.planTarget}
+                        interval={toDo.intervalSet}
+                        index={index}
+                      />
+                    </CardBox>
+                  ))}
+                  {provided.placeholder}
+                </Area>
+              )}
+            </Droppable>
+          </DropBox>
+        </Wrapper>
+      </DragDropContext>
+    </>
   );
 };
 
@@ -81,4 +88,11 @@ const CardBox = styled.div<{ dateNow: boolean }>`
 const Area = styled.div`
   display: flex;
   flex-direction: column;
+`;
+
+const GuidText = styled.h4`
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #e0e0e0;
 `;

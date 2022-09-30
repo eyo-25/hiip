@@ -47,20 +47,32 @@ const EditProfile = ({ userObj }: IUserObjProps) => {
       ) {
         deleteObject(ref(storageService, userObj.photoURL));
       }
-      await userObj.updateProfile({
-        displayName: newDisplayName,
-        photoURL: profileURL,
-        email: userObj.email,
-      });
-      dbService.collection("user").doc(userObj.uid).update({
+      await userObj
+        .updateProfile({
+          displayName: newDisplayName,
+          photoURL: profileURL,
+        })
+        .then(() => {
+          const copy = JSON.parse(localStorage.getItem("user") as any);
+          copy.nickname = newDisplayName;
+          copy.photoURL = profileURL;
+          localStorage.setItem("user", JSON.stringify(copy));
+        });
+      await dbService.collection("user").doc(userObj.uid).update({
         nickname: newDisplayName,
         photoURL: profileURL,
       });
     } else {
-      await userObj.updateProfile({
-        displayName: newDisplayName,
-      });
-      dbService.collection("user").doc(userObj.uid).update({
+      await userObj
+        .updateProfile({
+          displayName: newDisplayName,
+        })
+        .then(() => {
+          const copy = JSON.parse(localStorage.getItem("user") as any);
+          copy.nickname = newDisplayName;
+          localStorage.setItem("user", JSON.stringify(copy));
+        });
+      await dbService.collection("user").doc(userObj.uid).update({
         nickname: newDisplayName,
         photoURL: userObj.photoURL,
         email: userObj.email,

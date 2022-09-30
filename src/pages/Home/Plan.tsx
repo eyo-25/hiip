@@ -5,7 +5,7 @@ import { ReactComponent as PlusIcon } from "../../Assets/Icons/plus.svg";
 import { useRecoilState } from "recoil";
 import { toDoState } from "../../Recoil/atoms";
 import { useEffect } from "react";
-import { collection, orderBy, query, onSnapshot } from "firebase/firestore";
+import { query, onSnapshot } from "firebase/firestore";
 import { authService, dbService } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { IUserObjProps } from "../../Utils/interface";
@@ -29,9 +29,12 @@ const Home = ({ userObj }: IUserObjProps) => {
     navigate(`/interval`);
   };
   useEffect(() => {
+    const uid = JSON.parse(localStorage.getItem("user") as any).uid;
     const q = query(
-      collection(dbService, "plan"),
-      orderBy("creatorAt", "desc")
+      dbService
+        .collection("plan")
+        .where("creatorId", "==", uid)
+        .orderBy("creatorAt", "desc")
     );
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const newArray = querySnapshot.docs.map((doc: any) => {
@@ -61,7 +64,7 @@ const Home = ({ userObj }: IUserObjProps) => {
       <Header />
       <WeeklyDatePicker />
       <Container>
-        <TodoBoard userObj={userObj} />
+        <TodoBoard />
         <CreatePlanBtn onClick={onCreatePlanClick}>
           <PlusIcon />
         </CreatePlanBtn>

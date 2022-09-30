@@ -1,16 +1,16 @@
 import styled from "styled-components";
-import { IoPlaySharp, IoAlertCircleOutline } from "react-icons/io5";
-import { IUserObjProps } from "../../../Utils/interface";
+import { IoPlaySharp } from "react-icons/io5";
+import { dbService } from "../../../firebase";
+import { useRecoilState } from "recoil";
+import { readyState } from "../../../Recoil/atoms";
+import { useMatch } from "react-router-dom";
 
 interface IDragabbleCardProps {
   planTitle: string;
   planTarget: string;
-  index: number;
-  toDoId: number;
   interval: number;
+  toDoId: any;
   toDoObj: any;
-  userObj: IUserObjProps;
-  isOwner: boolean;
 }
 
 const StartCard = ({
@@ -18,42 +18,50 @@ const StartCard = ({
   planTarget,
   interval,
   toDoId,
-  index,
   toDoObj,
-  userObj,
-  isOwner,
 }: IDragabbleCardProps) => {
+  const [readyToDo, setReadyToDo] = useRecoilState(readyState);
+  const readyMatch = useMatch("/start/ready");
   let intervalArray = [];
   for (let index = 0; index < interval; index++) {
     intervalArray[index] = index;
   }
+  const onCardClick = (toDoId: string) => {
+    const uid = JSON.parse(localStorage.getItem("user") as any).uid;
+    const readyObj = { readyId: toDoId };
+    if (readyMatch !== null) {
+      dbService.collection("ready").doc(uid).set(readyObj);
+      setReadyToDo(toDoId);
+    }
+  };
   return (
     <>
-      {isOwner && (
-        <DragBox>
-          <TextBox>
-            <h4>{planTitle}</h4>
-            <p>{planTarget}</p>
-          </TextBox>
-          <IntervalBox>
-            <h4>{interval}</h4>
-            <span>SET</span>
-            <StartBtn />
-          </IntervalBox>
-          <IntervalBarBox>
-            {intervalArray.map((index) => (
-              <IntervalBar key={index} />
-            ))}
-          </IntervalBarBox>
-        </DragBox>
-      )}
+      <DragBox
+        isReadyCard={readyToDo === toDoId}
+        onClick={() => onCardClick(toDoId + "")}
+      >
+        <TextBox>
+          <h4>{planTitle}</h4>
+          <p>{planTarget}</p>
+        </TextBox>
+        <IntervalBox>
+          <h4>{interval}</h4>
+          <span>SET</span>
+          <StartBtn />
+        </IntervalBox>
+        <IntervalBarBox>
+          {intervalArray.map((index) => (
+            <IntervalBar isReadyCard={readyToDo === toDoId} key={index} />
+          ))}
+        </IntervalBarBox>
+      </DragBox>
     </>
   );
 };
 
 export default StartCard;
 
-const DragBox = styled.li`
+const DragBox = styled.div<{ isReadyCard: boolean }>`
   position: relative;
   display: flex;
   justify-content: space-between;
@@ -61,10 +69,11 @@ const DragBox = styled.li`
   padding: 20px 35px;
   height: 90px;
   width: 100%;
-  background: white;
   border-radius: 10px;
   margin-bottom: 15px;
-  box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.1);
+  background: ${(props) => (props.isReadyCard ? "white" : "#f2f2f2")};
+  box-shadow: ${(props) =>
+    props.isReadyCard && "2px 4px 12px rgba(0, 0, 0, 0.1)"};
   cursor: pointer;
 `;
 
@@ -105,9 +114,9 @@ const IntervalBarBox = styled.div`
   height: 4px;
 `;
 
-const IntervalBar = styled.div`
+const IntervalBar = styled.div<{ isReadyCard: boolean }>`
   display: flex;
-  background-color: #1e272e;
+  background-color: ${(props) => (props.isReadyCard ? "black" : "#cccccc")};
   height: 100%;
   width: 100%;
   margin: 0 3px;

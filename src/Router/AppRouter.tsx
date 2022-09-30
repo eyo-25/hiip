@@ -1,9 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Header from "../Component/Header";
 import NavBar from "../Component/NavBar";
 import Auth from "../pages/Auth/Auth";
 import FeedBack from "../pages/FeedBack/FeedBack";
-import Home from "../pages/Home/Home";
+import Home from "../pages/Home/Plan";
 import CreateProject from "../pages/Home/Interval/CreateProject";
 import MyPage from "../pages/MyPage/MyPage";
 import Start from "../pages/Start/Start";
@@ -26,8 +25,8 @@ export default function AppRouter({ isLoggedIn, userObj }: AppRouterProps) {
   return (
     <BrowserRouter basename={process.env.PUBLIC_URL}>
       <Routes>
-        <Route path={"/"} element={<Start userObj={userObj} />}>
-          <Route path={"/start/ready"} element={<Start userObj={userObj} />} />
+        <Route path={"/"} element={<Start />}>
+          <Route path={"/start/ready"} element={<Start />} />
         </Route>
         <Route path={"/plan"} element={<Home userObj={userObj} />}>
           <Route
