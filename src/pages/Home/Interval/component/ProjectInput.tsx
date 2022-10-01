@@ -9,8 +9,10 @@ import { useNavigate } from "react-router-dom";
 import {
   clickState,
   endChange,
+  indexState,
   nowDateState,
   startChange,
+  toDoState,
 } from "../../../../Recoil/atoms";
 import { dbService } from "../../../../firebase";
 import { IUserObjProps } from "../../../../Utils/interface";
@@ -25,10 +27,12 @@ const ProjectInput = ({ userObj }: IUserObjProps) => {
   const [clickDate, setClickDate] = useRecoilState(nowDateState);
   const [click, setClick] = useRecoilState(clickState);
   const Moment = require("moment");
+  const [indexCount, setIndexCount] = useRecoilState(indexState);
 
   useEffect(() => {
     setStartDate(null);
     setEndDate(null);
+    setIndexCount(0);
   }, []);
 
   useEffect(() => {
@@ -36,6 +40,20 @@ const ProjectInput = ({ userObj }: IUserObjProps) => {
       setEndDate(null);
     }
   }, [startDate]);
+
+  useEffect(() => {
+    const uid = JSON.parse(localStorage.getItem("user") as any).uid;
+    dbService
+      .collection("indexcount")
+      .doc(`${uid}`)
+      .get()
+      .then((result: any) => {
+        setIndexCount(result.data().index);
+      })
+      .catch(() => {
+        setIndexCount(0);
+      });
+  }, []);
 
   const onStartChange = (dates: any) => {
     setStartDate(dates);
@@ -73,6 +91,7 @@ const ProjectInput = ({ userObj }: IUserObjProps) => {
     setPlanTarget(value);
   };
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    const uid = JSON.parse(localStorage.getItem("user") as any).uid;
     event.preventDefault();
     const newObj = {
       startDate: startDate,
@@ -80,11 +99,21 @@ const ProjectInput = ({ userObj }: IUserObjProps) => {
       planTitle: planTitle,
       planTarget: planTarget,
       intervalSet: count,
-      creatorId: userObj.uid,
+      creatorId: uid,
       repeat: 1,
       creatorAt: Date.now(),
+      index: indexCount,
     };
     await dbService.collection("plan").add(newObj);
+
+    const indexCountObj = {
+      index: indexCount + 1,
+    };
+    if (indexCount < 1) {
+      await dbService.collection("indexcount").doc(uid).set(indexCountObj);
+    } else {
+      await dbService.collection("indexcount").doc(uid).update(indexCountObj);
+    }
     setStartDate(null);
     setEndDate(null);
     navigate("/plan");

@@ -2,8 +2,9 @@ import styled from "styled-components";
 import { IoPlaySharp } from "react-icons/io5";
 import { dbService } from "../../../firebase";
 import { useRecoilState } from "recoil";
-import { readyState } from "../../../Recoil/atoms";
+import { indexState, readyState } from "../../../Recoil/atoms";
 import { useMatch } from "react-router-dom";
+import React, { useEffect } from "react";
 
 interface IDragabbleCardProps {
   planTitle: string;
@@ -21,19 +22,57 @@ const StartCard = ({
   toDoObj,
 }: IDragabbleCardProps) => {
   const [readyToDo, setReadyToDo] = useRecoilState(readyState);
+  const [indexCount, setIndexCount] = useRecoilState(indexState);
+
+  useEffect(() => {
+    const uid = JSON.parse(localStorage.getItem("user") as any).uid;
+    dbService
+      .collection("indexcount")
+      .doc(`${uid}`)
+      .get()
+      .then((result: any) => {
+        setIndexCount(result.data().index);
+      });
+  }, []);
+
+  useEffect(() => {
+    const uid = JSON.parse(localStorage.getItem("user") as any).uid;
+    dbService
+      .collection("ready")
+      .doc(`${uid}`)
+      .get()
+      .then((result: any) => {
+        setReadyToDo(result.data().readyId);
+      });
+  }, []);
+
   const readyMatch = useMatch("/start/ready");
   let intervalArray = [];
   for (let index = 0; index < interval; index++) {
     intervalArray[index] = index;
   }
-  const onCardClick = (toDoId: string) => {
-    const uid = JSON.parse(localStorage.getItem("user") as any).uid;
-    const readyObj = { readyId: toDoId };
-    if (readyMatch !== null) {
-      dbService.collection("ready").doc(uid).set(readyObj);
+  const onCardClick = async (toDoId: string) => {
+    if (readyMatch !== null && readyToDo !== toDoId) {
+      const uid = JSON.parse(localStorage.getItem("user") as any).uid;
+      const readyObj = { readyId: toDoId };
+      const editObj = {
+        index: 999999999,
+      };
+      const returnObj = {
+        index: indexCount,
+      };
+      const indexCountObj = {
+        index: indexCount + 1,
+      };
+      await dbService.collection("ready").doc(uid).set(readyObj);
+      await dbService.collection("plan").doc(readyToDo).update(returnObj);
+      await dbService.collection("plan").doc(toDoId).update(editObj);
+      await dbService.collection("indexcount").doc(uid).update(indexCountObj);
       setReadyToDo(toDoId);
+      setIndexCount(indexCount + 1);
     }
   };
+
   return (
     <>
       <DragBox
@@ -59,7 +98,7 @@ const StartCard = ({
   );
 };
 
-export default StartCard;
+export default React.memo(StartCard);
 
 const DragBox = styled.div<{ isReadyCard: boolean }>`
   position: relative;

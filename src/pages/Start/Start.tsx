@@ -6,7 +6,7 @@ import SummaryBox from "./Component/SummaryBox";
 import StartBoard from "./Component/StartBoard";
 import { useMatch, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import { readyState, toDoState } from "../../Recoil/atoms";
+import { indexState, readyState, toDoState } from "../../Recoil/atoms";
 import { useEffect } from "react";
 import { onSnapshot, query } from "firebase/firestore";
 import { authService, dbService } from "../../firebase";
@@ -15,6 +15,7 @@ import { onAuthStateChanged } from "firebase/auth";
 const Start = () => {
   const [toDos, setToDos] = useRecoilState(toDoState);
   const [readyToDo, setReadyToDo] = useRecoilState(readyState);
+  const [indexCount, setIndexCount] = useRecoilState(indexState);
   const navigate = useNavigate();
   const readyMatch = useMatch("/start/ready");
 
@@ -24,7 +25,7 @@ const Start = () => {
       dbService
         .collection("plan")
         .where("creatorId", "==", uid)
-        .orderBy("creatorAt", "desc")
+        .orderBy("index", "desc")
     );
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const newArray = querySnapshot.docs.map((doc: any) => {
@@ -47,17 +48,6 @@ const Start = () => {
         unsubscribe();
       }
     });
-  }, []);
-
-  useEffect(() => {
-    const uid = JSON.parse(localStorage.getItem("user") as any).uid;
-    dbService
-      .collection("ready")
-      .doc(`${uid}`)
-      .get()
-      .then((result: any) => {
-        setReadyToDo(result.data().readyId);
-      });
   }, []);
 
   const onPlayClick = () => {

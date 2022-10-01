@@ -72,7 +72,7 @@ const WeeklyPickerHeader = () => {
         <MonthBox>
           <PrevBtn onClick={onPrevClick} />
           <MonthText onClick={onTodayClick}>
-            {arWeek[0].getMonth() + 1}월
+            {new Date(clickDate.split("-")).getMonth() + 1}월
           </MonthText>
           <NextBtn onClick={onNextClick} />
         </MonthBox>

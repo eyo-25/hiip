@@ -3,7 +3,7 @@ import styled from "styled-components";
 import TodoBoard from "./Project/component/TodoBoard";
 import { ReactComponent as PlusIcon } from "../../Assets/Icons/plus.svg";
 import { useRecoilState } from "recoil";
-import { toDoState } from "../../Recoil/atoms";
+import { indexState, toDoState } from "../../Recoil/atoms";
 import { useEffect } from "react";
 import { query, onSnapshot } from "firebase/firestore";
 import { authService, dbService } from "../../firebase";
@@ -34,7 +34,7 @@ const Home = ({ userObj }: IUserObjProps) => {
       dbService
         .collection("plan")
         .where("creatorId", "==", uid)
-        .orderBy("creatorAt", "desc")
+        .orderBy("index", "desc")
     );
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const newArray = querySnapshot.docs.map((doc: any) => {
@@ -58,6 +58,19 @@ const Home = ({ userObj }: IUserObjProps) => {
       }
     });
   }, []);
+
+  console.log(toDos.length);
+  useEffect(() => {
+    if (toDos.length === 1) {
+      const uid = JSON.parse(localStorage.getItem("user") as any).uid;
+      const readyObj = { readyId: toDos[0].id };
+      const editObj = {
+        index: 999999999,
+      };
+      dbService.collection("plan").doc(toDos[0].id).update(editObj);
+      dbService.collection("ready").doc(uid).set(readyObj);
+    }
+  }, [toDos]);
 
   return (
     <>

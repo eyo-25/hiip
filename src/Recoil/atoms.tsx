@@ -95,3 +95,8 @@ export const readyState = atom<any>({
   key: "readyState",
   default: "",
 });
+
+export const indexState = atom<any>({
+  key: "indexState",
+  default: 0,
+});

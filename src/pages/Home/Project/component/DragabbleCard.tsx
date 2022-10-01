@@ -6,7 +6,8 @@ import { IoPlaySharp, IoAlertCircleOutline } from "react-icons/io5";
 import EditCard from "./EditCard";
 import { useMatch, useNavigate } from "react-router-dom";
 import { dbService } from "../../../../firebase";
-import { IUserObjProps } from "../../../../Utils/interface";
+import { indexState, readyState, toDoState } from "../../../../Recoil/atoms";
+import { useRecoilState } from "recoil";
 
 interface IDragabbleCardProps {
   planTitle: string;
@@ -26,6 +27,9 @@ function DragabbleCard({
   const navigate = useNavigate();
   const editMatch = useMatch("/plan/edit/:todoId");
   const [infoPopup, setInfoPopup] = useState(false);
+  const [toDos, setToDos] = useRecoilState(toDoState);
+  const [readyToDo, setReadyToDo] = useRecoilState(readyState);
+  const [indexCount, setIndexCount] = useRecoilState(indexState);
   const onInfoClick = () => {
     setInfoPopup((prev) => !prev);
   };
@@ -35,7 +39,25 @@ function DragabbleCard({
   const onDelete = async () => {
     const ok = window.confirm("플랜을 삭제 하시겠습니까?");
     if (ok) {
+      const uid = JSON.parse(localStorage.getItem("user") as any).uid;
       await dbService.doc(`plan/${toDoId}`).delete();
+      if (1 <= toDos.length && readyToDo === toDoId) {
+        console.log(toDos);
+        const readyObj = { readyId: toDos[1].id };
+        const indexCountObj = {
+          index: indexCount + 1,
+        };
+        const editObj = {
+          index: 999999999,
+        };
+        await dbService.collection("plan").doc(toDos[1].id).update(editObj);
+        await dbService.collection("ready").doc(uid).set(readyObj);
+        await dbService
+          .collection("plan")
+          .doc(toDos[1].id)
+          .update(indexCountObj);
+        setReadyToDo(toDos[1].id);
+      }
     }
   };
   let intervalArray = [] as any;
