@@ -1,62 +1,54 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { IoChevronForward, IoChevronBack } from "react-icons/io5";
 import { useRecoilState } from "recoil";
 import { nowDateState } from "../../../Recoil/atoms";
 
 const WeeklyPickerHeader = () => {
-  const date = new Date();
-  // 달력 연도
-  let calendarYear = date.getFullYear();
-  // 달력 월
-  let calendarMonth = date.getMonth() + 1;
-  // 달력 일
-  let calendarToday = date.getDate();
+  const Moment = require("moment");
 
-  // 달력 현재 요일
-  let calendarMonthTodayDay = date.getDay();
+  const [clickDate, setClickDate] = useRecoilState(nowDateState);
 
   // 주간 배열
   let arWeek = [null, null, null, null, null, null, null] as any;
 
-  const [count, setCount] = useState(0);
-
-  let addDay1 = count;
-  for (let index = calendarMonthTodayDay; index < 7; index++) {
+  let addDay1 = 0;
+  for (let index = 3; index < 7; index++) {
     arWeek[index] = new Date(
-      calendarYear,
-      calendarMonth - 1,
-      calendarToday + addDay1
+      Moment(clickDate).year(),
+      Moment(clickDate).month(),
+      Moment(clickDate).date() + addDay1
     );
     addDay1++;
   }
 
-  let addDay2 = count;
-  for (let index = calendarMonthTodayDay - 1; index >= 0; index--) {
-    --addDay2;
+  let addDay2 = 0;
+  for (let index = 2; index >= 0; index--) {
+    addDay2--;
     arWeek[index] = new Date(
-      calendarYear,
-      calendarMonth - 1,
-      calendarToday + addDay2
+      Moment(clickDate).year(),
+      Moment(clickDate).month(),
+      Moment(clickDate).date() + addDay2
     );
   }
 
   const onPrevClick = () => {
-    setCount((prev) => prev - 7);
+    setClickDate(() => {
+      const copy = Moment(clickDate);
+      return copy.subtract(1, "days");
+    });
   };
 
   const onNextClick = () => {
-    setCount((prev) => prev + 7);
+    setClickDate(() => {
+      const copy = Moment(clickDate);
+      return copy.add(1, "days");
+    });
   };
 
   const onTodayClick = () => {
-    setCount(0);
     setClickDate(Moment().format("YYYY-MM-DD"));
   };
-
-  const Moment = require("moment");
-
-  const [clickDate, setClickDate] = useRecoilState(nowDateState);
 
   const onDateClick = (date: string) => {
     setClickDate(Moment(date).format("YYYY-MM-DD"));
@@ -72,18 +64,14 @@ const WeeklyPickerHeader = () => {
         <MonthBox>
           <PrevBtn onClick={onPrevClick} />
           <MonthText onClick={onTodayClick}>
-            {new Date(clickDate.split("-")).getMonth() + 1}월
+            {Moment(clickDate).month() + 1}월
           </MonthText>
           <NextBtn onClick={onNextClick} />
         </MonthBox>
         <DateContainer>
           {arWeek.map((date: any, index: number) => (
-            <DateBox
-              key={index}
-              clicked={clickDate === Moment(date).format("YYYY-MM-DD")}
-              onClick={() => onDateClick(date)}
-            >
-              <div>{date.getDate()}</div>
+            <DateBox key={index} onClick={() => onDateClick(date)}>
+              <DateText>{date.getDate()}</DateText>
             </DateBox>
           ))}
         </DateContainer>
@@ -138,29 +126,27 @@ const DateContainer = styled.div`
   font-weight: 600;
 `;
 
-const DayBox = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 10px;
-`;
-
-const DateBox = styled.div<{ clicked: boolean }>`
+const DateBox = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-bottom: 2px;
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
-    color: ${(props) => (props.clicked ? "black" : "white")};
-    background-color: ${(props) => props.clicked && "white"};
+  &:nth-child(4) {
+    div {
+      background-color: white;
+      color: black;
+    }
   }
+`;
+
+const DateText = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 2px;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
 `;
 
 const PrevBtn = styled(IoChevronBack)`

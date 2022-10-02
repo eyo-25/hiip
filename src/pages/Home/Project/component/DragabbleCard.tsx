@@ -30,26 +30,35 @@ function DragabbleCard({
   const [toDos, setToDos] = useRecoilState(toDoState);
   const [readyToDo, setReadyToDo] = useRecoilState(readyState);
   const [indexCount, setIndexCount] = useRecoilState(indexState);
+  const uid = JSON.parse(localStorage.getItem("user") as any).uid;
+  const indexCountObj = {
+    index: indexCount + 1,
+  };
+  const editObj = {
+    index: 999999999,
+  };
   const onInfoClick = () => {
     setInfoPopup((prev) => !prev);
   };
   const onEditClick = () => {
     navigate(`/plan/edit/${toDoId}`);
   };
+  const onStartClick = async () => {
+    navigate("/");
+    if (readyToDo !== toDoId) {
+      const readyObj = { readyId: toDoId };
+      await dbService.collection("plan").doc(toDoId).update(editObj);
+      await dbService.collection("ready").doc(uid).set(readyObj);
+      await dbService.collection("plan").doc(readyToDo).update(indexCountObj);
+      setReadyToDo(toDoId);
+    }
+  };
   const onDelete = async () => {
     const ok = window.confirm("플랜을 삭제 하시겠습니까?");
     if (ok) {
-      const uid = JSON.parse(localStorage.getItem("user") as any).uid;
       await dbService.doc(`plan/${toDoId}`).delete();
       if (1 <= toDos.length && readyToDo === toDoId) {
-        console.log(toDos);
         const readyObj = { readyId: toDos[1].id };
-        const indexCountObj = {
-          index: indexCount + 1,
-        };
-        const editObj = {
-          index: 999999999,
-        };
         await dbService.collection("plan").doc(toDos[1].id).update(editObj);
         await dbService.collection("ready").doc(uid).set(readyObj);
         await dbService
@@ -85,7 +94,7 @@ function DragabbleCard({
             <IntervalBox>
               <h4>{interval}</h4>
               <span>SET</span>
-              <StartBtn />
+              <StartBtn onClick={onStartClick} />
             </IntervalBox>
             <InfoBtn onClick={onInfoClick} />
             {infoPopup ? (
@@ -153,6 +162,7 @@ const IntervalBox = styled.div`
 const StartBtn = styled(IoPlaySharp)`
   color: #9d9d9d;
   margin-left: 15px;
+  cursor: pointer;
 `;
 
 const InfoBtn = styled(IoAlertCircleOutline)`

@@ -5,7 +5,14 @@ import { useRecoilState } from "recoil";
 import { nowDateState } from "../../../../Recoil/atoms";
 
 const WeeklyDatePicker = () => {
+  const Moment = require("moment");
+  const [clickDate, setClickDate] = useState(Moment().format("YYYY-MM-DD"));
   const date = new Date();
+
+  useEffect(() => {
+    setClickDate(Moment().format("YYYY-MM-DD"));
+  }, []);
+
   // 달력 연도
   let calendarYear = date.getFullYear();
   // 달력 월
@@ -56,17 +63,9 @@ const WeeklyDatePicker = () => {
     setClickDate(Moment().format("YYYY-MM-DD"));
   };
 
-  const Moment = require("moment");
-
-  const [clickDate, setClickDate] = useRecoilState(nowDateState);
-
   const onDateClick = (date: string) => {
     setClickDate(Moment(date).format("YYYY-MM-DD"));
   };
-
-  useEffect(() => {
-    setClickDate(Moment().format("YYYY-MM-DD"));
-  }, []);
 
   return (
     <Wrapper>

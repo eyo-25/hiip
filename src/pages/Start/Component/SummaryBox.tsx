@@ -1,9 +1,13 @@
+import { useEffect, useState } from "react";
 import { useMatch, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
-import { toDoState } from "../../../Recoil/atoms";
+import { nowDateState, readyState, toDoState } from "../../../Recoil/atoms";
+import moment from "moment";
 
 const Summary = () => {
+  const [clickDate, setClickDate] = useRecoilState(nowDateState);
+  const [readyToDo, setReadyToDo] = useRecoilState(readyState);
   const [toDos, setToDos] = useRecoilState(toDoState);
   const navigate = useNavigate();
   const readyMatch = useMatch("/start/ready");
@@ -12,6 +16,17 @@ const Summary = () => {
       navigate("/");
     }
   };
+  const readyObj = toDos.find((todo) => todo.id === readyToDo);
+
+  let dDay = 0;
+  if (1 <= toDos.length && readyObj) {
+    let start = moment(clickDate);
+    let end = moment(readyObj?.endDate);
+
+    let result = moment.duration(end.diff(start)).asDays();
+    dDay = 1 <= result ? result : 0;
+  }
+
   return (
     <Container onClick={onBackClick} isReady={readyMatch !== null}>
       <SummaryBox isReady={readyMatch !== null}>
@@ -26,7 +41,7 @@ const Summary = () => {
         )}
       </SummaryBox>
       <DdayBox>
-        <DdayText>0</DdayText>
+        <DdayText>{dDay}</DdayText>
         <span>D.day</span>
       </DdayBox>
       {readyMatch !== null && (

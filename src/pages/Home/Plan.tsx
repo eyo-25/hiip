@@ -59,7 +59,6 @@ const Home = ({ userObj }: IUserObjProps) => {
     });
   }, []);
 
-  console.log(toDos.length);
   useEffect(() => {
     if (toDos.length === 1) {
       const uid = JSON.parse(localStorage.getItem("user") as any).uid;
