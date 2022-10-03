@@ -6,7 +6,7 @@ import { nowDateState } from "../../../../Recoil/atoms";
 
 const WeeklyDatePicker = () => {
   const Moment = require("moment");
-  const [clickDate, setClickDate] = useState(Moment().format("YYYY-MM-DD"));
+  const [clickDate, setClickDate] = useRecoilState(nowDateState);
   const date = new Date();
 
   useEffect(() => {
@@ -73,7 +73,7 @@ const WeeklyDatePicker = () => {
         <MonthBox>
           <PrevBtn onClick={onPrevClick} />
           <MonthText onClick={onTodayClick}>
-            {new Date(clickDate.split("-")).getMonth() + 1}월
+            {Moment(clickDate).month() + 1}월
           </MonthText>
           <NextBtn onClick={onNextClick} />
         </MonthBox>

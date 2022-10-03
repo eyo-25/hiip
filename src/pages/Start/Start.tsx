@@ -11,11 +11,10 @@ import { useEffect } from "react";
 import { onSnapshot, query } from "firebase/firestore";
 import { authService, dbService } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import Timer from "./Component/Timer";
 
 const Start = () => {
   const [toDos, setToDos] = useRecoilState(toDoState);
-  const [readyToDo, setReadyToDo] = useRecoilState(readyState);
-  const [indexCount, setIndexCount] = useRecoilState(indexState);
   const navigate = useNavigate();
   const readyMatch = useMatch("/start/ready");
 
@@ -51,7 +50,11 @@ const Start = () => {
   }, []);
 
   const onPlayClick = () => {
-    navigate("/start/ready");
+    if (readyMatch) {
+      navigate("/timer");
+    } else {
+      navigate("/start/ready");
+    }
   };
   const onBackClick = () => {
     if (readyMatch !== null) {

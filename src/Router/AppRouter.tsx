@@ -6,6 +6,7 @@ import Home from "../pages/Home/Plan";
 import CreateProject from "../pages/Home/Interval/CreateProject";
 import MyPage from "../pages/MyPage/MyPage";
 import Start from "../pages/Start/Start";
+import Timer from "../pages/Start/Component/Timer";
 
 interface AppRouterProps {
   isLoggedIn: boolean;
@@ -25,15 +26,16 @@ export default function AppRouter({ isLoggedIn, userObj }: AppRouterProps) {
   return (
     <BrowserRouter basename={process.env.PUBLIC_URL}>
       <Routes>
-        <Route path={"/"} element={<Start />}>
-          <Route path={"/start/ready"} element={<Start />} />
-        </Route>
         <Route path={"/plan"} element={<Home userObj={userObj} />}>
           <Route
             path={"/plan/edit/:todoId"}
             element={<Home userObj={userObj} />}
           />
         </Route>
+        <Route path={"/"} element={<Start />}>
+          <Route path={"/start/ready"} element={<Start />} />
+        </Route>
+        <Route path={"/timer"} element={<Timer />} />
         <Route
           path={"/interval"}
           element={<CreateProject userObj={userObj} />}

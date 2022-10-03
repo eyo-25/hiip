@@ -3,6 +3,7 @@ import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { nowDateState, toDoState } from "../../../../Recoil/atoms";
 import DragabbleCard from "./DragabbleCard";
+import { useEffect } from "react";
 
 //Droppable과 Draggable의 Children은 함수여야 한다.
 //Draggable의 prop중 dragHandleProps은 요소를 드래그 가능하게 한다.

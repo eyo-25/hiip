@@ -91,32 +91,35 @@ const ProjectInput = ({ userObj }: IUserObjProps) => {
     setPlanTarget(value);
   };
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    const uid = JSON.parse(localStorage.getItem("user") as any).uid;
-    event.preventDefault();
-    const newObj = {
-      startDate: startDate,
-      endDate: endDate,
-      planTitle: planTitle,
-      planTarget: planTarget,
-      intervalSet: count,
-      creatorId: uid,
-      repeat: 1,
-      creatorAt: Date.now(),
-      index: indexCount,
-    };
-    await dbService.collection("plan").add(newObj);
+    const ok = window.confirm("플랜을 생성하시겠습니까?");
+    if (ok) {
+      const uid = JSON.parse(localStorage.getItem("user") as any).uid;
+      event.preventDefault();
+      const newObj = {
+        startDate: startDate,
+        endDate: endDate,
+        planTitle: planTitle,
+        planTarget: planTarget,
+        intervalSet: count,
+        creatorId: uid,
+        repeat: 1,
+        creatorAt: Date.now(),
+        index: indexCount,
+      };
+      await dbService.collection("plan").add(newObj);
 
-    const indexCountObj = {
-      index: indexCount + 1,
-    };
-    if (indexCount < 1) {
-      await dbService.collection("indexcount").doc(uid).set(indexCountObj);
-    } else {
-      await dbService.collection("indexcount").doc(uid).update(indexCountObj);
+      const indexCountObj = {
+        index: indexCount + 1,
+      };
+      if (indexCount < 1) {
+        await dbService.collection("indexcount").doc(uid).set(indexCountObj);
+      } else {
+        await dbService.collection("indexcount").doc(uid).update(indexCountObj);
+      }
+      setStartDate(null);
+      setEndDate(null);
+      navigate("/plan");
     }
-    setStartDate(null);
-    setEndDate(null);
-    navigate("/plan");
   };
 
   return (
