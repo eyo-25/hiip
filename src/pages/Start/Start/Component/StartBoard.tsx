@@ -1,7 +1,7 @@
 import { useMatch } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
-import { toDoState } from "../../../Recoil/atoms";
+import { toDoState } from "../../../../Recoil/atoms";
 import StartCard from "./StartCard";
 
 const StartBoard = () => {

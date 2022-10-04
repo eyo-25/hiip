@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useMatch, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
-import { nowDateState, readyState, toDoState } from "../../../Recoil/atoms";
+import { nowDateState, readyState, toDoState } from "../../../../Recoil/atoms";
 import moment from "moment";
 
 const Summary = () => {

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import styled from "styled-components";
 import { IoChevronForward, IoChevronBack } from "react-icons/io5";
 import { useRecoilState } from "recoil";
-import { nowDateState } from "../../../Recoil/atoms";
+import { nowDateState } from "../../../../Recoil/atoms";
 
 const WeeklyPickerHeader = () => {
   const Moment = require("moment");

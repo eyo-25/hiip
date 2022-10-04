@@ -6,7 +6,7 @@ import Home from "../pages/Home/Plan";
 import CreateProject from "../pages/Home/Interval/CreateProject";
 import MyPage from "../pages/MyPage/MyPage";
 import Start from "../pages/Start/Start";
-import Timer from "../pages/Start/Component/Timer";
+import Timer from "../pages/Start/Timer/Timer";
 
 interface AppRouterProps {
   isLoggedIn: boolean;

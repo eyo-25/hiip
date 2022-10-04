@@ -103,5 +103,10 @@ export const indexState = atom<any>({
 
 export const intervalState = atom<any>({
   key: "intervalState",
-  default: { min: 1, sec: 0, interval: 4, breakMin: 0, breakSec: 0 },
+  default: { min: 0, sec: 2, interval: 2, breakMin: 0, breakSec: 1 },
+});
+
+export const timeState = atom<any>({
+  key: "timeState",
+  default: { min: 0, sec: 0, interval: 0, breakMin: 0, breakSec: 0 },
 });

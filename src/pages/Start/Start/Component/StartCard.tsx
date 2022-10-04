@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import { IoPlaySharp } from "react-icons/io5";
-import { dbService } from "../../../firebase";
+import { dbService } from "../../../../firebase";
 import { useRecoilState } from "recoil";
-import { indexState, readyState } from "../../../Recoil/atoms";
+import { indexState, readyState } from "../../../../Recoil/atoms";
 import { useMatch } from "react-router-dom";
 import React, { useEffect } from "react";
 

@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import Background from "../../Assets/image/start_background2.png";
-import WeeklyPickerHeader from "./Component/WeeklyPickerHeader";
+import WeeklyPickerHeader from "./Start/Component/WeeklyPickerHeader";
 import { IoPlaySharp } from "react-icons/io5";
-import SummaryBox from "./Component/SummaryBox";
-import StartBoard from "./Component/StartBoard";
+import SummaryBox from "./Start/Component/SummaryBox";
+import StartBoard from "./Start/Component/StartBoard";
 import { useMatch, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { indexState, readyState, toDoState } from "../../Recoil/atoms";
@@ -11,7 +11,7 @@ import { useEffect } from "react";
 import { onSnapshot, query } from "firebase/firestore";
 import { authService, dbService } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import Timer from "./Component/Timer";
+import Timer from "./Timer/Timer";
 
 const Start = () => {
   const [toDos, setToDos] = useRecoilState(toDoState);
