@@ -1,122 +1,78 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
-import { intervalState } from "../../../../Recoil/atoms";
+import {
+  counterState,
+  timeSaveState,
+  timeState,
+} from "../../../../Recoil/atoms";
+import { BreakTimer } from "./BreakCounter";
+import { IntervalCounter } from "./IntervalCounter";
 
-const padNumber = (num: any, length: any) => {
-  return String(num).padStart(length, "0");
+const useCounter = (setMin: any, setSec: any) => {
+  const countRef = useRef<any>(setMin * 60 + setSec);
+  const [count, setCount] = useState(countRef.current);
+  const intervalRef = useRef<any>(null);
+  const start = useCallback(() => {
+    intervalRef.current = setInterval(() => {
+      if (intervalRef.current === null) return;
+      if (0 < countRef.current) {
+        countRef.current -= 1;
+        setCount(countRef.current);
+      } else if (countRef.current < 0) {
+        clearInterval(intervalRef.current);
+      }
+    }, 1000);
+  }, []);
+  const stop = useCallback(() => {
+    if (intervalRef.current === null) return;
+    clearInterval(intervalRef.current);
+  }, []);
+  const reset = useCallback(() => {
+    countRef.current = setMin * 60 + setSec;
+    setCount(countRef.current);
+    clearInterval(intervalRef.current);
+  }, []);
+  const done = useCallback(() => {
+    countRef.current = 0;
+    setCount(countRef.current);
+    clearInterval(intervalRef.current);
+  }, []);
+  return { count, start, stop, reset, done };
 };
 
-const Counter = () => {
-  const [time, setTime] = useRecoilState(intervalState);
-  const [save, setSave] = useState({});
+function Counter() {
   const navigate = useNavigate();
-  // 타이머를 초단위로 변환한 initialTime과 setInterval을 저장할 interval ref
-  // useRef는 값이 변화하더라도 리랜더링을 발생시키지 않아 useEffect를 호출하지 않는다.
-  const initialTime = useRef<any>(time.min * 60 + time.sec);
-  const initialBreakTime = useRef<any>(time.breakMin * 60 + time.breakSec);
-  const interval = useRef<any>(null);
+  const [counterStatus, setCounterStatus] = useRecoilState<any>(counterState);
+  const [time, setTime] = useRecoilState<any>(timeState);
+  const [timeSave, setTimeSave] = useRecoilState<any>(timeSaveState);
 
-  const [intervalSet, setIntervalSet] = useState<number>(time.interval);
-  const [min, setMin] = useState(padNumber(time.min, 2));
-  const [sec, setSec] = useState(padNumber(time.sec, 2));
-  const [breakSet, setBreakSet] = useState<number>(time.interval - 1);
-  const [breakMin, setBreakMin] = useState(padNumber(time.breakMin, 2));
-  const [breakSec, setbBreakSec] = useState(padNumber(time.breakSec, 2));
+  useEffect(() => {
+    setTimeSave(time);
+  }, []);
 
-  const [isStart, setIsStart] = useState(false);
-
-  const onStopClick = () => {
-    if (initialTime.current === 0) return;
-    if (initialBreakTime.current === 0) return;
-    clearInterval(interval.current);
-    setIsStart(false);
-  };
-
-  const onStartClick = () => {
-    setIsStart(true);
-  };
+  console.log(timeSave);
 
   const onBackClick = () => {
-    navigate("/");
+    navigate(`/`);
   };
-  useEffect(() => {
-    if (isStart && intervalSet < breakSet + 1) {
-      interval.current = setInterval(() => {
-        if (breakSet <= 0) return;
-        if (0 < initialBreakTime.current) {
-          initialBreakTime.current -= 1;
-          setbBreakSec(padNumber(initialBreakTime.current % 60, 2));
-          setBreakMin(
-            padNumber(parseInt((initialBreakTime.current / 60) as any), 2)
-          );
-        } else if (0 < intervalSet && initialBreakTime.current === 0) {
-          clearInterval(interval.current);
-          setBreakSet((prev: number) => prev - 1);
-          initialBreakTime.current = time.breakMin * 60 + time.breakSec;
-          setBreakMin(padNumber(time.breakMin, 2));
-          setbBreakSec(padNumber(time.breakSec, 2));
-          setIsStart(false);
-        }
-      }, 1000);
-    }
-    //clean up 함수
-    return () => clearInterval(interval.current);
-  }, [isStart]);
-
-  useEffect(() => {
-    if (intervalSet === 0) {
-      setSec(padNumber(0, 2));
-      setIsStart(false);
-    }
-    if (isStart && breakSet < intervalSet) {
-      interval.current = setInterval(() => {
-        if (intervalSet <= 0) return;
-        if (0 < initialTime.current) {
-          initialTime.current -= 1;
-          setSec(padNumber(initialTime.current % 60, 2));
-          setMin(padNumber(parseInt((initialTime.current / 60) as any), 2));
-        } else if (0 < intervalSet) {
-          clearInterval(interval.current && initialTime.current === 0);
-          setIntervalSet((prev: number) => prev - 1);
-          setMin(padNumber(time.min, 2));
-          setSec(padNumber(time.sec, 2));
-          setIsStart(false);
-          initialTime.current = time.min * 60 + time.sec;
-        }
-      }, 1000);
-    }
-    // clean up 함수
-    return () => clearInterval(interval.current);
-  }, [isStart]);
 
   return (
     <>
-      <div>{intervalSet}SET</div>
-      {intervalSet < breakSet + 1 && 0 < breakSet && <div>Break T</div>}
-      {intervalSet < breakSet + 1 && 0 < breakSet && (
-        <CountText>
-          {breakMin}
-          <span>:</span>
-          {breakSec}
-        </CountText>
-      )}
-      {(breakSet < intervalSet || intervalSet === 0) && (
-        <CountText>
-          {min}
-          <span>:</span>
-          {sec}
-        </CountText>
-      )}
-      <button onClick={onStartClick}>start</button>
-      <button onClick={onStopClick}>stop</button>
+      {!counterStatus && <IntervalCounter useCounter={useCounter} />}
+      {counterStatus && <BreakTimer useCounter={useCounter} />}
       <button onClick={onBackClick}>back</button>
     </>
   );
-};
+}
 
-export default Counter;
+export default React.memo(Counter);
+
+export const CountBox = styled.div`
+  display: flex;
+  align-items: flex-end;
+`;
 
 export const CountText = styled.div`
   display: flex;
@@ -124,4 +80,8 @@ export const CountText = styled.div`
   font-weight: 900;
   font-size: 80px;
   letter-spacing: -3px;
+  &:nth-child(2) {
+    margin-bottom: 8px;
+    font-size: 70px;
+  }
 `;

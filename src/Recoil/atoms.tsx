@@ -101,12 +101,31 @@ export const indexState = atom<any>({
   default: 0,
 });
 
-export const intervalState = atom<any>({
-  key: "intervalState",
-  default: { min: 0, sec: 2, interval: 2, breakMin: 0, breakSec: 1 },
-});
-
 export const timeState = atom<any>({
   key: "timeState",
-  default: { min: 0, sec: 0, interval: 0, breakMin: 0, breakSec: 0 },
+  default: {
+    min: 0,
+    sec: 20,
+    interval: 3,
+    breakSet: 2,
+    breakMin: 0,
+    breakSec: 10,
+  },
+});
+
+export const timeSaveState = atom<any>({
+  key: "timeSaveState",
+  default: {
+    min: 0,
+    sec: 0,
+    interval: 0,
+    breakSet: 0,
+    breakMin: 0,
+    breakSec: 0,
+  },
+});
+
+export const counterState = atom<any>({
+  key: "counterState",
+  default: false,
 });

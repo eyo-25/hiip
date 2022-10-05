@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
-import { intervalState } from "../../../Recoil/atoms";
 import Counter from "./component/Counter";
 
 const Timer = () => {
