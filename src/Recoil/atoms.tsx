@@ -105,11 +105,11 @@ export const timeState = atom<any>({
   key: "timeState",
   default: {
     min: 0,
-    sec: 20,
-    interval: 3,
-    breakSet: 2,
+    sec: 0,
+    interval: 0,
+    breakSet: 0,
     breakMin: 0,
-    breakSec: 10,
+    breakSec: 0,
   },
 });
 

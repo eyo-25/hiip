@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import {
@@ -6,7 +6,6 @@ import {
   timeSaveState,
   timeState,
 } from "../../../../Recoil/atoms";
-import { useClickOnce } from "../../../../Utils/clickOnce";
 
 export function IntervalCounter({ useCounter }: any) {
   const [counterStatus, setCounterStatus] = useRecoilState<any>(counterState);

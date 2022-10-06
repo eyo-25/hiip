@@ -103,10 +103,21 @@ const ProjectInput = ({ userObj }: IUserObjProps) => {
         intervalSet: count,
         creatorId: uid,
         repeat: 1,
-        creatorAt: Date.now(),
+        // creatorAt: Date.now(),
         index: indexCount,
       };
-      await dbService.collection("plan").add(newObj);
+      const timerObj = {
+        interval: 2,
+        min: 0,
+        sec: 10,
+        breakMin: 0,
+        breakSec: 5,
+        breakSet: 1,
+      };
+      await (await dbService.collection("plan").add(newObj))
+        .collection("timer")
+        .doc("time")
+        .set(timerObj);
 
       const indexCountObj = {
         index: indexCount + 1,

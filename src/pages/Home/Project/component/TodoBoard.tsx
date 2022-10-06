@@ -40,7 +40,7 @@ const TodoBoard = () => {
                 <Area ref={provided.innerRef} {...provided.droppableProps}>
                   {toDos?.map((toDo, index) => (
                     <CardBox
-                      key={toDo.creatorAt}
+                      key={toDo.id}
                       dateNow={
                         Moment(toDo.startDate).format("YYYY-MM-DD") <=
                           clickDate &&

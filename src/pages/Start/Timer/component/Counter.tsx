@@ -1,9 +1,12 @@
+import { query } from "firebase/firestore";
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
+import { dbService } from "../../../../firebase";
 import {
   counterState,
+  readyState,
   timeSaveState,
   timeState,
 } from "../../../../Recoil/atoms";
@@ -12,7 +15,7 @@ import { IntervalCounter } from "./IntervalCounter";
 
 const useCounter = (setMin: any, setSec: any) => {
   const countRef = useRef<any>(setMin * 60 + setSec);
-  const [count, setCount] = useState(countRef.current);
+  const [count, setCount] = useState(setMin * 60 + setSec);
   const intervalRef = useRef<any>(null);
   const start = useCallback(() => {
     intervalRef.current = setInterval(() => {
@@ -44,15 +47,24 @@ const useCounter = (setMin: any, setSec: any) => {
 
 function Counter() {
   const navigate = useNavigate();
+  const [readyToDo, setReadyToDo] = useRecoilState(readyState);
   const [counterStatus, setCounterStatus] = useRecoilState<any>(counterState);
   const [time, setTime] = useRecoilState<any>(timeState);
   const [timeSave, setTimeSave] = useRecoilState<any>(timeSaveState);
 
   useEffect(() => {
-    setTimeSave(time);
+    dbService
+      .collection("plan")
+      .doc(`${readyToDo}`)
+      .collection("timer")
+      .doc("time")
+      .get()
+      .then((result: any) => {
+        setTime(result.data());
+      });
   }, []);
 
-  console.log(timeSave);
+  // console.log(time);
 
   const onBackClick = () => {
     navigate(`/`);

@@ -22,7 +22,7 @@ export interface ITodo {
   id: any;
 }
 
-const Home = ({ userObj }: IUserObjProps) => {
+const Home = () => {
   const [toDos, setToDos] = useRecoilState(toDoState);
   const navigate = useNavigate();
   const onCreatePlanClick = () => {

@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { IoPlaySharp } from "react-icons/io5";
 import { dbService } from "../../../../firebase";
 import { useRecoilState } from "recoil";
-import { indexState, readyState } from "../../../../Recoil/atoms";
+import { indexState, readyState, timeState } from "../../../../Recoil/atoms";
 import { useMatch } from "react-router-dom";
 import React, { useEffect } from "react";
 
@@ -19,10 +19,10 @@ const StartCard = ({
   planTarget,
   interval,
   toDoId,
-  toDoObj,
 }: IDragabbleCardProps) => {
   const [readyToDo, setReadyToDo] = useRecoilState(readyState);
   const [indexCount, setIndexCount] = useRecoilState(indexState);
+  const [time, setTime] = useRecoilState<any>(timeState);
 
   useEffect(() => {
     const uid = JSON.parse(localStorage.getItem("user") as any).uid;
@@ -70,6 +70,17 @@ const StartCard = ({
       await dbService.collection("indexcount").doc(uid).update(indexCountObj);
       setReadyToDo(toDoId);
       setIndexCount(indexCount + 1);
+
+      await dbService
+        .collection("plan")
+        .doc(`${readyToDo}`)
+        .collection("timer")
+        .doc("time")
+        .get()
+        .then((result: any) => {
+          setTime(result.data());
+          console.log(result.data());
+        });
     }
   };
 

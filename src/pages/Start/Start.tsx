@@ -6,15 +6,16 @@ import SummaryBox from "./Start/Component/SummaryBox";
 import StartBoard from "./Start/Component/StartBoard";
 import { useMatch, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import { indexState, readyState, toDoState } from "../../Recoil/atoms";
-import { useEffect } from "react";
+import { readyState, timeState, toDoState } from "../../Recoil/atoms";
+import React, { useEffect } from "react";
 import { onSnapshot, query } from "firebase/firestore";
 import { authService, dbService } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import Timer from "./Timer/Timer";
 
 const Start = () => {
   const [toDos, setToDos] = useRecoilState(toDoState);
+  const [readyToDo, setReadyToDo] = useRecoilState(readyState);
+  const [time, setTime] = useRecoilState<any>(timeState);
   const navigate = useNavigate();
   const readyMatch = useMatch("/start/ready");
 
@@ -54,6 +55,15 @@ const Start = () => {
       navigate("/timer");
     } else {
       navigate("/start/ready");
+      dbService
+        .collection("plan")
+        .doc(`${readyToDo}`)
+        .collection("timer")
+        .doc("time")
+        .get()
+        .then((result: any) => {
+          setTime(result.data());
+        });
     }
   };
   const onBackClick = () => {
@@ -142,4 +152,4 @@ const PlayBtn = styled(IoPlaySharp)`
   height: 40px;
 `;
 
-export default Start;
+export default React.memo(Start);
