@@ -6,7 +6,12 @@ import SummaryBox from "./Start/Component/SummaryBox";
 import StartBoard from "./Start/Component/StartBoard";
 import { useMatch, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import { readyState, timeState, toDoState } from "../../Recoil/atoms";
+import {
+  readyState,
+  timeSaveState,
+  timeState,
+  toDoState,
+} from "../../Recoil/atoms";
 import React, { useEffect } from "react";
 import { onSnapshot, query } from "firebase/firestore";
 import { authService, dbService } from "../../firebase";
@@ -16,11 +21,12 @@ const Start = () => {
   const [toDos, setToDos] = useRecoilState(toDoState);
   const [readyToDo, setReadyToDo] = useRecoilState(readyState);
   const [time, setTime] = useRecoilState<any>(timeState);
+  const [timeSave, setTimeSave] = useRecoilState<any>(timeSaveState);
   const navigate = useNavigate();
   const readyMatch = useMatch("/start/ready");
+  const uid = JSON.parse(localStorage.getItem("user") as any).uid;
 
   useEffect(() => {
-    const uid = JSON.parse(localStorage.getItem("user") as any).uid;
     const q = query(
       dbService
         .collection("plan")
@@ -50,20 +56,54 @@ const Start = () => {
     });
   }, []);
 
+  console.log(timeSave);
+
   const onPlayClick = () => {
+    dbService
+      .collection("plan")
+      .doc(`${readyToDo.readyId}`)
+      .collection("timer")
+      .doc("time")
+      .get()
+      .then((result: any) => {
+        setTimeSave(result.data());
+      });
     if (readyMatch) {
-      navigate("/timer");
+      if (readyToDo.status === "ready") {
+        dbService
+          .collection("plan")
+          .doc(`${readyToDo.readyId}`)
+          .collection("timer")
+          .doc("time")
+          .get()
+          .then((result: any) => {
+            setTime(result.data());
+            setReadyToDo((data: any) => {
+              return { ...data, status: "start" };
+            });
+            navigate("/timer");
+          });
+        dbService
+          .collection("plan")
+          .doc(`${readyToDo.readyId}`)
+          .update({ status: "start" });
+        dbService.collection("ready").doc(uid).update({ status: "start" });
+      } else {
+        dbService
+          .collection("time")
+          .doc(`${readyToDo.readyId}`)
+          .get()
+          .then((result: any) => {
+            setTime(result.data());
+            navigate("/timer");
+          });
+      }
     } else {
-      navigate("/start/ready");
-      dbService
-        .collection("plan")
-        .doc(`${readyToDo}`)
-        .collection("timer")
-        .doc("time")
-        .get()
-        .then((result: any) => {
-          setTime(result.data());
-        });
+      if (0 < toDos.length) {
+        navigate("/start/ready");
+      } else {
+        navigate("/plan");
+      }
     }
   };
   const onBackClick = () => {

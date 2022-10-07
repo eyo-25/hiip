@@ -53,6 +53,7 @@ const TodoBoard = () => {
                         planTarget={toDo.planTarget}
                         interval={toDo.intervalSet}
                         index={index}
+                        status={toDo.status}
                       />
                     </CardBox>
                   ))}

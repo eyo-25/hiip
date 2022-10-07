@@ -1,16 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
+import { dbService } from "../../../../firebase";
 import {
   counterState,
+  readyState,
   timeSaveState,
   timeState,
 } from "../../../../Recoil/atoms";
 
 export function IntervalCounter({ useCounter }: any) {
+  const [readyToDo, setReadyToDo] = useRecoilState(readyState);
+  const [timeSave, setTimeSave] = useRecoilState<any>(timeSaveState);
   const [counterStatus, setCounterStatus] = useRecoilState<any>(counterState);
   const [time, setTime] = useRecoilState<any>(timeState);
-  const [timeSave, setTimeSave] = useRecoilState<any>(timeSaveState);
   const [intervalSet, setIntervalSet] = useState(time.interval);
   const { count, start, stop, reset, done } = useCounter(time.min, time.sec);
   const [minutes, setMinutes] = useState(0);
@@ -23,24 +26,36 @@ export function IntervalCounter({ useCounter }: any) {
     if (intervalSet <= 1 && count <= 0) {
       done();
       setIntervalSet(0);
-      setTimeSave({ ...timeSave, interval: 0, min: 0, sec: 0 });
-    } else {
-      setTimeSave({ ...timeSave, min: minutes, sec: secounds });
+      dbService.collection("time").doc(`${readyToDo.readyId}`).update({
+        interval: 0,
+        min: 0,
+        sec: 0,
+      });
+    } else if (secounds !== 0) {
+      dbService.collection("time").doc(`${readyToDo.readyId}`).update({
+        min: minutes,
+        sec: secounds,
+      });
     }
-    setTimeout(() => {
-      if (count <= 0 && 1 < intervalSet) {
-        reset();
-        setIntervalSet((prev: number) => prev - 1);
-        setCounterStatus((prev: boolean) => !prev);
-        setTime({ ...time, interval: time.interval - 1 });
-        setTimeSave({
-          ...timeSave,
-          interval: timeSave.interval - 1,
-          min: 0,
-          sec: 0,
+    if (count <= 0 && 1 < intervalSet) {
+      reset();
+      setIntervalSet((prev: number) => prev - 1);
+      setCounterStatus((prev: boolean) => !prev);
+      setTime({
+        ...time,
+        interval: time.interval - 1,
+        min: timeSave.min,
+        sec: timeSave.sec,
+      });
+      dbService
+        .collection("time")
+        .doc(`${readyToDo.readyId}`)
+        .update({
+          interval: time.interval - 1,
+          min: timeSave.min,
+          sec: timeSave.sec,
         });
-      }
-    }, 1000);
+    }
   };
 
   useEffect(timer, [count]);

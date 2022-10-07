@@ -11,6 +11,7 @@ export interface ITodo {
   creatorAt?: any;
   repeat: any;
   id: any;
+  status: string;
 }
 
 export const toDoState = atom<ITodo[]>({
@@ -93,7 +94,10 @@ export const clickState = atom<any>({
 
 export const readyState = atom<any>({
   key: "readyState",
-  default: "",
+  default: {
+    readyId: "",
+    status: false,
+  },
 });
 
 export const indexState = atom<any>({

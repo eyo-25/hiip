@@ -15,6 +15,7 @@ interface IDragabbleCardProps {
   index: number;
   toDoId: any;
   interval: number;
+  status: string;
 }
 
 function DragabbleCard({
@@ -23,6 +24,7 @@ function DragabbleCard({
   interval,
   toDoId,
   index,
+  status,
 }: IDragabbleCardProps) {
   const navigate = useNavigate();
   const editMatch = useMatch("/plan/edit/:todoId");
@@ -31,6 +33,7 @@ function DragabbleCard({
   const [readyToDo, setReadyToDo] = useRecoilState(readyState);
   const [indexCount, setIndexCount] = useRecoilState(indexState);
   const uid = JSON.parse(localStorage.getItem("user") as any).uid;
+
   const indexCountObj = {
     index: indexCount + 1,
   };
@@ -45,27 +48,35 @@ function DragabbleCard({
   };
   const onStartClick = async () => {
     navigate("/");
-    if (readyToDo !== toDoId) {
-      const readyObj = { readyId: toDoId };
+    if (readyToDo.readyId !== toDoId) {
+      const readyObj = { readyId: toDoId, status: status };
       await dbService.collection("plan").doc(toDoId).update(editObj);
       await dbService.collection("ready").doc(uid).set(readyObj);
-      await dbService.collection("plan").doc(readyToDo).update(indexCountObj);
-      setReadyToDo(toDoId);
+      await dbService
+        .collection("plan")
+        .doc(readyToDo.readyId)
+        .update(indexCountObj);
+      setReadyToDo(readyObj);
     }
   };
   const onDelete = async () => {
     const ok = window.confirm("플랜을 삭제 하시겠습니까?");
     if (ok) {
       await dbService.doc(`plan/${toDoId}`).delete();
-      if (1 <= toDos.length && readyToDo === toDoId) {
-        const readyObj = { readyId: toDos[1].id };
+      await dbService
+        .doc(`plan/${toDoId}`)
+        .collection("timer")
+        .doc("time")
+        .delete();
+      if (1 <= toDos.length && readyToDo.readyId === toDoId) {
+        const readyObj = { readyId: toDos[1].id, status: toDos[1].status };
         await dbService.collection("plan").doc(toDos[1].id).update(editObj);
         await dbService.collection("ready").doc(uid).set(readyObj);
         await dbService
           .collection("plan")
           .doc(toDos[1].id)
           .update(indexCountObj);
-        setReadyToDo(toDos[1].id);
+        setReadyToDo(readyObj);
       }
     }
   };

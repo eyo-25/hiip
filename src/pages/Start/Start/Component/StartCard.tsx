@@ -12,6 +12,7 @@ interface IDragabbleCardProps {
   interval: number;
   toDoId: any;
   toDoObj: any;
+  status: any;
 }
 
 const StartCard = ({
@@ -19,6 +20,7 @@ const StartCard = ({
   planTarget,
   interval,
   toDoId,
+  status,
 }: IDragabbleCardProps) => {
   const [readyToDo, setReadyToDo] = useRecoilState(readyState);
   const [indexCount, setIndexCount] = useRecoilState(indexState);
@@ -42,7 +44,10 @@ const StartCard = ({
       .doc(`${uid}`)
       .get()
       .then((result: any) => {
-        setReadyToDo(result.data().readyId);
+        setReadyToDo({
+          readyId: result.data().readyId,
+          status: result.data().status,
+        });
       });
   }, []);
 
@@ -52,9 +57,9 @@ const StartCard = ({
     intervalArray[index] = index;
   }
   const onCardClick = async (toDoId: string) => {
-    if (readyMatch !== null && readyToDo !== toDoId) {
+    if (readyMatch !== null && readyToDo.readyId !== toDoId) {
       const uid = JSON.parse(localStorage.getItem("user") as any).uid;
-      const readyObj = { readyId: toDoId };
+      const readyObj = { readyId: toDoId, status: status };
       const editObj = {
         index: 999999999,
       };
@@ -65,29 +70,21 @@ const StartCard = ({
         index: indexCount + 1,
       };
       await dbService.collection("ready").doc(uid).set(readyObj);
-      await dbService.collection("plan").doc(readyToDo).update(returnObj);
-      await dbService.collection("plan").doc(toDoId).update(editObj);
-      await dbService.collection("indexcount").doc(uid).update(indexCountObj);
-      setReadyToDo(toDoId);
-      setIndexCount(indexCount + 1);
-
       await dbService
         .collection("plan")
-        .doc(`${readyToDo}`)
-        .collection("timer")
-        .doc("time")
-        .get()
-        .then((result: any) => {
-          setTime(result.data());
-          console.log(result.data());
-        });
+        .doc(readyToDo.readyId)
+        .update(returnObj);
+      await dbService.collection("plan").doc(toDoId).update(editObj);
+      await dbService.collection("indexcount").doc(uid).update(indexCountObj);
+      setReadyToDo(readyObj);
+      setIndexCount(indexCount + 1);
     }
   };
 
   return (
     <>
       <DragBox
-        isReadyCard={readyToDo === toDoId}
+        isReadyCard={readyToDo.readyId === toDoId}
         onClick={() => onCardClick(toDoId + "")}
       >
         <TextBox>
@@ -101,7 +98,10 @@ const StartCard = ({
         </IntervalBox>
         <IntervalBarBox>
           {intervalArray.map((index) => (
-            <IntervalBar isReadyCard={readyToDo === toDoId} key={index} />
+            <IntervalBar
+              isReadyCard={readyToDo.readyId === toDoId}
+              key={index}
+            />
           ))}
         </IntervalBarBox>
       </DragBox>

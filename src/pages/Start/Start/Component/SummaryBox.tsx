@@ -16,7 +16,7 @@ const Summary = () => {
       navigate("/");
     }
   };
-  const readyObj = toDos.find((todo) => todo.id === readyToDo);
+  const readyObj = toDos.find((todo) => todo.id === readyToDo.readyId);
 
   let dDay = 0;
   if (1 <= toDos.length && readyObj) {

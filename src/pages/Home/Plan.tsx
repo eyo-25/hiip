@@ -62,7 +62,7 @@ const Home = () => {
   useEffect(() => {
     if (toDos.length === 1) {
       const uid = JSON.parse(localStorage.getItem("user") as any).uid;
-      const readyObj = { readyId: toDos[0].id };
+      const readyObj = { readyId: toDos[0].id, status: toDos[0].status };
       const editObj = {
         index: 999999999,
       };

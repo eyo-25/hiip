@@ -53,18 +53,19 @@ function Counter() {
   const [timeSave, setTimeSave] = useRecoilState<any>(timeSaveState);
 
   useEffect(() => {
-    dbService
-      .collection("plan")
-      .doc(`${readyToDo}`)
-      .collection("timer")
-      .doc("time")
-      .get()
-      .then((result: any) => {
-        setTime(result.data());
-      });
-  }, []);
+    if (time.interval === time.breakset && 0 < time.breakset) {
+      setCounterStatus(false);
+    }
 
-  // console.log(time);
+    dbService.collection("time").doc(`${readyToDo.readyId}`).set({
+      min: time.min,
+      sec: time.sec,
+      interval: time.interval,
+      breakSet: time.breakSet,
+      breakMin: time.breakMin,
+      breakSec: time.breakSec,
+    });
+  }, []);
 
   const onBackClick = () => {
     navigate(`/`);

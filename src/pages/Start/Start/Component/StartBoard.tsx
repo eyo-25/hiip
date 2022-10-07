@@ -18,6 +18,7 @@ const StartBoard = () => {
             toDoId={toDo.id}
             interval={toDo.intervalSet}
             toDoObj={toDo}
+            status={toDo.status}
           />
         ))}
       </Container>

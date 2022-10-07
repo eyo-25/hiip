@@ -103,7 +103,7 @@ const ProjectInput = ({ userObj }: IUserObjProps) => {
         intervalSet: count,
         creatorId: uid,
         repeat: 1,
-        // creatorAt: Date.now(),
+        status: "ready",
         index: indexCount,
       };
       const timerObj = {
