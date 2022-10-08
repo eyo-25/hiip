@@ -107,12 +107,16 @@ const ProjectInput = ({ userObj }: IUserObjProps) => {
         index: indexCount,
       };
       const timerObj = {
-        interval: 2,
+        intervalSet: 2,
+        breakSet: 1,
+        setMin: 0,
+        setSec: 10,
+        setBreakMin: 0,
+        setBreakSec: 5,
         min: 0,
         sec: 10,
         breakMin: 0,
         breakSec: 5,
-        breakSet: 1,
       };
       await (await dbService.collection("plan").add(newObj))
         .collection("timer")

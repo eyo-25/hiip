@@ -24,7 +24,6 @@ const StartCard = ({
 }: IDragabbleCardProps) => {
   const [readyToDo, setReadyToDo] = useRecoilState(readyState);
   const [indexCount, setIndexCount] = useRecoilState(indexState);
-  const [time, setTime] = useRecoilState<any>(timeState);
 
   useEffect(() => {
     const uid = JSON.parse(localStorage.getItem("user") as any).uid;

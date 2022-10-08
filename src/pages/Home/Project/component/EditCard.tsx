@@ -9,6 +9,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   endDateState,
   startDateState,
+  timeState,
   toDoState,
 } from "../../../../Recoil/atoms";
 import { dbService } from "../../../../firebase";
@@ -21,6 +22,7 @@ const EditCard = () => {
   const [endDate, setEndDate] = useRecoilState(endDateState);
   const [planTitle, setPlanTitle] = useState<string>();
   const [planTarget, setPlanTarget] = useState<string>();
+  const [time, setTime] = useRecoilState<any>(timeState);
   const [count, setCount] = useState(1);
   useEffect(() => {
     if (params.todoId && toDos) {
@@ -32,6 +34,27 @@ const EditCard = () => {
       setPlanTitle(editTodo?.planTitle);
       setPlanTarget(editTodo?.planTarget);
       setCount(editTodo?.intervalSet);
+
+      dbService
+        .collection("plan")
+        .doc(`${params.todoId}`)
+        .collection("timer")
+        .doc("time")
+        .get()
+        .then((result: any) => {
+          setTime({
+            min: result.data().setMin,
+            sec: result.data().setSec,
+            intervalSet: result.data().intervalSet,
+            breakSet: result.data().breakSet,
+            breakMin: result.data().setBreakMin,
+            breakSec: result.data().setBreakSec,
+            setMin: result.data().setMin,
+            setSec: result.data().setSec,
+            setBreakMin: result.data().setBreakMin,
+            setBreakSec: result.data().setBreakSec,
+          });
+        });
     } else {
       navigate("/plan");
     }
@@ -90,6 +113,19 @@ const EditCard = () => {
       setStartDate(null);
       setEndDate(null);
       navigate("/plan");
+      await dbService
+        .collection("plan")
+        .doc(`${params.todoId}`)
+        .collection("timer")
+        .doc("time")
+        .update({
+          intervalSet: count,
+          breakSet: count - 1,
+          min: time.setMin,
+          sec: time.setSec,
+          breakMin: time.setBreakMin,
+          breakSec: time.setBreakSec,
+        });
     }
   };
   return (

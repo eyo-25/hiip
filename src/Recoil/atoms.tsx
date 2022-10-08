@@ -110,22 +110,14 @@ export const timeState = atom<any>({
   default: {
     min: 0,
     sec: 0,
-    interval: 0,
+    intervalSet: 0,
     breakSet: 0,
     breakMin: 0,
     breakSec: 0,
-  },
-});
-
-export const timeSaveState = atom<any>({
-  key: "timeSaveState",
-  default: {
-    min: 0,
-    sec: 0,
-    interval: 0,
-    breakSet: 0,
-    breakMin: 0,
-    breakSec: 0,
+    setMin: 0,
+    setSec: 0,
+    setBreakMin: 0,
+    setBreakSec: 0,
   },
 });
 

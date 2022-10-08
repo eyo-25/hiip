@@ -6,22 +6,17 @@ import SummaryBox from "./Start/Component/SummaryBox";
 import StartBoard from "./Start/Component/StartBoard";
 import { useMatch, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import {
-  readyState,
-  timeSaveState,
-  timeState,
-  toDoState,
-} from "../../Recoil/atoms";
+import { readyState, timeState, toDoState } from "../../Recoil/atoms";
 import React, { useEffect } from "react";
 import { onSnapshot, query } from "firebase/firestore";
 import { authService, dbService } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { ReactComponent as PlusIcon } from "../../Assets/Icons/plus.svg";
 
 const Start = () => {
   const [toDos, setToDos] = useRecoilState(toDoState);
   const [readyToDo, setReadyToDo] = useRecoilState(readyState);
   const [time, setTime] = useRecoilState<any>(timeState);
-  const [timeSave, setTimeSave] = useRecoilState<any>(timeSaveState);
   const navigate = useNavigate();
   const readyMatch = useMatch("/start/ready");
   const uid = JSON.parse(localStorage.getItem("user") as any).uid;
@@ -56,18 +51,7 @@ const Start = () => {
     });
   }, []);
 
-  console.log(timeSave);
-
   const onPlayClick = () => {
-    dbService
-      .collection("plan")
-      .doc(`${readyToDo.readyId}`)
-      .collection("timer")
-      .doc("time")
-      .get()
-      .then((result: any) => {
-        setTimeSave(result.data());
-      });
     if (readyMatch) {
       if (readyToDo.status === "ready") {
         dbService
@@ -77,9 +61,17 @@ const Start = () => {
           .doc("time")
           .get()
           .then((result: any) => {
-            setTime(result.data());
-            setReadyToDo((data: any) => {
-              return { ...data, status: "start" };
+            setTime({
+              min: result.data().setMin,
+              sec: result.data().setSec,
+              intervalSet: result.data().intervalSet,
+              breakSet: result.data().breakSet,
+              setMin: result.data().setMin,
+              setSec: result.data().setSec,
+              breakMin: result.data().setBreakMin,
+              breakSec: result.data().setBreakSec,
+              setBreakMin: result.data().setBreakMin,
+              setBreakSec: result.data().setBreakSec,
             });
             navigate("/timer");
           });
@@ -90,11 +82,24 @@ const Start = () => {
         dbService.collection("ready").doc(uid).update({ status: "start" });
       } else {
         dbService
-          .collection("time")
+          .collection("plan")
           .doc(`${readyToDo.readyId}`)
+          .collection("timer")
+          .doc("time")
           .get()
           .then((result: any) => {
-            setTime(result.data());
+            setTime({
+              intervalSet: result.data().intervalSet,
+              breakSet: result.data().breakSet,
+              min: result.data().min,
+              sec: result.data().sec,
+              breakMin: result.data().breakMin,
+              breakSec: result.data().breakSec,
+              setMin: result.data().setMin,
+              setSec: result.data().setSec,
+              setBreakMin: result.data().setBreakMin,
+              setBreakSec: result.data().setBreakSec,
+            });
             navigate("/timer");
           });
       }
@@ -123,7 +128,7 @@ const Start = () => {
         <StartBoard />
       </Container>
       <PlayBtnBox onClick={onPlayClick}>
-        <PlayBtn />
+        {toDos.length <= 0 ? <PlusBtn /> : <PlayBtn />}
       </PlayBtnBox>
     </Wrapper>
   );
@@ -190,6 +195,12 @@ const PlayBtn = styled(IoPlaySharp)`
   padding-left: 4px;
   width: 40px;
   height: 40px;
+`;
+
+const PlusBtn = styled(PlusIcon)`
+  color: white;
+  width: 30px;
+  height: 30px;
 `;
 
 export default React.memo(Start);

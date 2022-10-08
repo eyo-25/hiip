@@ -4,12 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { dbService } from "../../../../firebase";
-import {
-  counterState,
-  readyState,
-  timeSaveState,
-  timeState,
-} from "../../../../Recoil/atoms";
+import { counterState, readyState, timeState } from "../../../../Recoil/atoms";
 import { BreakTimer } from "./BreakCounter";
 import { IntervalCounter } from "./IntervalCounter";
 
@@ -50,21 +45,11 @@ function Counter() {
   const [readyToDo, setReadyToDo] = useRecoilState(readyState);
   const [counterStatus, setCounterStatus] = useRecoilState<any>(counterState);
   const [time, setTime] = useRecoilState<any>(timeState);
-  const [timeSave, setTimeSave] = useRecoilState<any>(timeSaveState);
 
   useEffect(() => {
-    if (time.interval === time.breakset && 0 < time.breakset) {
-      setCounterStatus(false);
-    }
-
-    dbService.collection("time").doc(`${readyToDo.readyId}`).set({
-      min: time.min,
-      sec: time.sec,
-      interval: time.interval,
-      breakSet: time.breakSet,
-      breakMin: time.breakMin,
-      breakSec: time.breakSec,
-    });
+    setCounterStatus(
+      time.intervalSet === time.breakSet && 0 < time.breakSet ? true : false
+    );
   }, []);
 
   const onBackClick = () => {
