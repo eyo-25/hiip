@@ -12,7 +12,6 @@ import {
   indexState,
   nowDateState,
   startChange,
-  toDoState,
 } from "../../../../Recoil/atoms";
 import { dbService } from "../../../../firebase";
 import { IUserObjProps } from "../../../../Utils/interface";

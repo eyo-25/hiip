@@ -90,16 +90,46 @@ const Start = () => {
           .then((result: any) => {
             setTime({
               intervalSet: result.data().intervalSet,
-              breakSet: result.data().breakSet,
+              breakSet:
+                result.data().intervalSet === result.data().breakSet
+                  ? result.data().breakSet - 1 === 0
+                    ? 0
+                    : result.data().breakSet - 1
+                  : result.data().breakSet,
               min: result.data().min,
               sec: result.data().sec,
-              breakMin: result.data().breakMin,
-              breakSec: result.data().breakSec,
+              breakMin:
+                result.data().breakSet - 1 === 0 ? 0 : result.data().breakMin,
+              breakSec:
+                result.data().breakSet - 1 === 0 ? 0 : result.data().breakSec,
               setMin: result.data().setMin,
               setSec: result.data().setSec,
               setBreakMin: result.data().setBreakMin,
               setBreakSec: result.data().setBreakSec,
             });
+            if (result.data().intervalSet === result.data().breakSet) {
+              dbService
+                .collection("plan")
+                .doc(`${readyToDo.readyId}`)
+                .collection("timer")
+                .doc("time")
+                .update({
+                  breakSet: result.data().intervalSet - 1,
+                  breakMin:
+                    result.data().breakSet - 1 === 0
+                      ? 0
+                      : result.data().breakMin,
+                  breakSec:
+                    result.data().breakSet - 1 === 0
+                      ? 0
+                      : result.data().breakSec,
+                })
+                .then(() => {
+                  navigate("/timer");
+                });
+            } else {
+              navigate("/timer");
+            }
             navigate("/timer");
           });
       }
@@ -173,18 +203,17 @@ const BackgroundImg = styled.div<{ isReady: boolean }>`
 `;
 
 const PlayBtnBox = styled.button`
-  position: absolute;
+  position: fixed;
   left: 0;
   right: 0;
+  bottom: 140px;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 78px;
   width: 78px;
-  border-radius: 40px;
+  border-radius: 50%;
   border: none;
-  position: fixed;
-  bottom: 140px;
   margin: 0 auto;
   background-color: black;
   cursor: pointer;
@@ -193,8 +222,8 @@ const PlayBtnBox = styled.button`
 const PlayBtn = styled(IoPlaySharp)`
   color: white;
   padding-left: 4px;
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
 `;
 
 const PlusBtn = styled(PlusIcon)`
