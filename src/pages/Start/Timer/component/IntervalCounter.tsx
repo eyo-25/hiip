@@ -7,7 +7,7 @@ import { counterState, readyState, timeState } from "../../../../Recoil/atoms";
 import { ReactComponent as PauseIcon } from "../../../../Assets/Icons/pause.svg";
 import { useNavigate } from "react-router-dom";
 
-export function IntervalCounter({ useCounter }: any) {
+function IntervalCounter({ useCounter }: any) {
   const navigate = useNavigate();
   const [readyToDo, setReadyToDo] = useRecoilState(readyState);
   const [counterStatus, setCounterStatus] = useRecoilState<any>(counterState);
@@ -19,8 +19,10 @@ export function IntervalCounter({ useCounter }: any) {
   const [isDone, setIsDone] = useState(false);
 
   const timer = () => {
-    setMinutes(Math.floor(count / 60));
-    setSecounds(count - Math.floor(count / 60) * 60);
+    if (intervalSet !== 0) {
+      setMinutes(Math.floor(count / 60));
+      setSecounds(count - Math.floor(count / 60) * 60);
+    }
     if (intervalSet <= 1 && count <= 0) {
       done();
       setIntervalSet(0);
@@ -31,11 +33,31 @@ export function IntervalCounter({ useCounter }: any) {
         .doc("time")
         .update({
           intervalSet: 0,
-          min: 0,
-          sec: 0,
-          breakMin: 0,
-          breakSec: 0,
           breakSet: 0,
+          // min: 0,
+          // sec: 0,
+          // breakMin: 0,
+          // breakSec: 0,
+          min: time.setMin,
+          sec: time.setSec,
+          breakMin: time.setBreakMin,
+          breakSec: time.setBreakSec,
+        })
+        .then(() => {
+          setTime({
+            ...time,
+            intervalSet: 0,
+            breakSet: 0,
+            // min: 0,
+            // sec: 0,
+            // breakMin: 0,
+            // breakSec: 0,
+            // breakSet: 0,
+            min: time.setMin,
+            sec: time.setSec,
+            breakMin: time.setBreakMin,
+            breakSec: time.setBreakSec,
+          });
         });
     } else if (secounds !== 0) {
       dbService
@@ -46,6 +68,15 @@ export function IntervalCounter({ useCounter }: any) {
         .update({
           min: minutes,
           sec: secounds - 1,
+        })
+        .then(() => {
+          setTime({
+            ...time,
+            min: minutes,
+            sec: secounds - 1,
+            breakMin: time.setBreakMin,
+            breakSec: time.setBreakSec,
+          });
         });
     }
     if (count <= 0 && 1 < intervalSet) {
@@ -102,13 +133,11 @@ export function IntervalCounter({ useCounter }: any) {
 
   return (
     <Container>
-      <h1>interval time</h1>
       <CountBox>
         <CountText>{minutes < 10 ? `0${minutes}` : minutes}</CountText>
         <CountText>:</CountText>
         <CountText>{secounds < 10 ? `0${secounds}` : secounds}</CountText>
       </CountBox>
-      <h1>{intervalSet}Set</h1>
       {isDone ? (
         <BtnContainer>
           <PlayBtnBox isWhite={false} onClick={onStopClick}>
@@ -129,8 +158,11 @@ export function IntervalCounter({ useCounter }: any) {
   );
 }
 
+export default React.memo(IntervalCounter);
+
 const Container = styled.div`
   position: relative;
+  align-items: center;
   top: 0;
   width: 100%;
   height: 100%;
@@ -152,6 +184,8 @@ const CountText = styled.div`
   &:nth-child(2) {
     margin-bottom: 8px;
     font-size: 70px;
+    padding-left: 7px;
+    padding-right: 5px;
   }
 `;
 

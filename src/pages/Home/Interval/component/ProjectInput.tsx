@@ -106,6 +106,8 @@ const ProjectInput = ({ userObj }: IUserObjProps) => {
         index: indexCount,
       };
       const timerObj = {
+        setIntervalSet: 2,
+        setBreakSet: 1,
         intervalSet: 2,
         breakSet: 1,
         setMin: 0,

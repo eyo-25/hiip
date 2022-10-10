@@ -43,6 +43,8 @@ const EditCard = () => {
         .get()
         .then((result: any) => {
           setTime({
+            setIntervalSet: result.data().intervalSet,
+            setBreakSet: result.data().breakSet,
             min: result.data().setMin,
             sec: result.data().setSec,
             intervalSet: result.data().intervalSet,
@@ -119,6 +121,8 @@ const EditCard = () => {
         .collection("timer")
         .doc("time")
         .update({
+          setIntervalSet: count,
+          setBreakSet: count - 1,
           intervalSet: count,
           breakSet: count - 1,
           min: time.setMin,

@@ -7,7 +7,7 @@ import { dbService } from "../../../../firebase";
 import { ReactComponent as PauseIcon } from "../../../../Assets/Icons/pause.svg";
 import { counterState, readyState, timeState } from "../../../../Recoil/atoms";
 
-export function BreakTimer({ useCounter }: any) {
+function BreakCounter({ useCounter }: any) {
   const navigate = useNavigate();
   const [readyToDo, setReadyToDo] = useRecoilState(readyState);
   const [counterStatus, setCounterStatus] = useRecoilState<any>(counterState);
@@ -20,8 +20,6 @@ export function BreakTimer({ useCounter }: any) {
     time.breakMin,
     time.breakSec
   );
-
-  console.log(time);
 
   const timer = () => {
     setMinutes(Math.floor(count / 60));
@@ -37,8 +35,20 @@ export function BreakTimer({ useCounter }: any) {
         .doc("time")
         .update({
           breakSet: 0,
-          breakMin: 0,
-          breakSec: 0,
+          // breakMin: 0,
+          // breakSec: 0,
+          breakMin: time.setBreakMin,
+          breakSec: time.setBreakSec,
+        })
+        .then(() => {
+          setTime({
+            ...time,
+            breakSet: 0,
+            // breakMin: 0,
+            // breakSec: 0,
+            breakMin: time.setBreakMin,
+            breakSec: time.setBreakSec,
+          });
         });
     } else if (secounds !== 0) {
       dbService
@@ -47,8 +57,16 @@ export function BreakTimer({ useCounter }: any) {
         .collection("timer")
         .doc("time")
         .update({
+          breakSet: intervalSet,
           breakMin: minutes,
           breakSec: secounds - 1,
+        })
+        .then(() => {
+          setTime({
+            ...time,
+            breakMin: minutes,
+            breakSec: secounds - 1,
+          });
         });
     }
     if (count <= 0 && 1 < intervalSet) {
@@ -99,17 +117,25 @@ export function BreakTimer({ useCounter }: any) {
 
   const onBackClick = () => {
     navigate(`/`);
+    setCounterStatus(false);
   };
 
   return (
     <Container>
-      <h1>{intervalSet}Set</h1>
-      <h2>break timer</h2>
-      <CountBox>
-        <CountText>{minutes < 10 ? `0${minutes}` : minutes}</CountText>
-        <CountText>:</CountText>
-        <CountText>{secounds < 10 ? `0${secounds}` : secounds}</CountText>
-      </CountBox>
+      <TextBox>
+        <TextItem>
+          <span>{intervalSet}</span>SET
+        </TextItem>
+        <TextItem>BREAK</TextItem>
+      </TextBox>
+      <SetBox>
+        <h4>다음세트 까지</h4>
+        <CountBox>
+          <CountText>{minutes < 10 ? `0${minutes}` : minutes}</CountText>
+          <CountText>:</CountText>
+          <CountText>{secounds < 10 ? `0${secounds}` : secounds}</CountText>
+        </CountBox>
+      </SetBox>
       {isDone ? (
         <BtnContainer>
           <PlayBtnBox isWhite={false} onClick={onStopClick}>
@@ -130,13 +156,17 @@ export function BreakTimer({ useCounter }: any) {
   );
 }
 
+export default React.memo(BreakCounter);
+
 const Container = styled.div`
   position: relative;
+  align-items: center;
   top: 0;
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
+  padding-top: 35px;
 `;
 
 const CountBox = styled.div`
@@ -148,11 +178,11 @@ const CountText = styled.div`
   display: flex;
   font-family: "Roboto";
   font-weight: 900;
-  font-size: 80px;
-  letter-spacing: -3px;
+  font-size: 55px;
   &:nth-child(2) {
-    margin-bottom: 8px;
-    font-size: 70px;
+    margin-bottom: 5px;
+    font-size: 50px;
+    padding-left: 2px;
   }
 `;
 
@@ -201,4 +231,32 @@ const DoneBtn = styled(IoStopSharp)`
   color: black;
   width: 30px;
   height: 30px;
+`;
+
+const TextItem = styled.div`
+  font-family: "Roboto";
+  font-weight: 900;
+  font-size: 65px;
+  margin-bottom: 10px;
+  span {
+    margin-right: 3px;
+  }
+`;
+
+const TextBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 70px;
+`;
+
+const SetBox = styled.div`
+  h4 {
+    text-align: center;
+    letter-spacing: -1px;
+    font-size: 18px;
+    font-weight: 100;
+    margin-bottom: 15px;
+  }
 `;

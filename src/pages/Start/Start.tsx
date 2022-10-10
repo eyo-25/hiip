@@ -62,6 +62,8 @@ const Start = () => {
           .get()
           .then((result: any) => {
             setTime({
+              setIntervalSet: result.data().setIntervalSet,
+              setBreakSet: result.data().setBreakSet,
               min: result.data().setMin,
               sec: result.data().setSec,
               intervalSet: result.data().intervalSet,
@@ -89,6 +91,8 @@ const Start = () => {
           .get()
           .then((result: any) => {
             setTime({
+              setIntervalSet: result.data().setIntervalSet,
+              setBreakSet: result.data().setBreakSet,
               intervalSet: result.data().intervalSet,
               breakSet:
                 result.data().intervalSet === result.data().breakSet
@@ -98,10 +102,10 @@ const Start = () => {
                   : result.data().breakSet,
               min: result.data().min,
               sec: result.data().sec,
-              breakMin:
-                result.data().breakSet - 1 === 0 ? 0 : result.data().breakMin,
-              breakSec:
-                result.data().breakSet - 1 === 0 ? 0 : result.data().breakSec,
+              breakMin: result.data().breakMin,
+              // result.data().breakSet - 1 === 0 ? 0 : result.data().breakMin,
+              breakSec: result.data().breakSec,
+              // result.data().breakSet - 1 === 0 ? 0 : result.data().breakSec,
               setMin: result.data().setMin,
               setSec: result.data().setSec,
               setBreakMin: result.data().setBreakMin,
