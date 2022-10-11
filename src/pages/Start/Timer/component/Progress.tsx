@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { timeState } from "../../../../Recoil/atoms";
 
-export function Progress() {
+function Progress() {
   const [time, setTime] = useRecoilState<any>(timeState);
+  const [percent, setPercent] = useState<number>(0);
 
   let barArray: number[] = [];
 
@@ -35,11 +36,13 @@ export function Progress() {
 
   let totalPercent2 = 100 < totalPercent ? 100 : totalPercent;
 
-  console.log(time);
+  useEffect(() => {
+    setPercent(totalPercent2);
+  }, [time]);
 
   return (
     <TimerBarBox>
-      <ProgressBar totalPercent={totalPercent2} />
+      <ProgressBar totalWidth={percent + "%"} />
       {barArray.map((data, index) => {
         return (
           <BarItems key={index}>
@@ -52,7 +55,7 @@ export function Progress() {
   );
 }
 
-export default Progress;
+export default React.memo(Progress);
 
 const TimerBarBox = styled.div`
   position: relative;
@@ -90,11 +93,11 @@ const BreakBar = styled.span`
   width: 5px;
 `;
 
-const ProgressBar = styled.div<{ totalPercent: number }>`
+const ProgressBar = styled.div<{ totalWidth: any }>`
   position: absolute;
   top: 0;
   display: flex;
-  width: ${(props) => props.totalPercent}%;
+  width: ${(props) => props.totalWidth};
   height: 5px;
   background-color: #0002ff;
 `;

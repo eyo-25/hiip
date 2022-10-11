@@ -13,37 +13,37 @@ import Font_BI from "../Assets/Fonts/Roboto-BlackItalic.woff";
 export const GlobalFont = createGlobalStyle`
     @font-face {
         font-family: "NotoSansKR";
-        src: local("NotoSansKR-Black"), url(${Font_BK}) format('woff'); 
+        src: url(${Font_BK}) format('woff'); 
         font-weight: 900;
     }
     @font-face {
         font-family: "NotoSansKR";
-        src: local("NotoSansKR-Bold"), url(${Font_B}) format('woff'); 
+        src: url(${Font_B}) format('woff'); 
         font-weight: 700;
     }
     @font-face {
         font-family: "NotoSansKR";
-        src: local("NotoSansKR-Medium"), url(${Font_M}) format('woff'); 
+        src:  url(${Font_M}) format('woff'); 
         font-weight: 400;
     }
     @font-face {
         font-family: "NotoSansKR";
-        src: local("NotoSansKR-Regular"), url(${Font_R}) format('woff'); 
+        src: url(${Font_R}) format('woff'); 
         font-weight: 300;
     }
     @font-face {
         font-family: "NotoSansKR";
-        src: local("NotoSansKR-Thin"), url(${Font_T}) format('woff'); 
+        src: url(${Font_T}) format('woff'); 
         font-weight: 100;
     }
     @font-face {
         font-family: "NotoSansKR";
-        src: local("NotoSansKR-Thin"), url(${Font_T}) format('woff'); 
+        src:  url(${Font_T}) format('woff'); 
         font-weight: 100;
     }
     @font-face {
         font-family: "Roboto";
-        src: local("Roboto-BlackItalic"), url(${Font_BI}) format('woff'); 
+        src: url(${Font_BI}) format('woff'); 
         font-weight: 900;
     }
 `;

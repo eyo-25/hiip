@@ -34,31 +34,20 @@ function IntervalCounter({ useCounter }: any) {
         .update({
           intervalSet: 0,
           breakSet: 0,
-          // min: 0,
-          // sec: 0,
-          // breakMin: 0,
-          // breakSec: 0,
           min: time.setMin,
           sec: time.setSec,
           breakMin: time.setBreakMin,
           breakSec: time.setBreakSec,
-        })
-        .then(() => {
-          setTime({
-            ...time,
-            intervalSet: 0,
-            breakSet: 0,
-            // min: 0,
-            // sec: 0,
-            // breakMin: 0,
-            // breakSec: 0,
-            // breakSet: 0,
-            min: time.setMin,
-            sec: time.setSec,
-            breakMin: time.setBreakMin,
-            breakSec: time.setBreakSec,
-          });
         });
+      setTime({
+        ...time,
+        intervalSet: 0,
+        breakSet: 0,
+        min: time.setMin,
+        sec: time.setSec,
+        breakMin: time.setBreakMin,
+        breakSec: time.setBreakSec,
+      });
     } else if (secounds !== 0) {
       dbService
         .collection("plan")

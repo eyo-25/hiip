@@ -1,3 +1,4 @@
+import React from "react";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { counterState } from "../../../Recoil/atoms";
@@ -21,7 +22,7 @@ const Timer = () => {
   );
 };
 
-export default Timer;
+export default React.memo(Timer);
 
 const Overlay = styled.div`
   display: flex;

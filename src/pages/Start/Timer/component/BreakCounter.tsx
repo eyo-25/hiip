@@ -35,8 +35,6 @@ function BreakCounter({ useCounter }: any) {
         .doc("time")
         .update({
           breakSet: 0,
-          // breakMin: 0,
-          // breakSec: 0,
           breakMin: time.setBreakMin,
           breakSec: time.setBreakSec,
         })
@@ -44,8 +42,6 @@ function BreakCounter({ useCounter }: any) {
           setTime({
             ...time,
             breakSet: 0,
-            // breakMin: 0,
-            // breakSec: 0,
             breakMin: time.setBreakMin,
             breakSec: time.setBreakSec,
           });
@@ -60,14 +56,12 @@ function BreakCounter({ useCounter }: any) {
           breakSet: intervalSet,
           breakMin: minutes,
           breakSec: secounds - 1,
-        })
-        .then(() => {
-          setTime({
-            ...time,
-            breakMin: minutes,
-            breakSec: secounds - 1,
-          });
         });
+      setTime({
+        ...time,
+        breakMin: minutes,
+        breakSec: secounds - 1,
+      });
     }
     if (count <= 0 && 1 < intervalSet) {
       dbService
@@ -129,7 +123,7 @@ function BreakCounter({ useCounter }: any) {
         <TextItem>BREAK</TextItem>
       </TextBox>
       <SetBox>
-        <h4>다음세트 까지</h4>
+        <h4>다음 세트 까지</h4>
         <CountBox>
           <CountText>{minutes < 10 ? `0${minutes}` : minutes}</CountText>
           <CountText>:</CountText>
@@ -253,6 +247,7 @@ const TextBox = styled.div`
 
 const SetBox = styled.div`
   h4 {
+    font-family: "NotoSansKRThin";
     text-align: center;
     letter-spacing: -1px;
     font-size: 18px;
