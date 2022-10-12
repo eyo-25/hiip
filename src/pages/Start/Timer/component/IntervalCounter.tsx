@@ -13,15 +13,24 @@ function IntervalCounter({ useCounter }: any) {
   const [counterStatus, setCounterStatus] = useRecoilState<any>(counterState);
   const [time, setTime] = useRecoilState<any>(timeState);
   const [intervalSet, setIntervalSet] = useState(time.intervalSet);
-  const { count, start, stop, reset, done } = useCounter(time.min, time.sec);
+  const { count, start, stop, reset, done } = useCounter(
+    time.min,
+    time.sec,
+    time.mSec
+  );
   const [minutes, setMinutes] = useState(0);
   const [secounds, setSecounds] = useState(0);
+  const [mSecounds, setMSecounds] = useState(0);
   const [isDone, setIsDone] = useState(false);
 
   const timer = () => {
+    if (intervalSet === 0) return;
     if (intervalSet !== 0) {
-      setMinutes(Math.floor(count / 60));
-      setSecounds(count - Math.floor(count / 60) * 60);
+      const mathMin = Math.floor(count / 60 / 100);
+      const mathSec = Math.floor((count - mathMin * 60 * 100) / 100);
+      setMinutes(mathMin);
+      setSecounds(mathSec);
+      setMSecounds(Math.floor(count - (mathSec * 100 + mathMin * 60 * 100)));
     }
     if (intervalSet <= 1 && count <= 0) {
       done();
@@ -38,6 +47,7 @@ function IntervalCounter({ useCounter }: any) {
           sec: time.setSec,
           breakMin: time.setBreakMin,
           breakSec: time.setBreakSec,
+          mSec: 0,
         });
       setTime({
         ...time,
@@ -47,26 +57,8 @@ function IntervalCounter({ useCounter }: any) {
         sec: time.setSec,
         breakMin: time.setBreakMin,
         breakSec: time.setBreakSec,
+        mSec: 0,
       });
-    } else if (secounds !== 0) {
-      dbService
-        .collection("plan")
-        .doc(`${readyToDo.readyId}`)
-        .collection("timer")
-        .doc("time")
-        .update({
-          min: minutes,
-          sec: secounds - 1,
-        })
-        .then(() => {
-          setTime({
-            ...time,
-            min: minutes,
-            sec: secounds - 1,
-            breakMin: time.setBreakMin,
-            breakSec: time.setBreakSec,
-          });
-        });
     }
     if (count <= 0 && 1 < intervalSet) {
       dbService
@@ -90,6 +82,7 @@ function IntervalCounter({ useCounter }: any) {
             sec: time.setSec,
             breakMin: time.setBreakMin,
             breakSec: time.setBreakSec,
+            mSec: 0,
           });
         });
     }
@@ -114,6 +107,15 @@ function IntervalCounter({ useCounter }: any) {
   const onStopClick = () => {
     stop();
     setIsDone(false);
+    dbService
+      .collection("plan")
+      .doc(`${readyToDo.readyId}`)
+      .collection("timer")
+      .doc("time")
+      .update({
+        min: minutes,
+        sec: secounds,
+      });
   };
 
   const onBackClick = () => {
@@ -126,6 +128,8 @@ function IntervalCounter({ useCounter }: any) {
         <CountText>{minutes < 10 ? `0${minutes}` : minutes}</CountText>
         <CountText>:</CountText>
         <CountText>{secounds < 10 ? `0${secounds}` : secounds}</CountText>
+        {/* <CountText>:</CountText>
+        <CountText>{mSecounds < 10 ? `0${mSecounds}` : mSecounds}</CountText> */}
       </CountBox>
       {isDone ? (
         <BtnContainer>

@@ -120,6 +120,8 @@ export const timeState = atom<any>({
     setSec: 0,
     setBreakMin: 0,
     setBreakSec: 0,
+    breakMSec: 0,
+    mSec: 0,
   },
 });
 

@@ -6,9 +6,9 @@ import IntervalCounter from "./IntervalCounter";
 import BreakCounter from "./BreakCounter";
 import Progress from "./Progress";
 
-const useCounter = (setMin: any, setSec: any) => {
-  const countRef = useRef<any>(setMin * 60 + setSec);
-  const [count, setCount] = useState(setMin * 60 + setSec);
+const useCounter = (setMin: any, setSec: any, mSec: any) => {
+  const countRef = useRef<any>(setMin * 60 * 100 + setSec * 100 + mSec);
+  const [count, setCount] = useState(setMin * 60 * 100 + setSec * 100 + mSec);
   const intervalRef = useRef<any>(null);
 
   const start = useCallback(() => {
@@ -20,14 +20,14 @@ const useCounter = (setMin: any, setSec: any) => {
       } else if (countRef.current < 0) {
         clearInterval(intervalRef.current);
       }
-    }, 1000);
+    }, 10);
   }, []);
   const stop = useCallback(() => {
     if (intervalRef.current === null) return;
     clearInterval(intervalRef.current);
   }, []);
   const reset = useCallback(() => {
-    countRef.current = setMin * 60 + setSec;
+    countRef.current = setMin * 60 * 100 + setSec * 100 + mSec;
     setCount(countRef.current);
     clearInterval(intervalRef.current);
   }, []);

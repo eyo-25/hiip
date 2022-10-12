@@ -15,15 +15,20 @@ function BreakCounter({ useCounter }: any) {
   const [intervalSet, setIntervalSet] = useState(time.breakSet);
   const [minutes, setMinutes] = useState(0);
   const [secounds, setSecounds] = useState(0);
+  const [mSecounds, setMSecounds] = useState(0);
   const [isDone, setIsDone] = useState(false);
   const { count, start, stop, reset, done } = useCounter(
     time.breakMin,
-    time.breakSec
+    time.breakSec,
+    time.breakMSec
   );
 
   const timer = () => {
-    setMinutes(Math.floor(count / 60));
-    setSecounds(count - Math.floor(count / 60) * 60);
+    const mathMin = Math.floor(count / 60 / 100);
+    const mathSec = Math.floor((count - mathMin * 60 * 100) / 100);
+    setMinutes(mathMin);
+    setSecounds(mathSec);
+    setMSecounds(Math.floor(count - (mathSec * 100 + mathMin * 60 * 100)));
     if (intervalSet <= 1 && count <= 0) {
       done();
       setIntervalSet(0);
@@ -46,22 +51,6 @@ function BreakCounter({ useCounter }: any) {
             breakSec: time.setBreakSec,
           });
         });
-    } else if (secounds !== 0) {
-      dbService
-        .collection("plan")
-        .doc(`${readyToDo.readyId}`)
-        .collection("timer")
-        .doc("time")
-        .update({
-          breakSet: intervalSet,
-          breakMin: minutes,
-          breakSec: secounds - 1,
-        });
-      setTime({
-        ...time,
-        breakMin: minutes,
-        breakSec: secounds - 1,
-      });
     }
     if (count <= 0 && 1 < intervalSet) {
       dbService
@@ -128,6 +117,8 @@ function BreakCounter({ useCounter }: any) {
           <CountText>{minutes < 10 ? `0${minutes}` : minutes}</CountText>
           <CountText>:</CountText>
           <CountText>{secounds < 10 ? `0${secounds}` : secounds}</CountText>
+          {/* <CountText>:</CountText>
+          <CountText>{mSecounds < 10 ? `0${mSecounds}` : mSecounds}</CountText> */}
         </CountBox>
       </SetBox>
       {isDone ? (
@@ -250,7 +241,7 @@ const SetBox = styled.div`
     font-family: "NotoSansKRThin";
     text-align: center;
     letter-spacing: -1px;
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 100;
     margin-bottom: 15px;
   }

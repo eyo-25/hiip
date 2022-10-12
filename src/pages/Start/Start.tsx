@@ -74,6 +74,8 @@ const Start = () => {
               breakSec: result.data().setBreakSec,
               setBreakMin: result.data().setBreakMin,
               setBreakSec: result.data().setBreakSec,
+              mSec: 0,
+              breakMSec: 0,
             });
             navigate("/timer");
           });
@@ -96,20 +98,20 @@ const Start = () => {
               intervalSet: result.data().intervalSet,
               breakSet:
                 result.data().intervalSet === result.data().breakSet
-                  ? result.data().breakSet - 1 === 0
+                  ? result.data().breakSet - 1 <= 0
                     ? 0
                     : result.data().breakSet - 1
                   : result.data().breakSet,
               min: result.data().min,
               sec: result.data().sec,
               breakMin: result.data().breakMin,
-              // result.data().breakSet - 1 === 0 ? 0 : result.data().breakMin,
               breakSec: result.data().breakSec,
-              // result.data().breakSet - 1 === 0 ? 0 : result.data().breakSec,
               setMin: result.data().setMin,
               setSec: result.data().setSec,
               setBreakMin: result.data().setBreakMin,
               setBreakSec: result.data().setBreakSec,
+              mSec: 0,
+              breakMSec: 0,
             });
             if (result.data().intervalSet === result.data().breakSet) {
               dbService
@@ -119,14 +121,8 @@ const Start = () => {
                 .doc("time")
                 .update({
                   breakSet: result.data().intervalSet - 1,
-                  breakMin:
-                    result.data().breakSet - 1 === 0
-                      ? 0
-                      : result.data().breakMin,
-                  breakSec:
-                    result.data().breakSet - 1 === 0
-                      ? 0
-                      : result.data().breakSec,
+                  breakMin: result.data().setBreakMin,
+                  breakSec: result.data().setBreakSec,
                 })
                 .then(() => {
                   navigate("/timer");
