@@ -2,28 +2,19 @@ import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { timeState } from "../../../../Recoil/atoms";
+import { IoCaretDownSharp } from "react-icons/io5";
 
 function Progress() {
   const [time, setTime] = useRecoilState<any>(timeState);
-  const [percent, setPercent] = useState<number>(0);
-
-  let barArray: any[] = [];
-
-  console.log(time);
-
-  for (let i = 0; i < time.setIntervalSet + time.setBreakSet - 1; i++) {
-    barArray.push(
-      (barArray[i] = {
-        if() {},
-      })
-    );
-  }
 
   //progress바 연산
 
-  //setinterval시간합
+  // 총 세트 수
+  let totalSet = time.setIntervalSet + time.setBreakSet - 1;
+
+  //setinterval 총시간
   let setCount = time.setMin * 60 * 100 + time.setSec * 100;
-  //setbreak시간합
+  //setbreak 총시간
   let setBreakCount = time.setBreakMin * 60 * 100 + time.setBreakSec * 100;
 
   //진행바 한 세트의 퍼센티지
@@ -33,79 +24,152 @@ function Progress() {
   //진행바 한 브레이크의 퍼센티지
   let oneBreakPercentage = Math.ceil(setBreakCount / oneSetPercentage);
 
-  // let totalTime =
-  //   setCount * time.setIntervalSet + setBreakCount * time.setBreakSet;
+  //진행바 인터벌 현재의 퍼센티지
+  let nowIntervalPercent =
+    ((setCount - (time.min * 60 * 100 + time.sec * 100 + time.mSec)) /
+      setCount) *
+    100;
 
-  // let nowCount = time.min * 60 * 100 + time.sec * 100;
-  // let nowBreakCount = time.breakMin * 60 * 100 + time.breakSec * 100;
+  //진행바 브레이크 현재의 퍼센티지
+  let nowBreakPercent =
+    ((setBreakCount -
+      (time.breakMin * 60 * 100 + time.breakSec * 100 + time.breakMSec)) /
+      setBreakCount) *
+    100;
 
-  // let nowSet = time.setIntervalSet - time.intervalSet;
+  //진행바 현재의 세트의 단계
+  let nowSetStep =
+    time.setIntervalSet - time.intervalSet + (time.setBreakSet - time.breakSet);
 
-  // let nowBreakSet = time.setBreakSet - time.breakSet;
+  let barArray: any[] = [];
 
-  // let totalNowTime =
-  //   setCount -
-  //   nowCount +
-  //   nowSet * setCount +
-  //   (setBreakCount - nowBreakCount) +
-  //   nowBreakSet * setBreakCount;
+  for (let i = 0; i < totalSet; i++) {
+    barArray.push(
+      (barArray[i] = {
+        if() {},
+      })
+    );
+  }
 
-  // let totalPercent = (totalNowTime / totalTime) * 100;
+  let percentArray: number[] = [];
 
-  // let totalPercent2 = 100 < totalPercent ? 100 : totalPercent;
+  let marginArray: number[] = [];
 
   useEffect(() => {
-    // setPercent(totalPercent2);
-  }, [time]);
+    for (let i = 0; i < totalSet; i++) {
+      percentArray.push((percentArray[i] = 0));
+    }
+  }, []);
 
-  // let breakBarWidth =
-  //   Math.floor((setBreakCount / totalTime) * 100) / time.setIntervalSet;
+  let marginSum = 0;
 
-  console.log(time);
+  barArray.map((data, index) => {
+    if (index % 2 === 0 && index === nowSetStep) {
+      percentArray.splice(index, 1, nowIntervalPercent);
+    }
+    if (index % 2 === 0 && index < nowSetStep) {
+      percentArray.splice(index, 1, 100);
+    }
+    if (index % 2 === 0 && nowSetStep < index) {
+      percentArray.splice(index, 1, 0);
+    }
+
+    if (index % 2 === 1 && index === nowSetStep) {
+      percentArray.splice(index, 1, nowBreakPercent);
+    }
+    if (index % 2 === 1 && index < nowSetStep) {
+      percentArray.splice(index, 1, 100);
+    }
+    if (index % 2 === 1 && nowSetStep < index) {
+      percentArray.splice(index, 1, 0);
+    }
+  });
+
+  for (let i = 0; i < percentArray.length - 1; i++) {
+    if (i % 2 === 0) {
+      marginArray.push(
+        (marginArray[i] = percentArray[i] * (oneIntervalPercentage / 266))
+      );
+    }
+    if (i % 2 === 1) {
+      marginArray.push(
+        (marginArray[i] = percentArray[i] * (oneBreakPercentage / 266))
+      );
+    }
+    marginSum = marginArray.reduce((a, b) => a + b);
+  }
+
+  console.log(oneBreakPercentage);
 
   return (
-    <TimerBarBox>
-      {barArray.map((data, index) => {
-        return (
-          <ProgressBar
-            width={
-              (index + 1) % 2 === 0 ? oneBreakPercentage : oneIntervalPercentage
-            }
-            key={index}
-          >
-            <ProgressPercent
-              isInterval={(index + 1) % 2 === 0 ? false : true}
-            />
-          </ProgressBar>
-        );
-      })}
-    </TimerBarBox>
+    <Container>
+      <ProgressPin marginLeft={marginSum} />
+      <TimerBarBox>
+        {barArray.map((data, index) => {
+          return (
+            <ProgressBar
+              width={
+                (index + 1) % 2 === 0
+                  ? oneBreakPercentage
+                  : oneIntervalPercentage
+              }
+              isBlack={index % 2 === 0 ? false : true}
+              key={index}
+            >
+              <ProgressPercent
+                isInterval={index % 2 === 0 ? false : true}
+                width={percentArray[index]}
+              />
+            </ProgressBar>
+          );
+        })}
+      </TimerBarBox>
+    </Container>
   );
 }
 
 export default React.memo(Progress);
 
+const Container = styled.div`
+  position: relative;
+  padding-top: 15px;
+  margin-top: 220px;
+  width: 230px;
+  display: flex;
+  flex-direction: column;
+`;
+
+const ProgressPin = styled(IoCaretDownSharp)<{ marginLeft: number }>`
+  position: absolute;
+  top: 0;
+  left: -7.5px;
+  margin-left: ${(props) => props.marginLeft}%;
+  display: flex;
+  width: 15px;
+  height: 15px;
+  color: #fb0045;
+`;
+
 const TimerBarBox = styled.div`
   display: flex;
-  margin-top: 220px;
   margin-bottom: 25px;
-  width: 230px;
   height: 7px;
-  background-color: white;
   overflow: hidden;
 `;
 
-const ProgressBar = styled.div<{ width: number }>`
+const ProgressBar = styled.div<{ width: number; isBlack: boolean }>`
   position: relative;
+  display: flex;
+  background-color: ${(props) => (props.isBlack ? "inherit" : "white")};
   width: ${(props) => props.width}%;
   height: 5px;
 `;
 
-const ProgressPercent = styled.div<{ isInterval: boolean }>`
+const ProgressPercent = styled.div<{ isInterval: boolean; width: number }>`
   position: absolute;
   top: 0;
   display: flex;
-  width: 100%;
+  width: ${(props) => props.width}%;
   height: 5px;
-  background-color: ${(props) => (props.isInterval ? "#0002ff" : "#fb0045")};
+  background-color: ${(props) => (props.isInterval ? "#fb0045" : "#0002ff")};
 `;

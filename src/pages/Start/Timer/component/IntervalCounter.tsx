@@ -31,6 +31,12 @@ function IntervalCounter({ useCounter }: any) {
       setMinutes(mathMin);
       setSecounds(mathSec);
       setMSecounds(Math.floor(count - (mathSec * 100 + mathMin * 60 * 100)));
+      setTime({
+        ...time,
+        min: mathMin,
+        sec: mathSec,
+        mSec: Math.floor(count - (mathSec * 100 + mathMin * 60 * 100)),
+      });
     }
     if (intervalSet <= 1 && count <= 0) {
       done();
@@ -47,7 +53,6 @@ function IntervalCounter({ useCounter }: any) {
           sec: time.setSec,
           breakMin: time.setBreakMin,
           breakSec: time.setBreakSec,
-          mSec: 0,
         });
       setTime({
         ...time,

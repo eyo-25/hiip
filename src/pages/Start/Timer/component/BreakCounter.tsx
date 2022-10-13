@@ -24,11 +24,19 @@ function BreakCounter({ useCounter }: any) {
   );
 
   const timer = () => {
-    const mathMin = Math.floor(count / 60 / 100);
-    const mathSec = Math.floor((count - mathMin * 60 * 100) / 100);
-    setMinutes(mathMin);
-    setSecounds(mathSec);
-    setMSecounds(Math.floor(count - (mathSec * 100 + mathMin * 60 * 100)));
+    if (intervalSet !== 0) {
+      const mathMin = Math.floor(count / 60 / 100);
+      const mathSec = Math.floor((count - mathMin * 60 * 100) / 100);
+      setMinutes(mathMin);
+      setSecounds(mathSec);
+      setMSecounds(Math.floor(count - (mathSec * 100 + mathMin * 60 * 100)));
+      setTime({
+        ...time,
+        breakMin: mathMin,
+        breakSec: mathSec,
+        breakMSec: Math.floor(count - (mathSec * 100 + mathMin * 60 * 100)),
+      });
+    }
     if (intervalSet <= 1 && count <= 0) {
       done();
       setIntervalSet(0);
@@ -49,6 +57,7 @@ function BreakCounter({ useCounter }: any) {
             breakSet: 0,
             breakMin: time.setBreakMin,
             breakSec: time.setBreakSec,
+            breakMSec: 0,
           });
         });
     }
@@ -72,6 +81,7 @@ function BreakCounter({ useCounter }: any) {
             breakSet: time.breakSet - 1,
             breakMin: time.setBreakMin,
             breakSec: time.setBreakSec,
+            breakMSec: 0,
           });
         });
     }

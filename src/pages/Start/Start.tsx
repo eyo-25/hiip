@@ -120,7 +120,10 @@ const Start = () => {
                 .collection("timer")
                 .doc("time")
                 .update({
-                  breakSet: result.data().intervalSet - 1,
+                  breakSet:
+                    result.data().intervalSet - 1 <= 0
+                      ? 0
+                      : result.data().intervalSet - 1,
                   breakMin: result.data().setBreakMin,
                   breakSec: result.data().setBreakSec,
                 })
