@@ -10,19 +10,27 @@ function Progress() {
   //progress바 연산
 
   // 총 세트 수
-  let totalSet = time.setIntervalSet + time.setBreakSet - 1;
+  let totalSet = time.setIntervalSet + time.setBreakSet;
 
-  //setinterval 총시간
+  //setinterval 한세트의 총시간
   let setCount = time.setMin * 60 * 100 + time.setSec * 100;
   //setbreak 총시간
-  let setBreakCount = time.setBreakMin * 60 * 100 + time.setBreakSec * 100;
+  let setBreakCount =
+    time.setBreakMin * 60 * 100 + (time.setBreakSec + 1) * 100;
+  //진행바 한 세트의 총시간
+  let totalCount = setCount + setBreakCount;
+
+  //진행바 모든세트의 총시간
+  let totalSetCount =
+    setCount * time.setIntervalSet + setBreakCount * time.setBreakSet;
 
   //진행바 한 세트의 퍼센티지
-  let oneSetPercentage = Math.floor((setCount + setBreakCount) / 100);
-  //진행바 한 인터벌의 퍼센티지
-  let oneIntervalPercentage = Math.floor(setCount / oneSetPercentage);
+  let oneSetPercentage = 100 / time.setIntervalSet;
+
+  // //진행바 한 인터벌의 퍼센티지
+  let oneIntervalPercentage = Math.floor((setCount / totalCount) * 100);
   //진행바 한 브레이크의 퍼센티지
-  let oneBreakPercentage = Math.ceil(setBreakCount / oneSetPercentage);
+  let oneBreakPercentage = Math.ceil((setBreakCount / totalCount) * 100);
 
   //진행바 인터벌 현재의 퍼센티지
   let nowIntervalPercent =
@@ -43,67 +51,76 @@ function Progress() {
 
   let barArray: any[] = [];
 
-  for (let i = 0; i < totalSet; i++) {
-    barArray.push(
-      (barArray[i] = {
-        if() {},
-      })
-    );
+  for (let i = 0; i < totalSet - 1; i++) {
+    barArray.push((barArray[i] = {}));
   }
-
-  let percentArray: number[] = [];
 
   let marginArray: number[] = [];
 
-  useEffect(() => {
-    for (let i = 0; i < totalSet; i++) {
-      percentArray.push((percentArray[i] = 0));
-    }
-  }, []);
-
   let marginSum = 0;
 
-  barArray.map((data, index) => {
-    if (index % 2 === 0 && index === nowSetStep) {
-      percentArray.splice(index, 1, nowIntervalPercent);
-    }
-    if (index % 2 === 0 && index < nowSetStep) {
-      percentArray.splice(index, 1, 100);
-    }
-    if (index % 2 === 0 && nowSetStep < index) {
-      percentArray.splice(index, 1, 0);
-    }
+  const [percentArray, setPercentArray] = useState<any>([]);
 
-    if (index % 2 === 1 && index === nowSetStep) {
-      percentArray.splice(index, 1, nowBreakPercent);
-    }
-    if (index % 2 === 1 && index < nowSetStep) {
-      percentArray.splice(index, 1, 100);
-    }
-    if (index % 2 === 1 && nowSetStep < index) {
-      percentArray.splice(index, 1, 0);
-    }
-  });
+  useEffect(() => {
+    setPercentArray((prev: any) => {
+      let copy = [...prev];
+      for (let i = 0; i < totalSet - 1; i++) {
+        copy[i] = 0;
+      }
+      return copy;
+    });
+  }, []);
 
-  for (let i = 0; i < percentArray.length - 1; i++) {
-    if (i % 2 === 0) {
-      marginArray.push(
-        (marginArray[i] = percentArray[i] * (oneIntervalPercentage / 266))
-      );
-    }
-    if (i % 2 === 1) {
-      marginArray.push(
-        (marginArray[i] = percentArray[i] * (oneBreakPercentage / 266))
-      );
-    }
-    marginSum = marginArray.reduce((a, b) => a + b);
-  }
+  useEffect(() => {
+    setPercentArray((array: any) => {
+      let copy = [...array];
+      barArray.map((data, index) => {
+        if (index % 2 === 0 && index === nowSetStep) {
+          copy.splice(index, 1, nowIntervalPercent);
+        }
+        if (index % 2 === 0 && index < nowSetStep) {
+          copy.splice(index, 1, 100);
+        }
+        if (index % 2 === 0 && nowSetStep < index) {
+          copy.splice(index, 1, 0);
+        }
 
-  console.log(oneBreakPercentage);
+        if (index % 2 === 1 && index === nowSetStep) {
+          copy.splice(index, 1, nowBreakPercent);
+        }
+        if (index % 2 === 1 && index < nowSetStep) {
+          copy.splice(index, 1, 100);
+        }
+        if (index % 2 === 1 && nowSetStep < index) {
+          copy.splice(index, 1, 0);
+        }
+      });
+      return copy;
+    });
+  }, [time]);
+
+  // console.log(percentArray);
+
+  // for (let i = 0; i < totalSet - 1; i++) {
+  //   if (i % 2 === 0) {
+  //     marginArray.push(
+  //       (marginArray[i] = percentArray[i] * (setCount / totalSetCount))
+  //     );
+  //   }
+  //   if (i % 2 === 1) {
+  //     marginArray.push(
+  //       (marginArray[i] = percentArray[i] * (setBreakCount / totalSetCount))
+  //     );
+  //   }
+  // }
+
+  // marginSum = marginArray.reduce((a, b) => a + b);
+
+  // console.log(percentArray);
 
   return (
     <Container>
-      <ProgressPin marginLeft={marginSum} />
+      {/* <ProgressPin marginLeft={marginSum} /> */}
       <TimerBarBox>
         {barArray.map((data, index) => {
           return (
@@ -118,7 +135,7 @@ function Progress() {
             >
               <ProgressPercent
                 isInterval={index % 2 === 0 ? false : true}
-                width={percentArray[index]}
+                style={{ width: `${percentArray[index]}%` }}
               />
             </ProgressBar>
           );
@@ -139,37 +156,38 @@ const Container = styled.div`
   flex-direction: column;
 `;
 
-const ProgressPin = styled(IoCaretDownSharp)<{ marginLeft: number }>`
-  position: absolute;
-  top: 0;
-  left: -7.5px;
-  margin-left: ${(props) => props.marginLeft}%;
-  display: flex;
-  width: 15px;
-  height: 15px;
-  color: #fb0045;
-`;
+// const ProgressPin = styled(IoCaretDownSharp)<{ marginLeft: number }>`
+//   position: absolute;
+//   top: 0;
+//   left: -7.5px;
+//   margin-left: ${(props) => props.marginLeft}%;
+//   display: flex;
+//   width: 15px;
+//   height: 15px;
+//   color: #fb0045;
+// `;
 
 const TimerBarBox = styled.div`
   display: flex;
   margin-bottom: 25px;
   height: 7px;
-  overflow: hidden;
 `;
 
-const ProgressBar = styled.div<{ width: number; isBlack: boolean }>`
+const ProgressPercent = styled.div<{ isInterval: boolean }>`
+  position: relative;
+  top: 0;
+  display: flex;
+  height: 5px;
+  background-color: ${(props) => (props.isInterval ? "#fb0045" : "#0002ff")};
+`;
+
+const ProgressBar = styled.div<{
+  width: number;
+  isBlack: boolean;
+}>`
   position: relative;
   display: flex;
   background-color: ${(props) => (props.isBlack ? "inherit" : "white")};
   width: ${(props) => props.width}%;
   height: 5px;
-`;
-
-const ProgressPercent = styled.div<{ isInterval: boolean; width: number }>`
-  position: absolute;
-  top: 0;
-  display: flex;
-  width: ${(props) => props.width}%;
-  height: 5px;
-  background-color: ${(props) => (props.isInterval ? "#fb0045" : "#0002ff")};
 `;
