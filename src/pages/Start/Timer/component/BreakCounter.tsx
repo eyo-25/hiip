@@ -5,7 +5,12 @@ import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { dbService } from "../../../../firebase";
 import { ReactComponent as PauseIcon } from "../../../../Assets/Icons/pause.svg";
-import { counterState, readyState, timeState } from "../../../../Recoil/atoms";
+import {
+  counterState,
+  isStartState,
+  readyState,
+  timeState,
+} from "../../../../Recoil/atoms";
 
 function BreakCounter({ useCounter }: any) {
   const navigate = useNavigate();
@@ -16,7 +21,7 @@ function BreakCounter({ useCounter }: any) {
   const [minutes, setMinutes] = useState(0);
   const [secounds, setSecounds] = useState(0);
   const [mSecounds, setMSecounds] = useState(0);
-  const [isDone, setIsDone] = useState(false);
+  const [isStart, setStart] = useRecoilState(isStartState);
   const { count, start, stop, reset, done } = useCounter(
     time.breakMin,
     time.breakSec,
@@ -41,6 +46,7 @@ function BreakCounter({ useCounter }: any) {
       done();
       setIntervalSet(0);
       setCounterStatus(false);
+      setStart(false);
       dbService
         .collection("plan")
         .doc(`${readyToDo.readyId}`)
@@ -76,6 +82,7 @@ function BreakCounter({ useCounter }: any) {
           reset();
           setIntervalSet((prev: number) => prev - 1);
           setCounterStatus(false);
+          setStart(false);
           setTime({
             ...time,
             breakSet: time.breakSet - 1,
@@ -90,22 +97,22 @@ function BreakCounter({ useCounter }: any) {
   useEffect(timer, [count]);
 
   useEffect(() => {
-    if (!isDone) {
+    if (!isStart) {
       start();
-      setIsDone(true);
+      setStart(true);
     }
   }, []);
 
   const onStartClick = () => {
-    if (!isDone) {
+    if (!isStart) {
       start();
-      setIsDone(true);
+      setStart(true);
     }
   };
 
   const onStopClick = () => {
     stop();
-    setIsDone(false);
+    setStart(false);
   };
 
   const onBackClick = () => {
@@ -115,14 +122,24 @@ function BreakCounter({ useCounter }: any) {
 
   return (
     <Container>
-      <TextBox>
-        <TextItem>
-          <span>{intervalSet}</span>SET
-        </TextItem>
-        <TextItem>BREAK</TextItem>
-      </TextBox>
+      {!isStart ? (
+        <>
+          <PauseText>PAUSE</PauseText>
+        </>
+      ) : (
+        <TextBox>
+          <TextItem>
+            <span>{intervalSet}</span>SET
+          </TextItem>
+          <TextItem>BREAK</TextItem>
+        </TextBox>
+      )}
       <SetBox>
-        <h4>다음 세트 까지</h4>
+        {!isStart ? (
+          <GuideText>다음 세트까지</GuideText>
+        ) : (
+          <h4>다음 세트까지</h4>
+        )}
         <CountBox>
           <CountText>{minutes < 10 ? `0${minutes}` : minutes}</CountText>
           <CountText>:</CountText>
@@ -131,21 +148,27 @@ function BreakCounter({ useCounter }: any) {
           <CountText>{mSecounds < 10 ? `0${mSecounds}` : mSecounds}</CountText> */}
         </CountBox>
       </SetBox>
-      {isDone ? (
+      {isStart ? (
         <BtnContainer>
           <PlayBtnBox isWhite={false} onClick={onStopClick}>
             <PauseBtn />
           </PlayBtnBox>
         </BtnContainer>
       ) : (
-        <BtnContainer>
-          <PlayBtnBox isWhite={true} onClick={onBackClick}>
-            <DoneBtn />
-          </PlayBtnBox>
-          <PlayBtnBox isWhite={false} onClick={onStartClick}>
-            <PlayBtn />
-          </PlayBtnBox>
-        </BtnContainer>
+        <>
+          <GuideText>
+            진행된 <span>SET</span>
+          </GuideText>
+          <SetText>{time.setIntervalSet - time.intervalSet}</SetText>
+          <BtnContainer>
+            <PlayBtnBox isWhite={true} onClick={onBackClick}>
+              <DoneBtn />
+            </PlayBtnBox>
+            <PlayBtnBox isWhite={false} onClick={onStartClick}>
+              <PlayBtn />
+            </PlayBtnBox>
+          </BtnContainer>
+        </>
       )}
     </Container>
   );
@@ -161,12 +184,12 @@ const Container = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding-top: 35px;
 `;
 
 const CountBox = styled.div`
   display: flex;
   align-items: flex-end;
+  margin-bottom: 30px;
 `;
 
 const CountText = styled.div`
@@ -228,22 +251,23 @@ const DoneBtn = styled(IoStopSharp)`
   height: 30px;
 `;
 
-const TextItem = styled.div`
-  font-family: "Roboto";
-  font-weight: 900;
-  font-size: 65px;
-  margin-bottom: 10px;
-  span {
-    margin-right: 3px;
-  }
-`;
-
 const TextBox = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-bottom: 70px;
+  margin-bottom: 40px;
+`;
+
+const TextItem = styled.div`
+  font-family: "Roboto";
+  font-weight: 900;
+  font-size: 65px;
+  margin-bottom: 5px;
+  margin-left: 5px;
+  span {
+    margin-right: 3px;
+  }
 `;
 
 const SetBox = styled.div`
@@ -255,4 +279,30 @@ const SetBox = styled.div`
     font-weight: 100;
     margin-bottom: 15px;
   }
+`;
+
+const PauseText = styled.h1`
+  display: flex;
+  font-family: "Roboto";
+  font-weight: 900;
+  font-size: 70px;
+  letter-spacing: -1px;
+  margin-bottom: 40px;
+`;
+
+const GuideText = styled.p`
+  font-family: "NotoSansKRThin";
+  text-align: center;
+  font-weight: 100;
+  margin-bottom: 5px;
+  span {
+    font-size: 18px;
+  }
+`;
+
+const SetText = styled.div`
+  display: flex;
+  font-family: "Roboto";
+  font-weight: 900;
+  font-size: 45px;
 `;

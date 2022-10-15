@@ -129,3 +129,8 @@ export const counterState = atom<any>({
   key: "counterState",
   default: false,
 });
+
+export const isStartState = atom<any>({
+  key: "isStartState",
+  default: false,
+});

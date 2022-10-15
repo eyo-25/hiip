@@ -1,21 +1,17 @@
 import React from "react";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
-import { counterState } from "../../../Recoil/atoms";
+import { counterState, isStartState } from "../../../Recoil/atoms";
 import Counter from "./component/Counter";
 import Progress from "./component/Progress";
 
 const Timer = () => {
   const [counterStatus, setCounterStatus] = useRecoilState<any>(counterState);
+  const [isStart, setStart] = useRecoilState(isStartState);
   return (
     <Overlay>
+      <Progress />
       <Container>
-        <Progress />
-        {!counterStatus && (
-          <FeedBackBox>
-            <FeedBackText>나중에 울지말고 지금 울면서해라</FeedBackText>
-          </FeedBackBox>
-        )}
         <Counter />
       </Container>
     </Overlay>
@@ -40,22 +36,11 @@ const Container = styled.div`
   flex-direction: column;
   position: relative;
   max-width: 375px;
-  margin: 0 auto;
+  margin-top: 310px;
   color: white;
   button {
     height: 30px;
     margin-bottom: 10px;
     cursor: pointer;
   }
-`;
-
-const FeedBackBox = styled.div`
-  display: flex;
-  margin-bottom: 60px;
-`;
-
-const FeedBackText = styled.h4`
-  font-size: 14px;
-  letter-spacing: -1px;
-  color: white;
 `;

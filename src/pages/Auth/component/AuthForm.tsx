@@ -70,6 +70,7 @@ const AuthForm = ({ close, newCount }: IAuthFormProps) => {
             <input
               {...register("password", { required: true })}
               type="password"
+              autoComplete="on"
               placeholder="Password를 적어주세요"
             />
             {newCount && (

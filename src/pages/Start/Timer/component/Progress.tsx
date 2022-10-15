@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { timeState } from "../../../../Recoil/atoms";
-import { IoCaretDownSharp } from "react-icons/io5";
+import { IoTriangleSharp } from "react-icons/io5";
 
 function Progress() {
   const [time, setTime] = useRecoilState<any>(timeState);
@@ -23,9 +23,6 @@ function Progress() {
   //진행바 모든세트의 총시간
   let totalSetCount =
     setCount * time.setIntervalSet + setBreakCount * time.setBreakSet;
-
-  //진행바 한 세트의 퍼센티지
-  let oneSetPercentage = 100 / time.setIntervalSet;
 
   // //진행바 한 인터벌의 퍼센티지
   let oneIntervalPercentage = Math.floor((setCount / totalCount) * 100);
@@ -55,14 +52,21 @@ function Progress() {
     barArray.push((barArray[i] = {}));
   }
 
-  let marginArray: number[] = [];
-
   let marginSum = 0;
 
   const [percentArray, setPercentArray] = useState<any>([]);
+  const [marginArray, setMarginArray] = useState<any>([]);
 
   useEffect(() => {
     setPercentArray((prev: any) => {
+      let copy = [...prev];
+      for (let i = 0; i < totalSet - 1; i++) {
+        copy[i] = 0;
+      }
+      return copy;
+    });
+
+    setMarginArray((prev: any) => {
       let copy = [...prev];
       for (let i = 0; i < totalSet - 1; i++) {
         copy[i] = 0;
@@ -99,28 +103,28 @@ function Progress() {
     });
   }, [time]);
 
-  // console.log(percentArray);
+  useEffect(() => {
+    setMarginArray((array: any) => {
+      let copy = [...array];
+      barArray.map((data, i) => {
+        if (i % 2 === 0) {
+          copy.splice(i, 1, percentArray[i] * (setCount / totalSetCount));
+        }
+        if (i % 2 === 1) {
+          copy.splice(i, 1, percentArray[i] * (setBreakCount / totalSetCount));
+        }
+      });
+      return copy;
+    });
+  }, [time, percentArray]);
 
-  // for (let i = 0; i < totalSet - 1; i++) {
-  //   if (i % 2 === 0) {
-  //     marginArray.push(
-  //       (marginArray[i] = percentArray[i] * (setCount / totalSetCount))
-  //     );
-  //   }
-  //   if (i % 2 === 1) {
-  //     marginArray.push(
-  //       (marginArray[i] = percentArray[i] * (setBreakCount / totalSetCount))
-  //     );
-  //   }
-  // }
-
-  // marginSum = marginArray.reduce((a, b) => a + b);
-
-  // console.log(percentArray);
+  if (1 <= marginArray.length) {
+    marginSum = marginArray.reduce((a: any, b: any) => a + b);
+  }
 
   return (
     <Container>
-      {/* <ProgressPin marginLeft={marginSum} /> */}
+      <ProgressPin style={{ marginLeft: `${marginSum}%` }} />
       <TimerBarBox>
         {barArray.map((data, index) => {
           return (
@@ -141,6 +145,9 @@ function Progress() {
           );
         })}
       </TimerBarBox>
+      <FeedBackBox>
+        <FeedBackText>나중에 울지말고 지금 울면서해라</FeedBackText>
+      </FeedBackBox>
     </Container>
   );
 }
@@ -148,24 +155,24 @@ function Progress() {
 export default React.memo(Progress);
 
 const Container = styled.div`
-  position: relative;
+  position: fixed;
   padding-top: 15px;
-  margin-top: 220px;
+  margin-top: 200px;
   width: 230px;
   display: flex;
   flex-direction: column;
 `;
 
-// const ProgressPin = styled(IoCaretDownSharp)<{ marginLeft: number }>`
-//   position: absolute;
-//   top: 0;
-//   left: -7.5px;
-//   margin-left: ${(props) => props.marginLeft}%;
-//   display: flex;
-//   width: 15px;
-//   height: 15px;
-//   color: #fb0045;
-// `;
+const ProgressPin = styled(IoTriangleSharp)`
+  position: absolute;
+  top: 2px;
+  left: -5px;
+  display: flex;
+  width: 10px;
+  height: 10px;
+  color: #fb0045;
+  transform: rotate(180deg);
+`;
 
 const TimerBarBox = styled.div`
   display: flex;
@@ -190,4 +197,16 @@ const ProgressBar = styled.div<{
   background-color: ${(props) => (props.isBlack ? "inherit" : "white")};
   width: ${(props) => props.width}%;
   height: 5px;
+`;
+
+const FeedBackBox = styled.div`
+  display: flex;
+  margin-bottom: 60px;
+`;
+
+const FeedBackText = styled.h4`
+  font-size: 14px;
+  margin: 0 auto;
+  letter-spacing: -1px;
+  color: white;
 `;
