@@ -2,8 +2,8 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { counterState, timeState } from "../../../../Recoil/atoms";
-import IntervalCounter from "./IntervalCounter";
-import BreakCounter from "./BreakCounter";
+import IntervalCounter from "./Interval/IntervalCounter";
+import BreakCounter from "./Break/BreakCounter";
 import Progress from "./Progress";
 
 const useCounter = (setMin: any, setSec: any, mSec: any) => {

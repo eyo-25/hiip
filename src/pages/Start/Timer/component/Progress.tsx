@@ -3,6 +3,7 @@ import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { timeState } from "../../../../Recoil/atoms";
 import { IoTriangleSharp } from "react-icons/io5";
+import { motion } from "framer-motion";
 
 function Progress() {
   const [time, setTime] = useRecoilState<any>(timeState);
@@ -123,7 +124,7 @@ function Progress() {
   }
 
   return (
-    <Container>
+    <Container variants={OnVarients} initial="start" animate="end">
       <ProgressPin style={{ marginLeft: `${marginSum}%` }} />
       <TimerBarBox>
         {barArray.map((data, index) => {
@@ -154,7 +155,7 @@ function Progress() {
 
 export default React.memo(Progress);
 
-const Container = styled.div`
+const Container = styled(motion.div)`
   position: fixed;
   padding-top: 15px;
   margin-top: 200px;
@@ -210,3 +211,15 @@ const FeedBackText = styled.h4`
   letter-spacing: -1px;
   color: white;
 `;
+
+const OnVarients = {
+  start: {
+    opacity: 0,
+  },
+  end: {
+    opacity: 1,
+    transition: {
+      duration: 0.2,
+    },
+  },
+};

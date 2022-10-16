@@ -3,14 +3,17 @@ import { IoPlaySharp, IoStopSharp } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
-import { dbService } from "../../../../firebase";
-import { ReactComponent as PauseIcon } from "../../../../Assets/Icons/pause.svg";
+import { dbService } from "../../../../../firebase";
+import { ReactComponent as PauseIcon } from "../../../../../Assets/Icons/pause.svg";
 import {
   counterState,
   isStartState,
   readyState,
   timeState,
-} from "../../../../Recoil/atoms";
+} from "../../../../../Recoil/atoms";
+import BreakPause from "./BreakPause";
+import BreakStart from "./BreakStart";
+import { AnimatePresence, motion } from "framer-motion";
 
 function BreakCounter({ useCounter }: any) {
   const navigate = useNavigate();
@@ -122,54 +125,55 @@ function BreakCounter({ useCounter }: any) {
 
   return (
     <Container>
-      {!isStart ? (
-        <>
-          <PauseText>PAUSE</PauseText>
-        </>
-      ) : (
-        <TextBox>
-          <TextItem>
-            <span>{intervalSet}</span>SET
-          </TextItem>
-          <TextItem>BREAK</TextItem>
-        </TextBox>
-      )}
-      <SetBox>
-        {!isStart ? (
-          <GuideText>다음 세트까지</GuideText>
-        ) : (
-          <h4>다음 세트까지</h4>
-        )}
-        <CountBox>
-          <CountText>{minutes < 10 ? `0${minutes}` : minutes}</CountText>
-          <CountText>:</CountText>
-          <CountText>{secounds < 10 ? `0${secounds}` : secounds}</CountText>
-          {/* <CountText>:</CountText>
-          <CountText>{mSecounds < 10 ? `0${mSecounds}` : mSecounds}</CountText> */}
-        </CountBox>
-      </SetBox>
       {isStart ? (
-        <BtnContainer>
-          <PlayBtnBox isWhite={false} onClick={onStopClick}>
-            <PauseBtn />
-          </PlayBtnBox>
-        </BtnContainer>
+        <BreakStart
+          secounds={secounds}
+          minutes={minutes}
+          id={readyToDo.readyId}
+          intervalset={time.intervalSet}
+        />
       ) : (
-        <>
-          <GuideText>
-            진행된 <span>SET</span>
-          </GuideText>
-          <SetText>{time.setIntervalSet - time.intervalSet}</SetText>
-          <BtnContainer>
-            <PlayBtnBox isWhite={true} onClick={onBackClick}>
-              <DoneBtn />
-            </PlayBtnBox>
-            <PlayBtnBox isWhite={false} onClick={onStartClick}>
-              <PlayBtn />
-            </PlayBtnBox>
-          </BtnContainer>
-        </>
+        <BreakPause
+          secounds={secounds}
+          minutes={minutes}
+          id={readyToDo.readyId}
+        />
       )}
+      <BtnContainer>
+        {isStart ? (
+          <>
+            <PlayBtnBox iswhite={false} onClick={onStopClick}>
+              <PauseBtn />
+            </PlayBtnBox>
+          </>
+        ) : (
+          <>
+            <AnimatePresence>
+              <DoneBtnBox
+                variants={DoneBtnVarients}
+                initial="start"
+                animate="end"
+                exit="exit"
+                onClick={onBackClick}
+              >
+                <DoneBtn />
+              </DoneBtnBox>
+            </AnimatePresence>
+            <AnimatePresence>
+              <StartBtnBox
+                variants={StartBtnVarients}
+                initial="start"
+                animate="end"
+                exit="exit"
+                iswhite={false}
+                onClick={onStartClick}
+              >
+                <PlayBtn />
+              </StartBtnBox>
+            </AnimatePresence>
+          </>
+        )}
+      </BtnContainer>
     </Container>
   );
 }
@@ -186,29 +190,11 @@ const Container = styled.div`
   flex-direction: column;
 `;
 
-const CountBox = styled.div`
-  display: flex;
-  align-items: flex-end;
-  margin-bottom: 30px;
-`;
-
-const CountText = styled.div`
-  display: flex;
-  font-family: "Roboto";
-  font-weight: 900;
-  font-size: 55px;
-  &:nth-child(2) {
-    margin-bottom: 5px;
-    font-size: 50px;
-    padding-left: 2px;
-  }
-`;
-
 const BtnContainer = styled.div`
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 140px;
+  bottom: 196px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -216,7 +202,8 @@ const BtnContainer = styled.div`
   margin: 0 auto;
 `;
 
-const PlayBtnBox = styled.div<{ isWhite: boolean }>`
+const PlayBtnBox = styled(motion.div)<{ iswhite: boolean }>`
+  position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -224,12 +211,34 @@ const PlayBtnBox = styled.div<{ isWhite: boolean }>`
   width: 78px;
   border-radius: 50%;
   border: none;
-  bottom: 140px;
-  background-color: ${(props) => (props.isWhite ? "white" : "black")};
+  background-color: ${(props) => (props.iswhite ? "white" : "black")};
   cursor: pointer;
-  &:nth-child(2) {
-    margin-left: 75px;
-  }
+`;
+
+const DoneBtnBox = styled(motion.div)`
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 78px;
+  width: 78px;
+  border-radius: 50%;
+  border: none;
+  background-color: white;
+  cursor: pointer;
+`;
+
+const StartBtnBox = styled(motion.div)<{ iswhite: boolean }>`
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 78px;
+  width: 78px;
+  border-radius: 50%;
+  border: none;
+  background-color: ${(props) => (props.iswhite ? "white" : "black")};
+  cursor: pointer;
 `;
 
 const PlayBtn = styled(IoPlaySharp)`
@@ -251,58 +260,44 @@ const DoneBtn = styled(IoStopSharp)`
   height: 30px;
 `;
 
-const TextBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 40px;
-`;
+const DoneBtnVarients = {
+  start: {
+    opacity: 0,
+    x: 0,
+  },
+  end: {
+    opacity: 1,
+    x: -80,
+    transition: {
+      duration: 0.3,
+      type: "linear",
+    },
+  },
+  exit: {
+    x: +80,
+    transition: {
+      duration: 1,
+      type: "linear",
+    },
+  },
+};
 
-const TextItem = styled.div`
-  font-family: "Roboto";
-  font-weight: 900;
-  font-size: 65px;
-  margin-bottom: 5px;
-  margin-left: 5px;
-  span {
-    margin-right: 3px;
-  }
-`;
-
-const SetBox = styled.div`
-  h4 {
-    font-family: "NotoSansKRThin";
-    text-align: center;
-    letter-spacing: -1px;
-    font-size: 17px;
-    font-weight: 100;
-    margin-bottom: 15px;
-  }
-`;
-
-const PauseText = styled.h1`
-  display: flex;
-  font-family: "Roboto";
-  font-weight: 900;
-  font-size: 70px;
-  letter-spacing: -1px;
-  margin-bottom: 40px;
-`;
-
-const GuideText = styled.p`
-  font-family: "NotoSansKRThin";
-  text-align: center;
-  font-weight: 100;
-  margin-bottom: 5px;
-  span {
-    font-size: 18px;
-  }
-`;
-
-const SetText = styled.div`
-  display: flex;
-  font-family: "Roboto";
-  font-weight: 900;
-  font-size: 45px;
-`;
+const StartBtnVarients = {
+  start: {
+    x: 0,
+  },
+  end: {
+    x: 80,
+    transition: {
+      duration: 0.3,
+      type: "ease",
+    },
+  },
+  exit: {
+    x: -80,
+    transition: {
+      duration: 1,
+      type: "ease",
+    },
+  },
+};

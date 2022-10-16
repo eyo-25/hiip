@@ -209,7 +209,8 @@ const PlayBtnBox = styled.button`
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 140px;
+  bottom: 156px;
+  z-index: 999;
   display: flex;
   justify-content: center;
   align-items: center;

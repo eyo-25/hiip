@@ -109,7 +109,7 @@ export const CreatePlanBtn = styled.button`
   border-radius: 40px;
   border: none;
   position: fixed;
-  bottom: 180px;
+  bottom: 156px;
   margin: 0 auto;
   background-color: black;
   cursor: pointer;
