@@ -25,6 +25,7 @@ function BreakCounter({ useCounter }: any) {
   const [secounds, setSecounds] = useState(0);
   const [mSecounds, setMSecounds] = useState(0);
   const [isStart, setStart] = useRecoilState(isStartState);
+  const [iswhite, setIswhite] = useState(false);
   const { count, start, stop, reset, done } = useCounter(
     time.breakMin,
     time.breakSec,
@@ -142,7 +143,7 @@ function BreakCounter({ useCounter }: any) {
       <BtnContainer>
         {isStart ? (
           <>
-            <PlayBtnBox iswhite={false} onClick={onStopClick}>
+            <PlayBtnBox iswhite={iswhite} onClick={onStopClick}>
               <PauseBtn />
             </PlayBtnBox>
           </>
@@ -165,7 +166,7 @@ function BreakCounter({ useCounter }: any) {
                 initial="start"
                 animate="end"
                 exit="exit"
-                iswhite={false}
+                iswhite={iswhite}
                 onClick={onStartClick}
               >
                 <PlayBtn />

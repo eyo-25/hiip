@@ -107,6 +107,7 @@ const EditCard = () => {
         planTitle: planTitle,
         planTarget: planTarget,
         intervalSet: count,
+        status: "start",
       };
       await dbService
         .collection("plan")

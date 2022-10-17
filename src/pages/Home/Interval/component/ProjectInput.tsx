@@ -107,9 +107,9 @@ const ProjectInput = ({ userObj }: IUserObjProps) => {
       };
       const timerObj = {
         setIntervalSet: count,
-        setBreakSet: count - 1 <= 0 ? 0 : count,
+        setBreakSet: count - 1 <= 0 ? 0 : count - 1,
         intervalSet: count,
-        breakSet: count - 1 <= 0 ? 0 : count,
+        breakSet: count - 1 <= 0 ? 0 : count - 1,
         setMin: 0,
         setSec: 10,
         setBreakMin: 0,

@@ -29,10 +29,13 @@ function IntervalCounter({ useCounter }: any) {
   const [minutes, setMinutes] = useState(0);
   const [secounds, setSecounds] = useState(0);
   const [mSecounds, setMSecounds] = useState(0);
-  const [isStart, setStart] = useRecoilState(isStartState);
+  const [isStart, setIsStart] = useRecoilState(isStartState);
+  const [iswhite, setIswhite] = useState(false);
 
   const timer = () => {
-    if (intervalSet === 0) return;
+    if (intervalSet === 0) {
+      navigate("/result");
+    }
     if (intervalSet !== 0) {
       const mathMin = Math.floor(count / 60 / 100);
       const mathSec = Math.floor((count - mathMin * 60 * 100) / 100);
@@ -49,6 +52,19 @@ function IntervalCounter({ useCounter }: any) {
     if (intervalSet <= 1 && count <= 0) {
       done();
       setIntervalSet(0);
+      setTime({
+        ...time,
+        intervalSet: 0,
+        breakSet: 0,
+        min: time.setMin,
+        sec: time.setSec,
+        breakMin: time.setBreakMin,
+        breakSec: time.setBreakSec,
+        mSec: 0,
+      });
+      dbService.collection("plan").doc(`${readyToDo.readyId}`).update({
+        status: "done",
+      });
       dbService
         .collection("plan")
         .doc(`${readyToDo.readyId}`)
@@ -61,17 +77,10 @@ function IntervalCounter({ useCounter }: any) {
           sec: time.setSec,
           breakMin: time.setBreakMin,
           breakSec: time.setBreakSec,
+        })
+        .then(() => {
+          navigate("/result");
         });
-      setTime({
-        ...time,
-        intervalSet: 0,
-        breakSet: 0,
-        min: time.setMin,
-        sec: time.setSec,
-        breakMin: time.setBreakMin,
-        breakSec: time.setBreakSec,
-        mSec: 0,
-      });
     }
     if (count <= 0 && 1 < intervalSet) {
       dbService
@@ -88,7 +97,7 @@ function IntervalCounter({ useCounter }: any) {
           reset();
           setIntervalSet((prev: number) => prev - 1);
           setCounterStatus(true);
-          setStart(false);
+          setIsStart(false);
           setTime({
             ...time,
             intervalSet: time.intervalSet - 1,
@@ -105,26 +114,30 @@ function IntervalCounter({ useCounter }: any) {
   useEffect(timer, [count]);
 
   useEffect(() => {
+    setIsStart(true);
     if (!isStart) {
-      setStart(true);
       setTimeout(() => {
         start();
       }, 500);
     }
+    //클린업펑션(언마운트시 실행)
+    return () => {
+      setIsStart(false);
+    };
   }, []);
 
   const onStartClick = () => {
     if (!isStart) {
       setTimeout(() => {
         start();
-      }, 500);
-      setStart(true);
+        setIsStart(true);
+      });
     }
   };
 
   const onStopClick = () => {
     stop();
-    setStart(false);
+    setIsStart(false);
     dbService
       .collection("plan")
       .doc(`${readyToDo.readyId}`)
@@ -158,7 +171,7 @@ function IntervalCounter({ useCounter }: any) {
       <BtnContainer>
         {isStart ? (
           <>
-            <PlayBtnBox iswhite={false} onClick={onStopClick}>
+            <PlayBtnBox iswhite={iswhite} onClick={onStopClick}>
               <PauseBtn />
             </PlayBtnBox>
           </>
@@ -181,7 +194,7 @@ function IntervalCounter({ useCounter }: any) {
                 initial="start"
                 animate="end"
                 exit="exit"
-                iswhite={false}
+                iswhite={iswhite}
                 onClick={onStartClick}
               >
                 <PlayBtn />
@@ -217,7 +230,7 @@ const BtnContainer = styled.div`
   margin: 0 auto;
 `;
 
-const PlayBtnBox = styled(motion.div)<{ iswhite: boolean }>`
+const PlayBtnBox = styled(motion.div)<{ iswhite: any }>`
   position: absolute;
   display: flex;
   justify-content: center;

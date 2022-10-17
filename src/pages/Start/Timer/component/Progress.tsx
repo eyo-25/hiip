@@ -25,8 +25,9 @@ function Progress() {
   let totalSetCount =
     setCount * time.setIntervalSet + setBreakCount * time.setBreakSet;
 
-  // //진행바 한 인터벌의 퍼센티지
-  let oneIntervalPercentage = Math.floor((setCount / totalCount) * 100);
+  // //진행바 한 인터벌의 퍼센티지(한세트에는 100%)
+  let oneIntervalPercentage =
+    totalSet === 1 ? 100 : Math.floor((setCount / totalCount) * 100);
   //진행바 한 브레이크의 퍼센티지
   let oneBreakPercentage = Math.ceil((setBreakCount / totalCount) * 100);
 
@@ -47,7 +48,7 @@ function Progress() {
   let nowSetStep =
     time.setIntervalSet - time.intervalSet + (time.setBreakSet - time.breakSet);
 
-  let barArray: any[] = [];
+  let barArray: any[] = [{}];
 
   for (let i = 0; i < totalSet - 1; i++) {
     barArray.push((barArray[i] = {}));

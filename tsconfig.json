@@ -22,5 +22,5 @@
   },
   "include": [
     "src"
-  ]
+, "src/pages/Home/Project/component/EditCard.tsx"  ]
 }

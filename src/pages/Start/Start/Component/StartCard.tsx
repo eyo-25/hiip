@@ -87,7 +87,16 @@ const StartCard = ({
         onClick={() => onCardClick(toDoId + "")}
       >
         <TextBox>
-          <h4>{planTitle}</h4>
+          <TitleBox>
+            <h4>{planTitle}</h4>
+            <StatusBox isStatus={status}>
+              <h5>
+                {status === "ready" && "대기"}
+                {status === "start" && "진행중"}
+                {status === "done" && "완료"}
+              </h5>
+            </StatusBox>
+          </TitleBox>
           <p>{planTarget}</p>
         </TextBox>
         <IntervalBox>
@@ -129,14 +138,41 @@ const DragBox = styled.div<{ isReadyCard: boolean }>`
 const TextBox = styled.div`
   display: flex;
   flex-direction: column;
-  letter-spacing: -0.2px;
-  h4 {
-    font-weight: 600;
-    margin-bottom: 10px;
-  }
   p {
     color: #9d9d9d;
     font-size: 14px;
+  }
+`;
+
+const TitleBox = styled.div`
+  display: flex;
+  margin-bottom: 10px;
+  h4 {
+    letter-spacing: -0.2px;
+    font-weight: 600;
+    margin-right: 10px;
+  }
+`;
+
+const StatusBox = styled.div<{ isStatus: string }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: ${(props) => {
+    if (props.isStatus === "start") {
+      return "#fb0045";
+    } else if (props.isStatus === "done") {
+      return "#1012FF";
+    } else {
+      return "black";
+    }
+  }};
+  border-radius: 10px;
+  h5 {
+    padding: 0 5px;
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
   }
 `;
 
