@@ -91,7 +91,6 @@ const StartCard = ({
             <h4>{planTitle}</h4>
             <StatusBox isStatus={status}>
               <h5>
-                {status === "ready" && "대기"}
                 {status === "start" && "진행중"}
                 {status === "done" && "완료"}
               </h5>
@@ -163,8 +162,6 @@ const StatusBox = styled.div<{ isStatus: string }>`
       return "#fb0045";
     } else if (props.isStatus === "done") {
       return "#1012FF";
-    } else {
-      return "black";
     }
   }};
   border-radius: 10px;

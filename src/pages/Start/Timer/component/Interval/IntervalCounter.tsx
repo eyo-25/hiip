@@ -8,6 +8,7 @@ import {
   isStartState,
   readyState,
   timeState,
+  toDoState,
 } from "../../../../../Recoil/atoms";
 import { ReactComponent as PauseIcon } from "../../../../../Assets/Icons/pause.svg";
 import { useNavigate } from "react-router-dom";
@@ -17,6 +18,7 @@ import IntervalStart from "./IntervalStart";
 
 function IntervalCounter({ useCounter }: any) {
   const navigate = useNavigate();
+  const [toDos, setToDos] = useRecoilState(toDoState);
   const [readyToDo, setReadyToDo] = useRecoilState(readyState);
   const [counterStatus, setCounterStatus] = useRecoilState<any>(counterState);
   const [time, setTime] = useRecoilState<any>(timeState);
@@ -33,6 +35,7 @@ function IntervalCounter({ useCounter }: any) {
   const [iswhite, setIswhite] = useState(false);
 
   const timer = () => {
+    const uid = JSON.parse(localStorage.getItem("user") as any).uid;
     if (intervalSet === 0) {
       navigate("/result");
     }
@@ -63,8 +66,23 @@ function IntervalCounter({ useCounter }: any) {
         mSec: 0,
       });
       dbService.collection("plan").doc(`${readyToDo.readyId}`).update({
+        index: 0,
         status: "done",
       });
+      dbService.collection("plan").doc(`${toDos[1].id}`).update({
+        index: 999999999,
+      });
+      const readyObj = {
+        readyId: toDos[1].id,
+        status: toDos[1].status,
+      };
+      dbService
+        .collection("ready")
+        .doc(uid)
+        .set(readyObj)
+        .then(() => {
+          setReadyToDo(readyObj);
+        });
       dbService
         .collection("plan")
         .doc(`${readyToDo.readyId}`)
@@ -114,8 +132,8 @@ function IntervalCounter({ useCounter }: any) {
   useEffect(timer, [count]);
 
   useEffect(() => {
-    setIsStart(true);
     if (!isStart) {
+      setIsStart(true);
       setTimeout(() => {
         start();
       }, 500);

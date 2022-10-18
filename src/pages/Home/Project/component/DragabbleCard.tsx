@@ -34,6 +34,30 @@ function DragabbleCard({
   const [indexCount, setIndexCount] = useRecoilState(indexState);
   const uid = JSON.parse(localStorage.getItem("user") as any).uid;
 
+  const [counter, setCounter] = useState(100);
+  const intervalRef = React.useRef(null) as any;
+
+  const startCounter = () => {
+    if (intervalRef.current) return;
+    intervalRef.current = setInterval(() => {
+      setCounter((prevCounter) => prevCounter + 1);
+      console.log(counter);
+      if (3 < counter) {
+        setInfoPopup(true);
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    }, 1000);
+  };
+
+  const stopCounter = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      setInfoPopup(false);
+      intervalRef.current = null;
+    }
+  };
+
   const indexCountObj = {
     index: indexCount + 1,
   };
@@ -89,6 +113,9 @@ function DragabbleCard({
       <Draggable draggableId={toDoId + ""} index={index} key={toDoId}>
         {(provided) => (
           <DragBox
+            onMouseDown={startCounter}
+            // onMouseUp={stopCounter}
+            onMouseLeave={stopCounter}
             ref={provided.innerRef}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
@@ -103,7 +130,6 @@ function DragabbleCard({
                 <h4>{planTitle}</h4>
                 <StatusBox isStatus={status}>
                   <h5>
-                    {status === "ready" && "대기"}
                     {status === "start" && "진행중"}
                     {status === "done" && "완료"}
                   </h5>
@@ -183,8 +209,6 @@ const StatusBox = styled.div<{ isStatus: string }>`
       return "#fb0045";
     } else if (props.isStatus === "done") {
       return "#1012FF";
-    } else {
-      return "black";
     }
   }};
   border-radius: 10px;

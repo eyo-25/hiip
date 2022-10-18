@@ -84,7 +84,7 @@ const Start = () => {
           .doc(`${readyToDo.readyId}`)
           .update({ status: "start" });
         dbService.collection("ready").doc(uid).update({ status: "start" });
-      } else {
+      } else if (readyToDo.status === "start") {
         dbService
           .collection("plan")
           .doc(`${readyToDo.readyId}`)
@@ -133,8 +133,9 @@ const Start = () => {
             } else {
               navigate("/timer");
             }
-            navigate("/timer");
           });
+      } else if (readyToDo.status === "done") {
+        navigate("/result");
       }
     } else {
       if (0 < toDos.length) {
