@@ -34,6 +34,11 @@ body {
   font-family: "NotoSansKR";
   line-height: 1;
   background-color: #F7F7F7;
+
+  position: relative;
+  margin: 0 auto;
+  max-width: 414px;
+  /* max-height: 896px; */
   
   // 스크롤바 영역차지 막기
   overflow: overlay;

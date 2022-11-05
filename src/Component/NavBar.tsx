@@ -19,55 +19,62 @@ const NavBar = () => {
   const planActive = planMatch !== null || IntervalMatch !== null;
   const startActive = homeMatch !== null || startMatch !== null;
   return (
-    <NavContainer isStart={startActive}>
-      <Nav>
-        {planMatch || IntervalMatch ? (
-          <SubItems>
-            <SubItem isActive={planMatch !== null}>
-              <Link to="/plan">프로젝트</Link>
-            </SubItem>
-            <SubItem isActive={IntervalMatch !== null}>
-              <Link to="/interval">인터벌 생성</Link>
-            </SubItem>
-          </SubItems>
-        ) : null}
-        <Items>
-          <Item isActive={planActive} onClick={() => onClick("/plan")}>
-            <Icon1 />
-            <Link to="/plan">계획</Link>
-          </Item>
-          <Item isActive={startActive} onClick={() => onClick("/")}>
-            <Icon2 />
-            <Link to="/">실행</Link>
-          </Item>
-          <Item
-            isActive={feedbackMatch !== null}
-            onClick={() => onClick("/feedback")}
-          >
-            <Icon3 />
-            <Link to="/feedback">피드백</Link>
-          </Item>
-          <Item
-            isActive={mypageMatch !== null}
-            onClick={() => onClick("/mypage")}
-          >
-            <Icon4 />
-            <Link to="/mypage">MY</Link>
-          </Item>
-        </Items>
-      </Nav>
-    </NavContainer>
+    <NavWrapper>
+      <NavContainer isStart={startActive}>
+        <Nav>
+          {planMatch || IntervalMatch ? (
+            <SubItems>
+              <SubItem isActive={planMatch !== null}>
+                <Link to="/plan">프로젝트</Link>
+              </SubItem>
+              <SubItem isActive={IntervalMatch !== null}>
+                <Link to="/interval">인터벌 생성</Link>
+              </SubItem>
+            </SubItems>
+          ) : null}
+          <Items>
+            <Item isActive={planActive} onClick={() => onClick("/plan")}>
+              <Icon1 />
+              <Link to="/plan">계획</Link>
+            </Item>
+            <Item isActive={startActive} onClick={() => onClick("/")}>
+              <Icon2 />
+              <Link to="/">실행</Link>
+            </Item>
+            <Item
+              isActive={feedbackMatch !== null}
+              onClick={() => onClick("/feedback")}
+            >
+              <Icon3 />
+              <Link to="/feedback">피드백</Link>
+            </Item>
+            <Item
+              isActive={mypageMatch !== null}
+              onClick={() => onClick("/mypage")}
+            >
+              <Icon4 />
+              <Link to="/mypage">MY</Link>
+            </Item>
+          </Items>
+        </Nav>
+      </NavContainer>
+    </NavWrapper>
   );
 };
 
 export default NavBar;
 
-const NavContainer = styled.div<{ isStart: boolean }>`
-  display: flex;
+const NavWrapper = styled.div`
+  position: relative;
+  width: 100%;
   position: fixed;
   bottom: 0;
+`;
+
+const NavContainer = styled.div<{ isStart: boolean }>`
+  display: flex;
   height: ${(props) => (props.isStart ? "100px" : "136px")};
-  width: 100%;
+  max-width: 414px;
   background-color: white;
   border-top: 1px solid #c4c4c4;
   z-index: 12;
