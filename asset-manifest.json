@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/hiip/static/css/main.c71e21dc.css",
-    "main.js": "/hiip/static/js/main.ffce7c0c.js",
+    "main.js": "/hiip/static/js/main.613d936c.js",
     "static/media/start_background2.png": "/hiip/static/media/start_background2.7f39d0b5d394d7cd25db.png",
     "static/media/Roboto-BlackItalic.woff": "/hiip/static/media/Roboto-BlackItalic.a2aa69c5f10fdeb3a862.woff",
     "static/media/NotoSansKR-Medium.woff": "/hiip/static/media/NotoSansKR-Medium.b9ef050bc1e73ab34f9e.woff",
@@ -19,10 +19,10 @@
     "static/media/planing.svg": "/hiip/static/media/planing.69da4f161d35af915df342f7caa52e2f.svg",
     "static/media/plus.svg": "/hiip/static/media/plus.29ef5c87b8ab896d68730bf8b2420968.svg",
     "main.c71e21dc.css.map": "/hiip/static/css/main.c71e21dc.css.map",
-    "main.ffce7c0c.js.map": "/hiip/static/js/main.ffce7c0c.js.map"
+    "main.613d936c.js.map": "/hiip/static/js/main.613d936c.js.map"
   },
   "entrypoints": [
     "static/css/main.c71e21dc.css",
-    "static/js/main.ffce7c0c.js"
+    "static/js/main.613d936c.js"
   ]
 }
